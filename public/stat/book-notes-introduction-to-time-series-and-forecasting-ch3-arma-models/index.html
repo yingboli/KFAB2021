@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.88.1" />
+
+
+<title>Book Notes: Introduction to Time Series and Forecasting --  Ch3 ARMA Models - A Hugo website</title>
+<meta property="og:title" content="Book Notes: Introduction to Time Series and Forecasting --  Ch3 ARMA Models - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/rstudio/blogdown">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/rstudio">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+
+    <h1 class="article-title">Book Notes: Introduction to Time Series and Forecasting --  Ch3 ARMA Models</h1>
+
+    
+
+    <div class="article-content">
+      
+
+<div id="TOC">
+<ul>
+<li><a href="#armap-q-processes">ARMA<span class="math inline">\((p, q)\)</span> Processes</a><ul>
+<li><a href="#stationary-solution">Stationary solution</a></li>
+<li><a href="#causality">Causality</a></li>
+<li><a href="#invertibility">Invertibility</a></li>
+</ul></li>
+<li><a href="#acf-and-pacf-of-an-armap-q-process">ACF and PACF of an ARMA<span class="math inline">\((p, q)\)</span> Process</a><ul>
+<li><a href="#calculation-of-the-acvf">Calculation of the ACVF</a></li>
+<li><a href="#test-for-mas-and-ars-from-the-acf-and-pacf">Test for MAs and ARs from the ACF and PACF</a></li>
+</ul></li>
+<li><a href="#forecast-arma-processes">Forecast ARMA Processes</a></li>
+</ul>
+</div>
+
+<p><strong><em>For the pdf slides, click <a href="/pdf/122918_time_series_ch3.pdf">here</a></em></strong></p>
+<div id="armap-q-processes" class="section level1">
+<h1>ARMA<span class="math inline">\((p, q)\)</span> Processes</h1>
+<div id="armap-q-process-definitions" class="section level3">
+<h3>ARMA<span class="math inline">\((p, q)\)</span> process: definitions</h3>
+<ul>
+<li><p><span class="math inline">\(\{X_t\}\)</span> is an <font color='blue'>ARMA<span class="math inline">\((p, q)\)</span> process</font> if it is <strong>stationary</strong>,
+and for all <span class="math inline">\(t\)</span>,
+<span class="math display">\[
+X_t - \phi_1 X_{t-1} - \cdots - \phi_p X_{t-p} = 
+Z_t + \theta_1 Z_{t-1} + \cdots + \theta_q Z_{t-q}
+\]</span>
+where <span class="math inline">\(\{Z_t\} \sim \textrm{WN}(0, \sigma^2)\)</span> and the polynomials
+<span class="math display">\[
+\phi(z) = 1 - \phi_1 z - \cdots - \phi_p z^p, \quad
+\theta(z) = 1 + \theta_1 z + \cdots + \theta_q z^q
+\]</span>
+have no common factors</p></li>
+<li><p>Equivalent formula using the backward shift operator
+<span class="math display">\[
+\phi(B) X_t = \theta(B) Z_t
+\]</span></p></li>
+<li><p>An ARMA<span class="math inline">\((p,q)\)</span> process with mean <span class="math inline">\(\mu\)</span>: we can study <span class="math inline">\(\{X_t - \mu\}\)</span>
+<span class="math display">\[
+(X_t-\mu) - \phi_1 (X_{t-1}-\mu) - \cdots - \phi_p (X_{t-p}-\mu) = 
+Z_t + \theta_1 Z_{t-1} + \cdots + \theta_q Z_{t-q}
+\]</span></p></li>
+</ul>
+</div>
+<div id="stationary-solution" class="section level2">
+<h2>Stationary solution</h2>
+<div id="stationary-solution-existence-and-uniqueness" class="section level3">
+<h3>Stationary solution: existence and uniqueness</h3>
+<ul>
+<li><p>A stationary solution exists and is unique if and only if
+<span class="math display">\[
+\phi(z) \neq 0, \quad \text{for all complex } z \text{ with } |z| = 1
+\]</span></p></li>
+<li><p><font color='blue'>The unit circle</font>: the region in <span class="math inline">\(z \in \mathbb{C}\)</span> defined by
+<span class="math inline">\(|z|=1\)</span></p></li>
+<li><p>Stationary solution:
+<span class="math display">\[
+X_t = \theta(B) / \phi(B) Z_t = \psi(B) Z_t = \sum_{j=-\infty}^{\infty}
+\psi_j Z_{t-j}
+\]</span></p></li>
+</ul>
+</div>
+</div>
+<div id="causality" class="section level2">
+<h2>Causality</h2>
+<div id="causality-phiz-has-no-zeros-inside-the-unit-circle" class="section level3">
+<h3>Causality: <span class="math inline">\(\phi(z)\)</span> has no zeros inside the unit circle</h3>
+<ul>
+<li><p>An ARMA<span class="math inline">\((p, q)\)</span> process is <font color='red'>causal</font>: if there exist <span class="math inline">\(\psi_0, \psi_1, \ldots\)</span>
+<span class="math display">\[
+\sum_{j=0}^{\infty} |\psi_j| &lt; \infty, \quad \text{and}
+\]</span>
+<span class="math display">\[
+X_t = \sum_{j=0}^{\infty}\psi_j Z_{t-j}, \quad \text{for all } t
+\]</span></p></li>
+<li><p><font color='red'>Theorem (equivalent condition of causaility)</font>:
+<span class="math display">\[
+\phi(z) = 1 - \phi_1 z - \cdots - \phi_p z^p \neq 0, \quad \text{for all }
+|z| \leq 1
+\]</span></p></li>
+<li><p><font color='green'>Example: ARMA<span class="math inline">\((1, 1)\)</span></font> <span class="math inline">\(X_t - \phi X_{t-1} = Z_t + \theta Z_{t-1}\)</span>
+<span class="math display">\[
+1-\phi z = 0 \Longrightarrow \text{ only zero } z = 1/\phi
+\]</span>
+So <span class="math inline">\(|z| = 1/|\phi| &gt; 1\)</span>, i.e., <span class="math inline">\(|\phi| &lt; 1\)</span> is equivalent of causality</p></li>
+</ul>
+</div>
+<div id="how-do-we-get-psi_js" class="section level3">
+<h3>How do we get <span class="math inline">\(\psi_j\)</span>’s?</h3>
+<ul>
+<li><p>Letting <span class="math inline">\(\theta_0 = 1\)</span> and matching coefficients of <span class="math inline">\(z^j\)</span> based on
+<span class="math display">\[
+1 + \theta_1 z + \cdots \theta_q z^q
+= (1 - \phi_1 z - \cdots \phi_p z^p)(\psi_0 + \psi_1 z + \cdots),
+\]</span>
+gives
+<span class="math display">\[
+\theta_j \mathbf{1}_{[j \leq q]} = \psi_j - \sum_{j=1}^p \phi_k \psi_{j-k}, \quad
+j = 0, 1, \ldots
+\]</span></p></li>
+<li><p><font color='green'>Example: causal ARMA<span class="math inline">\((1, 1)\)</span></font><br />
+<span class="math display">\[\begin{align*}
+1 &amp; = \psi_0\\
+\theta &amp; = \psi_1 - \phi \psi_0 \Longrightarrow \psi_1 = \theta + \psi\\
+0 &amp; = \psi_j - \phi \psi_{j-1} \text{ for } j \geq 2
+\Longrightarrow \psi_j = \phi \psi_{j-1}
+\end{align*}\]</span></p></li>
+</ul>
+<p>Therefore,
+<span class="math display">\[
+\psi_0 = 1, \quad \psi_j = \phi^{j-1}(\theta + \psi) \text{ for } j \geq 1
+\]</span></p>
+</div>
+</div>
+<div id="invertibility" class="section level2">
+<h2>Invertibility</h2>
+<div id="invertibility-thetaz-has-no-zeros-inside-the-unit-circle" class="section level3">
+<h3>Invertibility: <span class="math inline">\(\theta(z)\)</span> has no zeros inside the unit circle</h3>
+<ul>
+<li><p>An ARMA<span class="math inline">\((p, q)\)</span> process is <font color='red'>invertible</font>: if there exist
+<span class="math inline">\(\pi_0, \pi_1, \ldots\)</span>
+<span class="math display">\[
+\sum_{j=0}^{\infty} |\pi_j| &lt; \infty, \quad \text{and}
+\]</span>
+<span class="math display">\[
+Z_t = \sum_{j=0}^{\infty}\pi_j X_{t-j}, \quad \text{for all } t
+\]</span></p></li>
+<li><p><font color='red'>Theorem (equivalent condition of invertibility)</font>:
+<span class="math display">\[
+\theta(z) = 1 + \theta_1 z + \cdots + \theta_q z^q \neq 0, \quad \text{for all }
+|z| \leq 1
+\]</span></p></li>
+<li><p><font color='green'>Example: ARMA<span class="math inline">\((1, 1)\)</span></font> <span class="math inline">\(X_t - \phi X_{t-1} = Z_t + \theta Z_{t-1}\)</span>
+<span class="math display">\[
+1 + \theta z = 0 \Longrightarrow \text{ only zero } z = -1/\theta
+\]</span>
+So <span class="math inline">\(|z| = 1/|\theta| &gt; 1\)</span>, i.e., <span class="math inline">\(|\theta| &lt; 1\)</span> is equivalent of invertibility</p></li>
+</ul>
+</div>
+<div id="how-do-we-get-pi_js" class="section level3">
+<h3>How do we get <span class="math inline">\(\pi_j\)</span>’s?</h3>
+<ul>
+<li><p>Letting <span class="math inline">\(\phi_0 = -1\)</span> and matching coefficients of <span class="math inline">\(z^j\)</span> based on
+<span class="math display">\[
+1 - \phi_1 z - \cdots \phi_p z^p
+= (1 + \theta_1 z + \cdots \theta_q z^q)(\pi_0 + \pi_1 z + \cdots),
+\]</span>
+gives
+<span class="math display">\[
+-\phi_j \mathbf{1}_{[j \leq p]} = \pi_j + \sum_{j=1}^q \theta_k \pi_{j-k}, \quad
+j = 0, 1, \ldots
+\]</span></p></li>
+<li><p><font color='green'>Example: invertible ARMA<span class="math inline">\((1, 1)\)</span></font><br />
+<span class="math display">\[\begin{align*}
+1 &amp; = \pi_0\\
+-\phi &amp; = \pi_1 + \theta \psi_0 \Longrightarrow \pi_1 = -(\psi +\theta)\\
+0 &amp; = \pi_j + \theta \pi_{j-1} \text{ for } j \geq 2
+\Longrightarrow \pi_j = -\theta \pi_{j-1}
+\end{align*}\]</span></p></li>
+</ul>
+<p>Therefore,
+<span class="math display">\[
+\pi_0 = 1, \quad \pi_j = (-1)^j \theta^{j-1}(\psi + \theta) \text{ for } j \geq 1
+\]</span></p>
+</div>
+</div>
+</div>
+<div id="acf-and-pacf-of-an-armap-q-process" class="section level1">
+<h1>ACF and PACF of an ARMA<span class="math inline">\((p, q)\)</span> Process</h1>
+<div id="calculation-of-the-acvf" class="section level2">
+<h2>Calculation of the ACVF</h2>
+<div id="calculation-of-the-acvf-1" class="section level3">
+<h3>Calculation of the ACVF</h3>
+<ul>
+<li><p>Assume the ARMA<span class="math inline">\((p, q)\)</span> process <span class="math inline">\(\{X_t\}\)</span> is causal and invertible</p></li>
+<li><p>Method 1: If
+<span class="math inline">\(X_t = \sum_{j=0}^{\infty} \psi_j Z_{t-j}\)</span>, then
+<span class="math display">\[
+\gamma(h) = E(X_{t+h} E_t) = \sigma^2 \sum_{j=0}^{\infty} \psi_j \psi_{j + |h|}
+\]</span></p></li>
+<li><p>Method 2 (difference equation method): multiple the ARMA formula with
+<span class="math inline">\(X_t, X_{t-1}, \ldots\)</span> and take expectation</p></li>
+</ul>
+</div>
+<div id="example-arma1-1" class="section level3">
+<h3><font color='green'>Example: ARMA<span class="math inline">\((1, 1)\)</span></font></h3>
+<ul>
+<li><p>Recall that for a causal ARMA<span class="math inline">\((1, 1)\)</span>, in <span class="math inline">\(X_t = \sum_{j=0}^{\infty} \psi_j Z_{t-j}\)</span>,
+<span class="math display">\[
+\psi_0 = 1, \quad \psi_j = \phi^{j-1}(\theta + \psi) \text{ for } j \geq 1
+\]</span></p></li>
+<li><p>Lag-0 autocorrelation
+<span class="math display">\[
+\gamma(0) = \sigma^2 \sum_{j=0}^{\infty} \psi_j^2 
+= \sigma^2\left[ 1 + (\theta+\phi)^2 \sum_{j=0}^{\infty}\phi^{2j}\right]
+= \sigma^2\left[ 1 + \frac{(\theta+\phi)^2}{1-\phi^2} \right]
+\]</span></p></li>
+<li><p>Lag-1 autocorrelation
+<span class="math display">\[
+\gamma(1) = \sigma^2 \sum_{j=0}^{\infty} \psi_j \psi_{j+1} 
+%  = \sigma^2\left[ \theta+\phi + (\theta+\phi)^2\phi
+%    \sum_{j=0}^{\infty}\phi^{2j}\right]
+= \sigma^2\left[ \theta+\phi + \frac{(\theta+\phi)^2 \phi}{1-\phi^2} \right]
+\]</span></p></li>
+<li><p>Lag-<span class="math inline">\(k\)</span> autocorrelation (<span class="math inline">\(k \geq 2\)</span>)
+<span class="math display">\[
+\gamma(k) = \phi^{k-1} \gamma(1), \quad k \geq 2
+\]</span></p></li>
+</ul>
+</div>
+<div id="use-the-difference-equation-method-on-arma1-1" class="section level3">
+<h3>Use the difference equation method on <font color='green'>ARMA<span class="math inline">\((1, 1)\)</span></font></h3>
+<ol style="list-style-type: decimal">
+<li><p>Multiple <span class="math inline">\(X_t - \phi X_{t-1} = Z_t + \theta Z_{t-1}\)</span> by <span class="math inline">\(X_t\)</span>,
+then take expectation
+<span class="math display">\[
+E(X_t^2) - \phi E(X_t X_{t-1}) = E(X_t Z_t) + \theta E(X_t Z_{t-1})
+\]</span>
+Since <span class="math inline">\(E(X_t Z_k) = E[(\sum_{j=0}^{\infty} \psi_j Z_{t-j})Z_k] = \psi_{t-k} \sigma^2\)</span>, we have
+<span class="math display">\[
+\gamma(0) - \phi \gamma(1) = \sigma^2 + \theta (\theta + \phi) \sigma^2 
+\]</span></p></li>
+<li><p>Multiply by <span class="math inline">\(X_{t-1}\)</span>
+<span class="math display">\[
+E(X_{t-1} X_t) - \phi E(X_{t-1}^2) = E(X_{t-1} Z_t) + \theta E(X_{t-1} Z_{t-1})
+\]</span>
+<span class="math display">\[
+\gamma(1) - \phi \gamma(0) = 0 + \theta \sigma^2 \psi_0 = \theta \sigma^2
+\]</span></p></li>
+</ol>
+<p><strong>Using the two equations from 1 and 2, we can solve <span class="math inline">\(\gamma(0), \gamma(1)\)</span></strong></p>
+<ol start="3" style="list-style-type: decimal">
+<li>Multiply by <span class="math inline">\(X_{t-k}\)</span>, for <span class="math inline">\(k \geq 2\)</span>
+<span class="math display">\[
+E(X_{t-k} X_t) - \phi E(X_{t-k} X_{t-1}) = E(X_{t-k} Z_t) + \theta E(X_{t-k} Z_{t-1})
+\]</span>
+<span class="math display">\[
+\gamma(k) - \phi \gamma(k-1) = 0 \Longrightarrow \gamma(k) = \phi \gamma(k-1)
+\]</span></li>
+</ol>
+</div>
+</div>
+<div id="test-for-mas-and-ars-from-the-acf-and-pacf" class="section level2">
+<h2>Test for MAs and ARs from the ACF and PACF</h2>
+<div id="acf-of-an-maq-process" class="section level3">
+<h3>ACF of an MA<span class="math inline">\((q)\)</span> process</h3>
+<ul>
+<li>Suppose <span class="math inline">\(\{X_t\}\)</span> is an MA<span class="math inline">\((q)\)</span>, then <span class="math inline">\(\rho(h) = 0\)</span> for all <span class="math inline">\(h &gt; q\)</span></li>
+<li>By asymptotic normality
+<span class="math display">\[
+\hat{\rho}(q + 1) \stackrel{\cdot}{\sim} 
+\textrm{N}\left(0, \frac{w_{q+1, q+1}}{n}\right)
+\]</span>
+and Bartlett
+<span class="math display">\[\begin{align*}
+w_{q+1, q+1} &amp; = \sum_{k=1}^{\infty}
+\left[ \rho(k+q+1) + \rho(k-q-1) - 2 \rho(k+1) \rho(q)  \right]^2 \\
+&amp; = \sum_{k=1}^{\infty}\rho(k-q-1)^2\\
+&amp; = 1 + 2 \sum_{j=1}^q \rho(j)^2
+\end{align*}\]</span></li>
+</ul>
+</div>
+<div id="test-for-an-maq-from-the-acf" class="section level3">
+<h3><font color='red'>Test for an MA<span class="math inline">\((q)\)</span>: from the ACF</font></h3>
+<ol style="list-style-type: decimal">
+<li><p>Hypotheses
+<span class="math display">\[
+H_0: \{X_t\} \sim \textrm{MA}(q) \quad \longleftrightarrow \quad
+H_A: \text{Not } H_0
+\]</span></p></li>
+<li><p>Test statistic
+<span class="math display">\[
+Z = \frac{\hat{\rho}(q + 1) - 0}{\sqrt{\frac{1 + 2 \sum_{j=1}^q \hat{\rho}(j)^2}{n}}}
+\]</span></p></li>
+<li><p>Reject <span class="math inline">\(H_0\)</span> if <span class="math inline">\(|Z| \geq z_{\alpha/2}\)</span></p></li>
+</ol>
+<ul>
+<li>Note: under the null hypothesis, we use the sample ACF plot with bounds
+<span class="math inline">\(\pm 1.96 \times \sqrt{\frac{1 + 2 \sum_{j=1}^q \hat{\rho}(j)^2}{n}}\)</span> to check
+if <span class="math inline">\(\hat{\rho}(h)\)</span> for all <span class="math inline">\(h \geq q+1\)</span> are inside the bounds.
+But this may have some multiple testing problems.</li>
+</ul>
+</div>
+<div id="partial-autocorrelation-function-pacf" class="section level3">
+<h3>Partial autocorrelation function (PACF)</h3>
+<ul>
+<li><p>We define the <font color='blue'>partial autocorrelation function (PACF)</font>
+of an ARMA process as the function <span class="math inline">\(\alpha(\cdot)\)</span>
+<span class="math display">\[
+\alpha(0) = 1, \quad \alpha(h) = \phi_{hh}, \text{ for } h \geq 1
+\]</span>
+Here, <span class="math inline">\(\phi_{hh}\)</span> is the last entry of
+<span class="math display">\[
+\boldsymbol\phi_h = \boldsymbol\Gamma_h^{-1} \boldsymbol\gamma_h, \quad \text{where }
+\boldsymbol\Gamma_h = [\gamma(i-j)]_{i,j=1}^h, \ 
+\boldsymbol\gamma_h = [\gamma(1), \ldots, \gamma(h)]&#39;
+\]</span></p></li>
+<li><p><font color='blue'>Sample PACF</font> <span class="math inline">\(\hat{\alpha}(\cdot)\)</span>:
+change all <span class="math inline">\(\gamma(\cdot)\)</span> above to <span class="math inline">\(\hat{\gamma}(\cdot)\)</span></p></li>
+<li><p>Recall: in DL algorithm <span class="math inline">\(\hat{X}_{n+1} = \phi_{n1}X_n + \cdots + \phi_{nn} X_1\)</span>,
+<span class="math display">\[
+\phi_{nn} = \alpha(n), \quad \text{PACF at lag }n
+\]</span></p></li>
+</ul>
+</div>
+<div id="pacf-property" class="section level3">
+<h3>PACF property</h3>
+<ul>
+<li><p><span class="math inline">\(\phi_{nn}\)</span> is the correlation between the prediction errors
+<span class="math display">\[
+\alpha(n) = \text{Corr}
+\left( X_n - P(X_n | X_1, \ldots, X_{n-1}),
+X_0 - P(X_0 | X_1, \ldots, X_{n-1})\right)
+\]</span></p></li>
+<li><p><font color='red'>Theorem</font>: A stationary series is AR<span class="math inline">\((p)\)</span> if and only if
+<span class="math display">\[
+\alpha(h) = 0 \text{ for all } h &gt; p
+\]</span></p></li>
+<li><p>If <span class="math inline">\(\{X_t\}\)</span> is an AR<span class="math inline">\((p)\)</span>, then we have asymptotic normality
+<span class="math display">\[
+\hat{\alpha}(h) \stackrel{\cdot}{\sim} \textrm{N}\left(0, \frac{1}{n}\right),
+\quad \text{for all } h &gt; p
+\]</span></p></li>
+</ul>
+</div>
+<div id="test-for-an-arp-from-the-pacf" class="section level3">
+<h3><font color='red'>Test for an AR<span class="math inline">\((p)\)</span>: from the PACF</font></h3>
+<ol style="list-style-type: decimal">
+<li><p>Hypotheses
+<span class="math display">\[
+H_0: \{X_t\} \sim \textrm{AR}(p) \quad \longleftrightarrow \quad
+H_A: \text{Not } H_0
+\]</span></p></li>
+<li><p>Test statistic
+<span class="math display">\[
+Z = \frac{\hat{\alpha}(p + 1) - 0}{\sqrt{\frac{1}{n}}}
+\]</span></p></li>
+<li><p>Reject <span class="math inline">\(H_0\)</span> if <span class="math inline">\(|Z| \geq z_{\alpha/2}\)</span></p></li>
+</ol>
+<ul>
+<li>Note: under the null hypothesis, we use the sample PACF plot with bounds
+<span class="math inline">\(\pm 1.96 / \sqrt{n}\)</span> to check
+if <span class="math inline">\(\hat{\alpha}(h)\)</span> for all <span class="math inline">\(h \geq p+1\)</span> are inside the bounds.
+But this may have some multiple testing problems.</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="forecast-arma-processes" class="section level1">
+<h1>Forecast ARMA Processes</h1>
+<div id="forecast-armap-q-using-the-innovation-algorithm" class="section level3">
+<h3>Forecast ARMA<span class="math inline">\((p, q)\)</span> using the innovation algorithm</h3>
+<ul>
+<li><p>Let <span class="math inline">\(m = \max(p, q)\)</span></p></li>
+<li><p>One-step prediction
+<span class="math display">\[
+\hat{X}_{n+1} =  
+\begin{cases}
+\sum_{j=1}^n \theta_{nj}\left( X_{n+1-j} - \hat{X}_{n+1-j} \right),
+&amp;  n &lt; m\\
+\sum_{i=1}^p \phi_i X_{n+1-i} + 
+\sum_{j=1}^q \theta_{nj}\left( X_{n+1-j} - \hat{X}_{n+1-j} \right),
+&amp;  n \geq m\\
+\end{cases}
+\]</span></p>
+<ul>
+<li>Special case: AR<span class="math inline">\((p)\)</span> process
+<span class="math display">\[
+  \hat{X}_{n+1} = \sum_{i=1}^p \phi_k X_{n+1-i}, \quad n\geq p
+  \]</span></li>
+</ul></li>
+<li><p><span class="math inline">\(h\)</span>-step prediction: for <span class="math inline">\(n&gt;m\)</span> and all <span class="math inline">\(h \geq 1\)</span>,
+<span class="math display">\[
+P_n X_{n+h} =
+\sum_{i=1}^p \phi_i P_n X_{n+h-i} + 
+\sum_{j=h}^q \theta_{n+h-1,j}\left( X_{n+1-j} - \hat{X}_{n+1-j} \right)
+\]</span></p></li>
+</ul>
+</div>
+<div id="innovation-algorithm-parameters-vs-ma-parameters" class="section level3">
+<h3>Innovation algorithm parameters vs MA parameters</h3>
+<ul>
+<li><p><font color='red'>Innovation algorithm parameters converges to the MA parameters</font>:
+If <span class="math inline">\(\{X_t\}\)</span> is invertible, then as <span class="math inline">\(n\rightarrow \infty\)</span>,
+<span class="math display">\[
+\theta_{nj} \longrightarrow \theta_j, \quad j = 1, 2, \ldots, q
+\]</span></p></li>
+<li><p><font color='red'>Prediction MSE converges to </font> <span class="math inline">\(\sigma^2\)</span>:
+Let
+<span class="math display">\[
+v_n = E(X_{n+1} - \hat{X}_{n+1})^2, \quad \text{and } v_n = r_n \sigma^2
+\]</span>
+If <span class="math inline">\(\{X_t\}\)</span> is invertible, then as <span class="math inline">\(n\rightarrow \infty\)</span>,
+<span class="math display">\[
+r_n \longrightarrow 1
+\]</span></p></li>
+</ul>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li>Brockwell, Peter J. and Davis, Richard A. (2016), <em>Introduction to Time Series and Forecasting, Third Edition</em>. New York: Springer</li>
+</ul>
+</div>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

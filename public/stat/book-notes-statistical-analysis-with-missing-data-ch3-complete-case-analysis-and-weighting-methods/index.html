@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.88.1" />
+
+
+<title>Book Notes: Statistical Analysis with Missing Data -- Ch3 Complete Case Analysis and Weighting Methods - A Hugo website</title>
+<meta property="og:title" content="Book Notes: Statistical Analysis with Missing Data -- Ch3 Complete Case Analysis and Weighting Methods - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/rstudio/blogdown">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/rstudio">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+
+    <h1 class="article-title">Book Notes: Statistical Analysis with Missing Data -- Ch3 Complete Case Analysis and Weighting Methods</h1>
+
+    
+
+    <div class="article-content">
+      
+
+<div id="TOC">
+<ul>
+<li><a href="#weighted-complete-case-analysis">Weighted Complete-Case Analysis</a></li>
+<li><a href="#available-case-analysis">Available-Case Analysis</a></li>
+</ul>
+</div>
+
+<p><strong><em>For the pdf slides, click <a href="/pdf/090720_missing_data_book_ch3.pdf">here</a></em></strong></p>
+<div id="complete-case-cc-analysis" class="section level3">
+<h3>Complete-case (CC) analysis</h3>
+<ul>
+<li><p><font color='blue'>Complete-case (CC) analysis</font>: use only data points (units) where all variables are observed</p></li>
+<li><p>Loss of information in CC analysis:</p>
+<ul>
+<li>Loss of precision (larger variance)</li>
+<li>Bias, when the missingness mechanism is not MCAR. In this case, the complete units are not a random sample of the population</li>
+</ul></li>
+<li><p>In this notes, I will focus on the bias issue</p>
+<ul>
+<li>Adjusting for the CC analysis bias using weights</li>
+<li>This idea is closed related to weighting in randomization inference for finite population surveys</li>
+</ul></li>
+</ul>
+</div>
+<div id="weighted-complete-case-analysis" class="section level1">
+<h1>Weighted Complete-Case Analysis</h1>
+<div id="notations" class="section level3">
+<h3>Notations</h3>
+<ul>
+<li>Population size <span class="math inline">\(N\)</span>, sample size <span class="math inline">\(n\)</span></li>
+<li>Number of variables (items): <span class="math inline">\(K\)</span></li>
+<li>Data: <span class="math inline">\(Y=(y_{ij})\)</span>, where <span class="math inline">\(i = 1, \ldots, N\)</span> and <span class="math inline">\(j = 1, \ldots, K\)</span></li>
+<li>Design information (about sampling or missingness): <span class="math inline">\(Z\)</span></li>
+<li><p>Sample indicator: <span class="math inline">\(I = (I_1, \ldots, I_N)&#39;\)</span>; for unit <span class="math inline">\(i\)</span>,
+<span class="math display">\[
+I_i = \mathbf{1}_{\{\text{unit } i \text{ included in the sample}\}}
+\]</span></p></li>
+<li><p>Sample selection processes can be characterized by a distribution for <span class="math inline">\(I\)</span> given <span class="math inline">\(Y\)</span> and <span class="math inline">\(Z\)</span>.</p></li>
+</ul>
+</div>
+<div id="probability-sampling" class="section level3">
+<h3>Probability sampling</h3>
+<ul>
+<li><p>Properties of <font color='blue'>probability sampling</font></p>
+<ol style="list-style-type: decimal">
+<li><p>Unconfounded: selection doesn’t depend on <span class="math inline">\(Y\)</span>, i.e.,
+<span class="math display">\[
+  f(I \mid Y, Z) = f(I \mid Z)
+  \]</span></p></li>
+<li><p>Every unit has a positive (known) probability of selection
+<span class="math display">\[
+  \pi_i = P(I_i = 1 \mid Z) &gt; 0, \quad \text{for all } i
+  \]</span></p></li>
+</ol></li>
+<li><p>In <font color='blue'>equal probability sample design</font>, <span class="math inline">\(\pi_i\)</span> is the same for all <span class="math inline">\(i\)</span></p></li>
+</ul>
+</div>
+<div id="stratified-random-sampling" class="section level3">
+<h3>Stratified random sampling</h3>
+<ul>
+<li><p><span class="math inline">\(Z\)</span> is a variable defining strata. Suppose Stratum <span class="math inline">\(Z=j\)</span> has <span class="math inline">\(N_j\)</span> units in total,
+for <span class="math inline">\(j= 1, \ldots, J\)</span></p></li>
+<li><p>In Stratum <span class="math inline">\(j\)</span>, <font color='blue'>stratified random sampling</font> takes a simple random sample of <span class="math inline">\(n_j\)</span> units</p></li>
+<li><p>The distribution of <span class="math inline">\(I\)</span> under stratified random sampling is
+<span class="math display">\[
+f(I \mid Z) = \prod_{j=1}^J {N_j \choose n_j}^{-1}
+\]</span></p></li>
+</ul>
+</div>
+<div id="example-estimating-population-mean-bary" class="section level3">
+<h3><font color='green'>Example: estimating population mean</font> <span class="math inline">\(\bar{Y}\)</span></h3>
+<ul>
+<li><p>An unbiased estimate is the stratified sample mean
+<span class="math display">\[
+\bar{y}_{\text{st}} = \frac{\sum_{j=1}^J N_j \bar{y}_j}{N}
+\]</span>
+where <span class="math inline">\(\bar{y}_j\)</span> is the sample mean in stratum <span class="math inline">\(j\)</span></p></li>
+<li><p>Sampling variance approximation
+<span class="math display">\[
+v(\bar{y}_{st}) \approx \frac{1}{N^2} \sum_{j=1}^J N_j^2 
+\left(\frac{1}{n_j} - \frac{1}{N_j} \right)s_j^2
+\]</span>
+where <span class="math inline">\(s_j\)</span> is the sample variance of <span class="math inline">\(Y\)</span> in stratum <span class="math inline">\(j\)</span></p></li>
+<li><p>A large sample 95% confidence interval for <span class="math inline">\(\bar{Y}\)</span> is
+<span class="math display">\[
+\bar{y}_{\text{st}} \pm 1.96 \sqrt{v(\bar{y}_{st})}
+\]</span></p></li>
+</ul>
+</div>
+<div id="weighting-methods" class="section level3">
+<h3>Weighting methods</h3>
+<ul>
+<li><p><font color='red'>Main idea: A unit selected with probability</font> <span class="math inline">\(\pi_i\)</span> <font color='red'>is “representing”</font> <span class="math inline">\(\pi_i^{-1}\)</span> <font color='red'>units in the population, hence should be given weights</font> <span class="math inline">\(\pi_i^{-1}\)</span>.</p></li>
+<li><p>For example, in stratified random sample</p>
+<ul>
+<li>A selected unit <span class="math inline">\(i\)</span> in stratum <span class="math inline">\(j\)</span> represents <span class="math inline">\(N_j/n_j\)</span> population units</li>
+<li>Thus by <font color='blue'>Horvitz-Thompson estimate</font>, the population mean can be estimated by the weighted sum
+<span class="math display">\[
+  \bar{y}_w = \frac{1}{n}\sum_{i=1}^n w_i y_i, \quad 
+  \pi_i = \frac{n_j}{N_j}, \quad w_i = n \cdot \frac{\pi_i^{-1}}{\sum_k \pi_k^{-1}}
+  \]</span></li>
+<li>It is not hard to show that
+<span class="math display">\[
+  \bar{y}_w = \bar{y}_{\text{st}}
+  \]</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="weighting-with-nonresponses" class="section level3">
+<h3>Weighting with nonresponses</h3>
+<ul>
+<li><p>If the probability of selecting unit <span class="math inline">\(i\)</span> is <span class="math inline">\(\pi_i\)</span>, and the probability of response for unit <span class="math inline">\(i\)</span> is <span class="math inline">\(\phi_i\)</span>, then
+<span class="math display">\[
+P(\text{unit } i \text{ is observed}) = \pi_i \phi_i
+\]</span></p></li>
+<li><p>Suppose there are <span class="math inline">\(r\)</span> units observed (respondents). Then the weighted estimate for <span class="math inline">\(\bar{Y}\)</span> is
+<span class="math display">\[
+\bar{y}_w = \frac{1}{r} \sum_{i=1}^r w_i y_i, \quad
+w_i = r \cdot \frac{(\pi_i \phi_i)^{-1}}{\sum_k (\pi_k \phi_k)^{-1}}
+\]</span></p></li>
+<li><p>Usually <span class="math inline">\(\phi_i\)</span> is unknown and thus needs to be estimated</p></li>
+</ul>
+</div>
+<div id="weighting-class-estimator" class="section level3">
+<h3><font color='blue'>Weighting class estimator</font></h3>
+<ul>
+<li><p>Weighting class adjustments are used primarily to handle unit nonresponse</p></li>
+<li><p>Suppose we partition the sample into <span class="math inline">\(J\)</span> “weighting classes”.
+In the weighting class <span class="math inline">\(C = j\)</span>:</p>
+<ul>
+<li><span class="math inline">\(n_j\)</span>: the sample size</li>
+<li><span class="math inline">\(r_j\)</span>: number of observed samples</li>
+<li>A simple estimator for <span class="math inline">\(\phi_j\)</span> is <span class="math inline">\(\hat{\phi}_j = \frac{r_j}{n_j}\)</span></li>
+</ul></li>
+<li><p>For equal probability designs, where <span class="math inline">\(\pi_i\)</span> is constant,
+the weighting class estimator is
+<span class="math display">\[
+\bar{y}_{\text{wc}} = \frac{1}{n}\sum_{j=1}^J n_j \bar{y}_{j\text{R}}
+\]</span>
+where <span class="math inline">\(\bar{y}_{j\text{R}}\)</span> is the respondent mean in class <span class="math inline">\(j\)</span></p></li>
+<li><p>The estimate is unbiased under the following form of MAR assumption
+<font color='red'>(Quasirandomization)</font>: data are MCAR within weighting class <span class="math inline">\(j\)</span></p></li>
+</ul>
+</div>
+<div id="more-about-weighting-class-adjustments" class="section level3">
+<h3>More about weighting class adjustments</h3>
+<ul>
+<li><p><font color='green'>Pros</font>: handle bias with one set of weights for multivariate <span class="math inline">\(Y\)</span></p></li>
+<li><p><font color='red'>Cons</font>: weighting is inefficient and can increase in sampling variance,
+if <span class="math inline">\(Y\)</span> is weakly related to the weighting class variable <span class="math inline">\(C\)</span></p></li>
+<li><p>How to choose weighting class adjustments: weighting is only effective for outcomes (<span class="math inline">\(Y\)</span>) that are associated with the adjustment cell variable (<span class="math inline">\(C\)</span>). See the right column in the table below.</p></li>
+</ul>
+<p><img src="/figures/Little_Rubin_book_tb3_1.png" width="90%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="propensity-weighting" class="section level3">
+<h3>Propensity weighting</h3>
+<ul>
+<li><p>The theory of propensity scores provides a prescription for choosing the coarsest reduction of <span class="math inline">\(X\)</span> to a weighting class variable <span class="math inline">\(C\)</span> so that quasirandomization is roughly satisfied</p></li>
+<li><p>Let <span class="math inline">\(X\)</span> denote the variables observed for both respondents and nonrespondents</p></li>
+<li><p>Suppose data are MAR, with <span class="math inline">\(\phi\)</span> being unknown parameters about missing mechanism
+<span class="math display">\[
+P(M \mid X, Y, \phi) = P(M \mid X, \phi)
+\]</span>
+Then quasirandomization is satisfied when <span class="math inline">\(C\)</span> is chosen to be <span class="math inline">\(X\)</span></p></li>
+</ul>
+</div>
+<div id="response-propensity-stratification" class="section level3">
+<h3>Response propensity stratification</h3>
+<ul>
+<li><p>Define <font color='blue'>response propensity</font> for unit <span class="math inline">\(i\)</span> as
+<span class="math display">\[
+\rho(x_i, \phi) = P\left(m_i = 0 \mid \rho(x_i, \phi), \phi\right)
+\]</span>
+i.e., <font color='green'>respondents are a random subsample within strata defined by the propensity score</font> <span class="math inline">\(\rho(X, \phi)\)</span></p></li>
+<li><p>Usually <span class="math inline">\(\phi\)</span> is unknown. So <strong>a practical procedure</strong> is</p>
+<ol style="list-style-type: lower-roman">
+<li>Estimate <span class="math inline">\(\hat{\phi}\)</span> from a binary regression of <span class="math inline">\(M\)</span> on <span class="math inline">\(X\)</span>,
+based on respondent and nonrespondent data</li>
+<li>Let <span class="math inline">\(C\)</span> be a grouped variable by coarsening <span class="math inline">\(\rho\left(X, \hat{\phi}\right)\)</span> into 5 or 10 values</li>
+</ol></li>
+<li><p>Thus, within the same adjustment class, all respondents and nonrespondents have the same value of the grouped propensity score</p></li>
+</ul>
+</div>
+<div id="an-alternative-procedure-propensity-weighting" class="section level3">
+<h3>An alternative procedure: propensity weighting</h3>
+<ul>
+<li><p>An alternative procedure is to weight respondents <span class="math inline">\(i\)</span> directly by the inverse propensity score <span class="math inline">\(\rho\left(X, \hat{\phi}\right)^{-1}\)</span></p></li>
+<li><p><font color='green'>This method removes nonresponse bias</font></p></li>
+<li><p><font color='red'>But it may yield estimates with extremely high sampling variance because respondents with very low estimated response propensities receive large nonresponse weights</font></p></li>
+<li><p><font color='red'>Also, weighting directly by inverse propensities place may reliance on correct model specification of the regression of <span class="math inline">\(M\)</span> on <span class="math inline">\(X\)</span></font></p></li>
+</ul>
+</div>
+<div id="example-inverse-probability-weighted-generalized-estimating-equations-gee" class="section level3">
+<h3><font color='green'>Example: inverse probability weighted generalized estimating equations (GEE)</font></h3>
+<ul>
+<li><p>Let <span class="math inline">\(x_i\)</span> be covariates of GEE, and <span class="math inline">\(z_i\)</span> be a fully observed vector that can predict missing mechanism</p></li>
+<li><p>If <span class="math inline">\(P(m_i = 1 \mid x_i, y_i, z_i, \phi) = P(m_i = 1 \mid x_i, \phi)\)</span>, then
+the unweighted completed case GEE is unbiased
+<span class="math display">\[
+\sum_{i=1}^r D_i(x_i, \beta)\left[y_i - g(x_i, \beta)\right] = 0
+\]</span></p></li>
+<li><p>If <span class="math inline">\(P(m_i = 1 \mid x_i, y_i, z_i, \phi) = P(m_i = 1 \mid x_i, z_i, \phi)\)</span>, then
+the inverse probability weighted GEE is unbiased
+<span class="math display">\[
+\sum_{i=1}^r w_i(\hat{\alpha}) D_i(x_i, \beta)\left[y_i - g(x_i, \beta)\right] = 0, \quad
+w_i(\hat{\alpha}) = \frac{1}{p(x_i, z_i \mid \hat{\alpha})}
+\]</span>
+where <span class="math inline">\(p(x_i, z_i \mid \hat{\alpha})\)</span> is the probability of being a complete unit,
+based on logistic regression of <span class="math inline">\(m_i\)</span> on <span class="math inline">\(x_i, z_i\)</span></p></li>
+</ul>
+</div>
+<div id="poststratification" class="section level3">
+<h3>Poststratification</h3>
+<ul>
+<li><p>The weighting class estimator
+<span class="math display">\[
+\bar{y}_{\text{wc}} = \frac{1}{n}\sum_{j=1}^J n_j \bar{y}_{j\text{R}}
+\]</span>
+uses the sample proportion <span class="math inline">\(n_j/n\)</span> to estimate the population proportion <span class="math inline">\(N_j/N\)</span>.</p></li>
+<li><p>If from an external resource (e.g., census or a large survey),
+we know the population proportion of weighting classes, then we can use the post stratified mean to estimate <span class="math inline">\(\bar{Y}\)</span>:
+<span class="math display">\[
+\bar{y}_{\text{ps}} = \frac{1}{N}\sum_{j=1}^J N_j \bar{y}_{j\text{R}}
+\]</span></p></li>
+</ul>
+</div>
+<div id="summary-of-weighting-methods" class="section level3">
+<h3>Summary of weighting methods</h3>
+<ul>
+<li><p>Weighted CC estimates are often simple to compute,
+but the appropriate standard errors can be hard to compute (even asymptotically)</p></li>
+<li><p>Weighting methods treat weights as fixed and known,
+but these nonresponse weights are computed from observed data and hence are subject to sampling uncertainty</p></li>
+<li><p>Because weighted CC methods discard incomplete units and do not provide an automatic control of sampling variance, they are most useful when</p>
+<ul>
+<li>Number of covariates is small, and</li>
+<li>Sample size is large</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="available-case-analysis" class="section level1">
+<h1>Available-Case Analysis</h1>
+<div id="available-case-ac-analysis" class="section level3">
+<h3>Available-case (AC) analysis</h3>
+<ul>
+<li><p><font color='blue'>Available-case analysis</font>: for univariate analysis, include all unites where that variable is present</p>
+<ul>
+<li>Sample changes from variable to variable according to the pattern of missing data</li>
+<li>This is problematic if not MCAR</li>
+<li>Under MCAR, AC can be used to estimate mean and variance for a single variable</li>
+</ul></li>
+<li><p><font color='blue'>Pairwise AC</font>: estimates covariance of <span class="math inline">\(Y_j\)</span> and <span class="math inline">\(Y_k\)</span> based on units <span class="math inline">\(i\)</span> where both <span class="math inline">\(y_{ij}\)</span> and <span class="math inline">\(y_{ik}\)</span> are observed</p>
+<ul>
+<li>Pairwise covariance estimator:
+<span class="math display">\[
+  s_{jk}^{(jk)} = \sum_{i \in I_{jk}} 
+  \left( y_{ij} - \bar{y}_j^{(jk)} \right)
+  \left( y_{ik} - \bar{y}_k^{(jk)} \right)/ \left( n^{(jk)} - 1 \right)
+  \]</span>
+where <span class="math inline">\(I_{jk}\)</span> is the set of <span class="math inline">\(n^{(jk)}\)</span> units with both <span class="math inline">\(Y_j\)</span> and <span class="math inline">\(Y_k\)</span> observed</li>
+</ul></li>
+</ul>
+</div>
+<div id="problems-with-pairwise-ac-estimators-on-correlation" class="section level3">
+<h3>Problems with pairwise AC estimators on correlation</h3>
+<ul>
+<li><p>Correlation estimator 1:
+<span class="math display">\[
+r_{jk}^* = \frac{s_{jk}^{(jk)}}{\sqrt{s_{jj}^{(j)} s_{kk}^{(k)}}}
+\]</span></p>
+<ul>
+<li><font color='red'>Problem: it can lie outside of <span class="math inline">\((-1, 1)\)</span></font></li>
+</ul></li>
+<li><p>Correlation estimator 2 corrects the previous problem:
+<span class="math display">\[
+r_{jk}^{(jk)} = \frac{s_{jk}^{(jk)}}{\sqrt{s_{jj}^{(jk)} s_{kk}^{(jk)}}}
+\]</span></p></li>
+<li><p><font color='green'>Under MCAR, all these estimators on covariance and correlation are consistent</font></p></li>
+<li><p><font color='red'>However, when <span class="math inline">\(K &gt; 3\)</span>, both correlation estimators can yield correlation matrices that are not positive definite!</font></p>
+<ul>
+<li>An extreme example: <span class="math inline">\(r_{12} = 1, r_{13} = 1, r_{23} = -1\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="compare-cc-and-ac-methods" class="section level3">
+<h3>Compare CC and AC methods</h3>
+<ul>
+<li><p>When data is MCAR and correlations are mild, AC methods are more efficient than CC</p></li>
+<li><p>When correlations are large, CC methods are usually better</p></li>
+</ul>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li>Little, R. J., &amp; Rubin, D. B. (2019). Statistical Analysis with Missing Data, 3rd Edition. John Wiley &amp; Sons.</li>
+</ul>
+</div>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

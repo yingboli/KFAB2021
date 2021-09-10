@@ -1,6 +1,15 @@
 ---
-date: "2016-05-05T21:48:51-07:00"
-title: About
+title: About Me
 ---
 
-This is a "hello world" example website for the [**blogdown**](https://github.com/rstudio/blogdown) package. The theme was forked from [@jrutheiser/hugo-lithium-theme](https://github.com/jrutheiser/hugo-lithium-theme) and modified by [Yihui Xie](https://github.com/yihui/hugo-lithium).
+* My goal is to become
+
+    - The home cook who knows the most about statistics
+    - The statistician who cooks the best
+
+* My secret anticipations for my offspring
+
+    - Enjoy eating my food
+    - Enjoy cooking with me
+    - Translate my recipes to English
+    - Learn some statistics

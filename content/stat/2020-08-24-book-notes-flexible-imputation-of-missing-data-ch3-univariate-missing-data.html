@@ -1,0 +1,304 @@
+---
+title: 'Book Notes: Flexible Imputation of Missing Data -- Ch3 Univariate Missing
+  Data'
+author: ''
+date: '2020-08-24'
+slug: book-notes-flexible-imputation-of-missing-data-ch3-univariate-missing-data
+categories:
+  - Book notes
+tags:
+  - Introduction
+  - Missing data
+  - Slides
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 2
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#imputation-under-the-normal-linear-model">Imputation under the Normal Linear Model</a></li>
+<li><a href="#predictive-mean-matching">Predictive Mean Matching</a></li>
+<li><a href="#imputation-under-cart">Imputation under CART</a></li>
+<li><a href="#imputing-categorical-and-other-types-of-data">Imputing Categorical and Other Types of Data</a></li>
+</ul>
+</div>
+
+<p><strong><em>For the pdf slides, click <a href="/pdf/081220_imputation_book_ch3.pdf">here</a></em></strong></p>
+<div id="notations" class="section level3">
+<h3>Notations</h3>
+<ul>
+<li><p>In this chapter, we assume that there is only one variable having missing values.
+We call this variable <span class="math inline">\(y\)</span> the target variable.</p>
+<ul>
+<li><span class="math inline">\(y_\text{obs}\)</span>: the <span class="math inline">\(n_1\)</span> observed data in <span class="math inline">\(y\)</span></li>
+<li><span class="math inline">\(y_\text{mis}\)</span>: the <span class="math inline">\(n_0\)</span> missing data in <span class="math inline">\(y\)</span></li>
+<li><span class="math inline">\(\dot{y}\)</span>: imputed values in <span class="math inline">\(y\)</span></li>
+</ul></li>
+<li><p>Suppose <span class="math inline">\(X\)</span> are the variables (covariates) in the imputation model.</p>
+<ul>
+<li><span class="math inline">\(X_\text{obs}\)</span>: the subset of <span class="math inline">\(n_1\)</span> rows of <span class="math inline">\(X\)</span> which <span class="math inline">\(y\)</span> is observed</li>
+<li><span class="math inline">\(X_\text{mis}\)</span>: the subset of <span class="math inline">\(n_0\)</span> rows of <span class="math inline">\(X\)</span> which <span class="math inline">\(y\)</span> is missing</li>
+</ul></li>
+</ul>
+</div>
+<div id="imputation-under-the-normal-linear-model" class="section level1">
+<h1>Imputation under the Normal Linear Model</h1>
+<div id="four-methods-to-impute-under-the-normal-linear-model" class="section level3">
+<h3>Four methods to impute under the normal linear model</h3>
+<ol style="list-style-type: decimal">
+<li>Regression imputation: <em>Predict</em> <font color='red'>(bad!)</font>. Fit a linear model on the observed data and get the OLS
+estimates <span class="math inline">\(\hat{\beta}_0, \hat{\beta}_1\)</span>. Impute with the predicted values
+<span class="math display">\[
+\dot{y} = \hat{\beta}_0 + X_\text{mis} \hat{\beta}_1
+\]</span>
+<ul>
+<li>In <code>mice</code> package, this method is <code>norm.predict</code></li>
+</ul></li>
+<li>Stochastic regression imputation: <em>Predict + noise</em> <font color='red'>(better, but still bad)</font>. Also add a random drawn noise
+from the estimated residual normal distribution
+<span class="math display">\[
+\dot{y} = \hat{\beta}_0 + X_\text{mis} \hat{\beta}_1 + \dot{\epsilon}, \quad
+\dot{\epsilon} \sim \text{N}(0, \hat{\sigma}^2)
+\]</span>
+<ul>
+<li>In <code>mice</code> package, this method is <code>norm.nob</code></li>
+</ul></li>
+</ol>
+</div>
+<div id="method-3-bayesian-multiple-imputation" class="section level3">
+<h3>Method 3: Bayesian multiple imputation</h3>
+<ul>
+<li><p><em>Predict + noise + parameter uncertainty</em>
+<span class="math display">\[
+\dot{y} = \dot{\beta}_0 + X_\text{mis} \dot{\beta}_1 + \dot{\epsilon}, \quad
+\dot{\epsilon} \sim \text{N}(0, \dot{\sigma}^2)
+\]</span></p></li>
+<li><p>Under the priors (where the hyper-parameter <span class="math inline">\(\kappa\)</span> is fixed at a small value, e.g., <span class="math inline">\(\kappa = 0.0001\)</span>)
+<span class="math display">\[
+\beta \sim \text{N}(0,  \mathbf{I}_p/\kappa), \quad p(\sigma^2) \propto 1/\sigma^2
+\]</span>
+We draw <span class="math inline">\(\dot{\beta}\)</span> (including both <span class="math inline">\(\dot{\beta}_0\)</span> and <span class="math inline">\(\dot{\beta}_1\)</span>), <span class="math inline">\(\dot{\sigma^2}\)</span> from the posterior distribution</p></li>
+<li><p>In <code>mice</code> package, this method is <code>norm</code></p></li>
+</ul>
+</div>
+<div id="method-4-bootstrap-multiple-imputation" class="section level3">
+<h3>Method 4: Bootstrap multiple imputation</h3>
+<ul>
+<li><p><em>Predict + noise + parameter uncertainty</em>
+<span class="math display">\[
+\dot{y} = \dot{\beta}_0 + X_\text{mis} \dot{\beta}_1 + \dot{\epsilon}, \quad
+\dot{\epsilon} \sim \text{N}(0, \dot{\sigma}^2)
+\]</span>
+where <span class="math inline">\(\dot{\beta}_0\)</span>, <span class="math inline">\(\dot{\beta}_1\)</span>, and <span class="math inline">\(\dot{\sigma^2}\)</span> are OLS estimates
+calculated form a bootstrap sample taken from the observed data</p></li>
+<li><p>In <code>mice</code> package, this method is <code>norm.boot</code></p></li>
+</ul>
+</div>
+<div id="a-simulation-study-to-impute-mcar-missing-in-y" class="section level3">
+<h3>A simulation study, to impute MCAR missing in <span class="math inline">\(y\)</span></h3>
+<ul>
+<li>Missing rate <span class="math inline">\(50\%\)</span> in <span class="math inline">\(y\)</span>, and number of imputations <span class="math inline">\(m = 5\)</span>.
+<ul>
+<li>From coverage, <code>norm</code>, <code>norm.boot</code>, and listwise deletion are good</li>
+<li>From CI width, listwise deletion is better than multiple imputation here, but it’s not always this case,
+especially when the number of covariates is large.</li>
+<li><font color='red'>RMSE is not imformative at all!</font></li>
+</ul></li>
+</ul>
+<p><img src="/figures/flexible_imputation_tab3_1.png" width="100%" style="display: block; margin: auto;" />
+### A simulation study, to impute MCAR missing in <span class="math inline">\(x\)</span></p>
+<ul>
+<li>Missing rate <span class="math inline">\(50\%\)</span> in <span class="math inline">\(x\)</span>, and number of imputations <span class="math inline">\(m = 5\)</span>.
+<ul>
+<li><code>norm.predict</code> is severely biased; <code>norm</code> is slightly biased</li>
+<li>From coverage, <code>norm</code>, <code>norm.boot</code>, and listwise deletion are good</li>
+<li><font color='red'>Again, RMSE is not imformative at all!</font></li>
+</ul></li>
+</ul>
+<p><img src="/figures/flexible_imputation_tab3_2.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="impute-from-a-continuous-non-normal-distributions" class="section level3">
+<h3>Impute from a (continuous) non-normal distributions</h3>
+<ul>
+<li><p>Optional 1: mean predictive matching</p></li>
+<li>Optional 2: model the non-normal data directly
+<ul>
+<li>E.g., impute from a t-distribution</li>
+<li>The <a href="https://www.gamlss.com/">GAMLSS</a> package: extends GLM and GAM</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="predictive-mean-matching" class="section level1">
+<h1>Predictive Mean Matching</h1>
+<div id="predictive-mean-matching-pmm-general-principle" class="section level3">
+<h3><font color='blue'>Predictive mean matching (PMM)</font>, general principle</h3>
+<ul>
+<li><p>For each missing entry, the method forms a small set of candidate donors (3, 5, or 10)
+from completed cases whose predicted values closest to the predicted value for the missing entry</p></li>
+<li><p>One donor is randomly drawn from the candidates, and the observed value of the donor is taken to replace the missing value</p></li>
+</ul>
+</div>
+<div id="advantages-of-predictive-mean-matching-pmm" class="section level3">
+<h3>Advantages of predictive mean matching (PMM)</h3>
+<ul>
+<li><p><font color='green'>PMM is fairly robust to transformations of the target variable</font></p></li>
+<li><p><font color='green'>PMM can also be used for discrete target variables</font></p></li>
+<li><font color='green'>PMM is fairly robust to model misspecification</font>
+<ul>
+<li>In the following example, the relationship between age and BMI is not linear, but PMM seems to preserve this relationship better than linear normal model</li>
+</ul></li>
+</ul>
+<p><img src="/figures/flexible_imputation_fig3_6.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="how-to-select-the-donors" class="section level3">
+<h3>How to select the donors</h3>
+<ul>
+<li>Once the metric has been defined, there are four ways to select the donors.
+<ul>
+<li>Let <span class="math inline">\(\hat{y}_i\)</span> denote the predicted values of rows with observed <span class="math inline">\(y_i\)</span></li>
+<li>Let <span class="math inline">\(\hat{y}_j\)</span> denote the predicted values of rows with missing <span class="math inline">\(y_j\)</span></li>
+</ul></li>
+</ul>
+<ol style="list-style-type: decimal">
+<li>Pre-specify a threshold <span class="math inline">\(\eta\)</span>, take all <span class="math inline">\(i\)</span> such that <span class="math inline">\(\left| \hat{y}_i - \hat{y}_j\right| &lt; \eta\)</span> as donors,
+and randomly sample one donor to impute</li>
+<li>Choose the closest candidate as the donor (only 1 donor), also called (<font color='blue'>nearest neighbor hot deck</font>)</li>
+<li>Pre-specify a number <span class="math inline">\(d\)</span>, take the <span class="math inline">\(d\)</span> closest candidate as donors, and randomly sample one donor to impute.
+Usually, <span class="math inline">\(d = 3, 5, 10\)</span></li>
+<li>Sample one donor with a probability that depends on the distance <span class="math inline">\(\left| \hat{y}_i - \hat{y}_j\right|\)</span>
+<ul>
+<li>Implemented by the <code>midastouch</code> method in <code>mice</code>, and also the <code>midastouch</code> package</li>
+</ul></li>
+</ol>
+</div>
+<div id="types-of-matching" class="section level3">
+<h3>Types of matching</h3>
+<ul>
+<li>Type 0: <span class="math inline">\(\hat{y} = X_\text{obs} \hat{\beta}\)</span> is matched to <span class="math inline">\(\hat{y}_j = X_\text{mis} \hat{\beta}\)</span>
+<ul>
+<li><font color='red'>Bad: it ignores the sampling variability in </font><span class="math inline">\(\hat{\beta}\)</span></li>
+</ul></li>
+<li>Type 1: <span class="math inline">\(\hat{y} = X_\text{obs} \hat{\beta}\)</span> is matched to <span class="math inline">\(\dot{y}_j = X_\text{mis} \dot{\beta}\)</span>
+<ul>
+<li>Here, <span class="math inline">\(\dot{\beta}\)</span> is a random draw from the posterior distribution</li>
+<li><font color='green'>Good</font>. The default in <code>mice</code></li>
+</ul></li>
+<li>Type 2: <span class="math inline">\(\dot{y} = X_\text{obs} \dot{\beta}\)</span> is matched to <span class="math inline">\(\dot{y}_j = X_\text{mis} \dot{\beta}\)</span>
+<ul>
+<li><font color='red'>Not very ideal, when model is small, the same donors get selected too often</font></li>
+</ul></li>
+<li>Type 3: <span class="math inline">\(\dot{y} = X_\text{obs} \dot{\beta}\)</span> is matched to <span class="math inline">\(\ddot{y}_j = X_\text{mis} \ddot{\beta}\)</span>
+<ul>
+<li>Here, <span class="math inline">\(\dot{\beta}\)</span> and <span class="math inline">\(\ddot{\beta}\)</span> are two different random draws from the posterior distribution</li>
+<li><font color='green'>Good</font></li>
+</ul></li>
+</ul>
+</div>
+<div id="illustration-of-type-1-matching" class="section level3">
+<h3>Illustration of Type 1 matching</h3>
+<p><img src="/figures/flexible_imputation_fig3_7.png" width="70%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="number-of-donors-d" class="section level3">
+<h3>Number of donors <span class="math inline">\(d\)</span></h3>
+<ul>
+<li><p><span class="math inline">\(d=1\)</span> is too low <font color='red'>(bad!)</font>. It may select the same donor over and over again</p></li>
+<li><p>The default in <code>mice</code> is <span class="math inline">\(d=5\)</span>. Also, <span class="math inline">\(d = 3, 10\)</span> are also feasible</p></li>
+</ul>
+</div>
+<div id="pitfalls-of-pmm" class="section level3">
+<h3>Pitfalls of PMM</h3>
+<ul>
+<li><p>If the data is small, or if there is a region where the missing rate is high, then the same donors may be used for too many times.</p></li>
+<li><p>Mis-specification of the impute model</p></li>
+<li><p>PMM cannot be used to extrapolate beyond the range of the data, or to interpolate within the region where data is sparse</p></li>
+<li><p>PMM may not perform well with small datasets</p></li>
+</ul>
+</div>
+</div>
+<div id="imputation-under-cart" class="section level1">
+<h1>Imputation under CART</h1>
+<div id="multiple-imputation-under-a-tree-model" class="section level3">
+<h3>Multiple imputation under a tree model</h3>
+<ul>
+<li><p><code>missForest</code>: <font color='red'>single imputation with CART is bad</font></p></li>
+<li><font color='green'>Multiple imputation under a tree model using the bootstrap</font>:</li>
+</ul>
+<ol style="list-style-type: decimal">
+<li>Draw a bootstrap sample among the observed data, and fit a CART model <span class="math inline">\(f(X)\)</span></li>
+<li>For each missing value <span class="math inline">\(y_j\)</span>, find it’s terminal node <span class="math inline">\(g_j\)</span>. All the <span class="math inline">\(d_j\)</span> cases in this node are the donors</li>
+<li><p>Randomly select one donor to impute</p>
+<ul>
+<li>When fitting the tree, it may be useful to pre-set the size of nodes to be 5 or 10</li>
+<li>We can also use random forest instead of CART</li>
+</ul></li>
+</ol>
+</div>
+</div>
+<div id="imputing-categorical-and-other-types-of-data" class="section level1">
+<h1>Imputing Categorical and Other Types of Data</h1>
+<div id="imputation-under-bayesian-glms" class="section level3">
+<h3>Imputation under Bayesian GLMs</h3>
+<ul>
+<li>Binary data: logistic regression (<code>logreg</code> method in <code>mice</code>)
+<ul>
+<li>In case of data separation, use a more informative Bayesian prior</li>
+</ul></li>
+<li><p>Categorical variable with <span class="math inline">\(K\)</span> unordered categories: multinomial logit model
+(<code>polyreg</code> method in <code>mice</code> package)
+<span class="math display">\[
+P(y_i = k\mid X_i, \beta) = \frac{\exp(X_i \beta_k)}{\sum_{j=1}^K \exp(X_i \beta_j)}
+\]</span></p></li>
+<li>Categorical variable with <span class="math inline">\(K\)</span> ordered categories: ordered logit model
+(<code>polr</code> method in <code>mice</code> package)
+<span class="math display">\[
+P(y_i \leq k\mid X_i, \beta, \tau_k) = \frac{\exp(\tau_k - X_i \beta)}{1 + \exp(\tau_k - X_i \beta)}
+\]</span>
+<ul>
+<li>For identifiability, set <span class="math inline">\(\tau_1 = 0\)</span></li>
+</ul></li>
+<li><p><font color='red'>When impute from these GLM models, make sure to not use the MLE of parameters, but either a draw from posterior, or a bootstraped estimate.</font></p></li>
+</ul>
+</div>
+<div id="categorical-variables-are-harder-to-impute-than-continuous-ones" class="section level3">
+<h3>Categorical variables are harder to impute than continuous ones</h3>
+<ul>
+<li>Empirically, the GLM imputations do not perform well
+<ul>
+<li>If missing rate exceeds 0.4</li>
+<li>If the data is imbalanced</li>
+<li>If there are many categories</li>
+</ul></li>
+<li>GLM imputation is found inferior than CART or latent class models</li>
+</ul>
+</div>
+<div id="imputation-of-count-data" class="section level3">
+<h3>Imputation of count data</h3>
+<ul>
+<li>Option 1: predictive mean matching</li>
+<li>Option 2: ordered categorical imputation</li>
+<li>Option 3: (zero-inflated) Poisson regression</li>
+<li>Option 4: (zero-inflated) negative binomial regression</li>
+</ul>
+</div>
+<div id="imputation-of-semi-continuous-data" class="section level3">
+<h3>Imputation of semi-continuous data</h3>
+<ul>
+<li><p><font color='blue'>Semi-continuous data</font>: has a high mass at one point (often zero) and a continuous distribution over the remaining values</p></li>
+<li>Option 1: model the data in two parts: logistic regression + regression</li>
+<li><p>Option 2: predictive mean matching</p></li>
+</ul>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li><p>Van Buuren, S. (2018). Flexible Imputation of Missing Data, 2nd Edition. CRC press.</p>
+<ul>
+<li><a href="https://stefvanbuuren.name/fimd/" class="uri">https://stefvanbuuren.name/fimd/</a></li>
+</ul></li>
+</ul>
+</div>
+</div>

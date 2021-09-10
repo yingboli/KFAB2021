@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.88.1" />
+
+
+<title>Book Notes: Computer Age Statistical Inference -- Ch9 Survival Analysis - A Hugo website</title>
+<meta property="og:title" content="Book Notes: Computer Age Statistical Inference -- Ch9 Survival Analysis - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/rstudio/blogdown">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/rstudio">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+
+    <h1 class="article-title">Book Notes: Computer Age Statistical Inference -- Ch9 Survival Analysis</h1>
+
+    
+
+    <div class="article-content">
+      
+
+<div id="TOC">
+<ul>
+<li><a href="#survival-analysis">Survival Analysis</a><ul>
+<li><a href="#life-table-and-kaplan-meier-estimate">Life Table and Kaplan-Meier Estimate</a></li>
+<li><a href="#coxs-proportional-hazards-model">Cox’s Proportional Hazards Model</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p><strong><em>For the pdf slides, click <a href="/pdf/052219_computer_age_stat_inference_Part2_Ch9.pdf">here</a></em></strong></p>
+<div id="survival-analysis" class="section level1">
+<h1>Survival Analysis</h1>
+<div id="life-table-and-kaplan-meier-estimate" class="section level2">
+<h2>Life Table and Kaplan-Meier Estimate</h2>
+<div id="life-table" class="section level3">
+<h3>Life table</h3>
+<ul>
+<li><p>An insurance company’s <font color='blue'>life table</font> shows information of clients by
+their age. For each age <span class="math inline">\(i\)</span>, it contains</p>
+<ul>
+<li><span class="math inline">\(n_i\)</span>: number of clients</li>
+<li><span class="math inline">\(y_i\)</span>: number of death</li>
+<li><span class="math inline">\(\hat{h}_i = y_i / n_i\)</span>: hazard rate</li>
+<li><span class="math inline">\(\hat{S}_i\)</span>: survival probability estimate</li>
+</ul></li>
+<li><p>An example life table</p></li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th>Age</th>
+<th><span class="math inline">\(n\)</span></th>
+<th><span class="math inline">\(y\)</span></th>
+<th><span class="math inline">\(\hat{h}\)</span></th>
+<th><span class="math inline">\(\hat{S}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>34</td>
+<td>120</td>
+<td>0</td>
+<td>0.000</td>
+<td>1.000</td>
+</tr>
+<tr class="even">
+<td>35</td>
+<td>71</td>
+<td>1</td>
+<td>0.014</td>
+<td>0.986</td>
+</tr>
+<tr class="odd">
+<td>36</td>
+<td>125</td>
+<td>0</td>
+<td>0.000</td>
+<td>0.986</td>
+</tr>
+<tr class="even">
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="discrete-survival-analysis-notations" class="section level3">
+<h3>Discrete survival analysis: notations</h3>
+<ul>
+<li>A client’s lifetime (<font color='blue'>time until event</font>): random variable <span class="math inline">\(X\)</span>
+<ul>
+<li>Also called <font color='blue'>failure time</font>, <font color='blue'>survival time</font>, or
+<font color='blue'>event time</font></li>
+</ul></li>
+<li><p>Probability of dying at age <span class="math inline">\(i\)</span>
+<span class="math display">\[
+f_i = P(X = i)
+\]</span></p></li>
+<li><p>Probability of surviving past age <span class="math inline">\(i\)</span>
+<span class="math display">\[
+S_i = \sum_{j \geq i + 1} f_j = P(X &gt; i)
+\]</span></p></li>
+<li><p><font color='blue'>Hazard rate</font> at age <span class="math inline">\(i\)</span>: conditional probability
+<span class="math display">\[
+h_i = \frac{f_i}{S_{i-1}} = P(X = i \mid X \geq i)
+\]</span></p></li>
+</ul>
+</div>
+<div id="life-table-estimations" class="section level3">
+<h3>Life table estimations</h3>
+<ul>
+<li>Hazard rate estimation: binomial proportions
+<span class="math display">\[
+\hat{h}_i = \frac{y_i}{n_i}
+\]</span>
+<ul>
+<li>Typical frequentist inference: probabilistic results <span class="math inline">\(h_i\)</span> is
+estimated by the plug-in principle</li>
+</ul></li>
+<li><p>Probability of surviving past age <span class="math inline">\(j\)</span> given survival past age <span class="math inline">\(i\)</span>:
+<span class="math display">\[
+P(X &gt; j \mid X &gt; i) = \prod_{k = i+1}^j P(X &gt; k \mid X \geq k) 
+= \prod_{k = i+1}^j (1 - h_k)
+\]</span></p></li>
+<li><p>Probability of survival estimation
+<span class="math display">\[
+\hat{S}_j = \prod_{k={i_0}}^j \left( 1 - \hat{h}_k\right)
+\]</span>
+where <span class="math inline">\(i_0\)</span> is the starting age</p></li>
+</ul>
+</div>
+<div id="continuous-survival-analysis-notations" class="section level3">
+<h3>Continuous survival analysis: notations</h3>
+<ul>
+<li><p><font color='blue'>Time until event</font> <span class="math inline">\(T\)</span>: a continuous positive random variable,
+with pdf <span class="math inline">\(f(t)\)</span> and cdf <span class="math inline">\(F(t)\)</span></p></li>
+<li><p><font color='blue'>Survival function</font> (i.e., reverse cdf)
+<span class="math display">\[
+S(t) = \int_{t}^{\infty} f(x) dx = P(T &gt; t) = 1- F(t)
+\]</span></p></li>
+<li><font color='blue'>Hazard rate</font>, also called <font color='blue'>hazard function</font>
+<span class="math display">\[
+h(t) = \frac{f(t)}{S(t)} = 
+\lim_{\Delta t \rightarrow 0} \frac{P(t &lt; T \leq t + \Delta t \mid T &gt; t)}{\Delta t}
+\]</span>
+<ul>
+<li>In some other books, hazard rate is denoted as <span class="math inline">\(\lambda(t)\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="hazard-rate-and-cumulative-hazard-function" class="section level3">
+<h3>Hazard rate and cumulative hazard function</h3>
+<ul>
+<li><p>Connection between hazard rate <span class="math inline">\(h(t)\)</span> and survival function <span class="math inline">\(S(t)\)</span>
+<span class="math display">\[
+h(t) = -\frac{\partial \log S(t)}{\partial t} \quad
+\Longleftrightarrow \quad
+S(t) = \exp\left\{ -\int_0^t h(x)dx \right\}
+\]</span></p></li>
+<li><p><font color='blue'>Cumulative hazard function</font>
+<span class="math display">\[
+\Lambda(t) = \int_0^t h(x) dx = -\log S(t)
+\]</span></p></li>
+<li><p><font color='red'>Knowing any of</font> <span class="math inline">\(S(t)\)</span>, <span class="math inline">\(h(t)\)</span>, <span class="math inline">\(\Lambda(t)\)</span> <font color='red'>allows one to derive the other two</font></p></li>
+<li><font color='green'>Example: exponential distributed <span class="math inline">\(T\)</span></font>
+<span class="math display">\[
+f(t) = \lambda e^{- \lambda t} \quad \Longrightarrow \quad
+S(t) = e^{-\lambda t}, \quad h(t) = \lambda
+\]</span>
+<ul>
+<li>Constant hazard rate: menoryless</li>
+</ul></li>
+</ul>
+</div>
+<div id="censored-data" class="section level3">
+<h3>Censored data</h3>
+<ul>
+<li><font color='blue'>Censored data</font>: survival times known only to exceed the reported value
+<ul>
+<li>E.g., lost to followup, experiment ended with some patients still alive</li>
+<li>Usually denoted as “number+”</li>
+</ul></li>
+<li>Observation <span class="math inline">\(z_i\)</span> for censored data:
+<span class="math display">\[
+z = (t_i, d_i), 
+\]</span>
+where <span class="math inline">\(t_i\)</span> is the survival time, and <span class="math inline">\(d_i\)</span> is the indicator
+<span class="math display">\[
+d_i = \begin{cases}
+    1 &amp; \text{if death observed}\\
+    0 &amp; \text{if death not observed}
+    \end{cases}
+\]</span></li>
+</ul>
+</div>
+<div id="kaplan-meier-estimate" class="section level3">
+<h3>Kaplan-Meier estimate</h3>
+<ul>
+<li><p>Among the censored data <span class="math inline">\(z_1, \ldots, z_n\)</span>, we denote the
+<font color='blue'>ordered survival times</font> as
+<span class="math display">\[
+t_{(1)} &lt; t_{(2)} &lt; \ldots &lt; t_{(n)},
+\]</span>
+assuming no ties.</p></li>
+<li><p>The <font color='blue'>Kaplan-Meier estimate</font> for survival probability
+<span class="math inline">\(S_{(j)} = P(X &gt; t_{(j)})\)</span> is the life table estimate
+<span class="math display">\[
+\hat{S}_{(j)} = \prod_{k \leq j} \left( \frac{n-k}{n-k+1} \right)^{d_{(k)}}
+\]</span></p></li>
+<li><p>Life table curves are nonparametric: no relationship is assumed between
+the hazard rates <span class="math inline">\(h_i\)</span></p></li>
+</ul>
+</div>
+<div id="a-parametric-approach" class="section level3">
+<h3>A parametric approach</h3>
+<ul>
+<li><p>Death counts <span class="math inline">\(y_k\)</span> are independent Binomials
+<span class="math display">\[
+y_k \stackrel{ind}{\sim} \text{B}(n_k, h_k)
+\]</span></p></li>
+<li><p>Logistic regression
+<span class="math display">\[
+log\left( \frac{h_k}{1-h_k} \right) = \boldsymbol\alpha \mathbf{x}_k
+\]</span></p>
+<ul>
+<li><p>E.g., cubic regression:
+<span class="math display">\[
+  x_k = (1, k, k^2, k^3)&#39;
+  \]</span></p></li>
+<li><p>E.g., cubic-linear spline:
+<span class="math display">\[
+  x_k = (1, k, (k - k_0)_-^2, (k - k_0)_-^3)&#39;
+  \]</span>
+where <span class="math inline">\(x_- = x \cdot \mathbf{1}_{x \leq 0}\)</span></p></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="coxs-proportional-hazards-model" class="section level2">
+<h2>Cox’s Proportional Hazards Model</h2>
+<div id="coxs-proportional-hazards-model-1" class="section level3">
+<h3>Cox’s proportional hazards model</h3>
+<ul>
+<li><p><font color='blue'>Proportional hazards model</font> assumes
+<span class="math display">\[
+h_i(t) = h_0(t) \cdot e^{\mathbf{x}_i&#39; \boldsymbol\beta},
+\]</span>
+where <span class="math inline">\(h_0(t)\)</span> is a baseline hazard, which we don’t need to specify</p></li>
+<li><p>Denote <span class="math inline">\(\theta_i = e^{\mathbf{x}_i&#39; \boldsymbol\beta}\)</span>, then
+<span class="math display">\[
+S_i(t) = S_0(t)^{\theta_i},
+\]</span>
+where <span class="math inline">\(S_0(t)\)</span> is the baseline survival function</p>
+<ul>
+<li>Larger value of <span class="math inline">\(\theta_i\)</span> indicates more quickly declining (i.e., worse)
+survival curves</li>
+<li>Positive value of the coefficient <span class="math inline">\(\beta_j\)</span> indicates increase of
+the corresponding covariate <span class="math inline">\(x_j\)</span> associating with worse survival curves</li>
+</ul></li>
+</ul>
+</div>
+<div id="proportional-hazards-model-key-results" class="section level3">
+<h3>Proportional hazards model: key results</h3>
+<ul>
+<li><p>Let <span class="math inline">\(J\)</span> be the number of observed deaths, occurring at times
+<span class="math display">\[
+T_{(1)} &lt; T_{(2)} &lt; \ldots &lt; T_{(J)}
+\]</span>
+assuming no ties</p></li>
+<li><p>Just before time <span class="math inline">\(T_{(j)}\)</span> there is a <font color='blue'>risk set</font> of
+individuals still under observation
+<span class="math display">\[
+R_j = \{i, t_i \geq T_{(j)}\}
+\]</span></p></li>
+<li><p><font color='red'>Key results of the proportional hazards model</font>: given one person
+dies at time <span class="math inline">\(T_{(j)}\)</span>, the probablity it is person <span class="math inline">\(i\)</span>, among the set of
+people at risk, is
+<span class="math display">\[
+P(i_j = i \mid R_j) = \frac{e^{\mathbf{x}_i&#39; \boldsymbol\beta}}
+{\sum_{k \in R_j} e^{\mathbf{x}_j&#39; \boldsymbol\beta}} = 
+\frac{\theta_i}{\sum_{k \in R_j} \theta_j}
+\]</span></p></li>
+</ul>
+</div>
+<div id="parameter-estimation-based-on-the-partial-likelihood" class="section level3">
+<h3>Parameter estimation: based on the partial likelihood</h3>
+<ul>
+<li><p>Estimaiton of <span class="math inline">\(\boldsymbol\beta\)</span> is to maximize the
+<font color='blue'>partial likelihood</font>
+<span class="math display">\[
+L(\boldsymbol\beta) = \prod_{j=1}^J \frac{e^{\mathbf{x}_{i_j}&#39; \boldsymbol\beta}}
+{\sum_{k \in R_j} e^{\mathbf{x}_j&#39; \boldsymbol\beta}}
+\]</span>
+where individual <span class="math inline">\(i_j\)</span> dies at time <span class="math inline">\(T_{(j)}\)</span></p></li>
+<li><p><font color='red'>Semi-parametric</font>: we do not need to specify the baseline <span class="math inline">\(h_0(t)\)</span>,
+since it is not contained in the objective function</p></li>
+</ul>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li>Efron, Bradley and Hastie, Trevor (2016), <em>Computer Age Statistical Inference</em>.
+Cambridge University Press</li>
+</ul>
+</div>
+</div>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

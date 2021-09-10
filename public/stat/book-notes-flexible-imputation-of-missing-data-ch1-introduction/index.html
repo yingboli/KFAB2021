@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.88.1" />
+
+
+<title>Book Notes: Flexible Imputation of Missing Data -- Ch1 Introduction - A Hugo website</title>
+<meta property="og:title" content="Book Notes: Flexible Imputation of Missing Data -- Ch1 Introduction - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/rstudio/blogdown">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/rstudio">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+
+    <h1 class="article-title">Book Notes: Flexible Imputation of Missing Data -- Ch1 Introduction</h1>
+
+    
+
+    <div class="article-content">
+      
+
+<div id="TOC">
+<ul>
+<li><a href="#concepts-of-mcar-mar-mnar">Concepts of MCAR, MAR, MNAR</a></li>
+<li><a href="#ad-hoc-solutions">Ad-hoc Solutions</a></li>
+<li><a href="#multiple-imputation-in-a-nutshell">Multiple Imputation in a Nutshell</a></li>
+</ul>
+</div>
+
+<p><strong><em>For the pdf slides, click <a href="/pdf/081120_imputation_book_ch1.pdf">here</a></em></strong></p>
+<div id="concepts-of-mcar-mar-mnar" class="section level1">
+<h1>Concepts of MCAR, MAR, MNAR</h1>
+<div id="concepts-of-mcar-mar-mnar-1" class="section level3">
+<h3>Concepts of MCAR, MAR, MNAR</h3>
+<ul>
+<li><font color='blue'>Missing completely at random (MCAR)</font>: the probability of being missing is the same for all cases
+<ul>
+<li>Cause of missing is unrelated to the data</li>
+</ul></li>
+<li><font color='blue'>Missing at random (MAR)</font>: the probability of being missing only depends on the observed data
+<ul>
+<li>Cause of missing is unrelated to the missing values</li>
+</ul></li>
+<li><font color='blue'>Missing not at random (MNAR)</font>: probability of being missing depends on the missing values themselves</li>
+</ul>
+</div>
+</div>
+<div id="ad-hoc-solutions" class="section level1">
+<h1>Ad-hoc Solutions</h1>
+<div id="listwise-deletion-and-pairwise-deletion" class="section level3">
+<h3>Listwise deletion and pairwise deletion</h3>
+<ul>
+<li><font color='blue'>Listwise deletion (also called complete-case analysis)</font>: delete rows which contain one or more missing values
+<ul>
+<li>If data is MCAR, listwise deletion produces unbiased estimates of means, variances, and regression weights (if need to train a predictive model)</li>
+<li>If data is not MCAR, listwise deletion can severely bias the above estimates.</li>
+</ul></li>
+<li><font color='blue'>Pairwise deletion (also called available-case analysis)</font>
+<ul>
+<li>Mean and variance of variable <span class="math inline">\(X\)</span> are based on all cases with observed data on <span class="math inline">\(X\)</span></li>
+<li>Covariance and correlation of <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> is based on all data which both <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> have non-missing values</li>
+</ul></li>
+</ul>
+</div>
+<div id="mean-imputation" class="section level3">
+<h3>Mean imputation</h3>
+<ul>
+<li>Compared with the observed data, in the imputed data (observed + imputed values)
+<ul>
+<li>Standard deviations decrease</li>
+<li>Correlation decreases</li>
+<li>Means can be biased if the data is not MCAR.</li>
+</ul></li>
+</ul>
+<p><img src="/figures/flexible_imputation_fig1_2.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="regression-imputation" class="section level3">
+<h3><font color='blue'>Regression imputation</font></h3>
+<ol style="list-style-type: decimal">
+<li>Build a regression model from the observed data</li>
+<li>Impute the missing values in the response variable with the predicted values from the fitted regression</li>
+</ol>
+<ul>
+<li>The impute values are the most likely values under the model
+<ul>
+<li>However, it decreases the variance of the target variable</li>
+<li>And it increases the correlations between the target and covariates</li>
+</ul></li>
+<li><font color='red'>Regression imputation, and its modern incarnations in machine learning is probably the most dangerous of all ad-hoc methods</font></li>
+</ul>
+<p><img src="/figures/flexible_imputation_fig1_3.png" width="70%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="stochastic-regression-imputation" class="section level3">
+<h3><font color='blue'>Stochastic regression imputation</font></h3>
+<ol style="list-style-type: decimal">
+<li>Build a regression model from the observed data</li>
+<li>Impute a missing value in the response variable with the predicted value <em>plus a random draw from the residual</em></li>
+</ol>
+<ul>
+<li>Preserves variance and correlation.</li>
+<li>Imputed values can exceed the range (e.g., a negative Ozone level). A more suitable model may resolve this.</li>
+</ul>
+<p><img src="/figures/flexible_imputation_fig1_4.png" width="70%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="locf-and-bocf" class="section level3">
+<h3>LOCF and BOCF</h3>
+<ul>
+<li><p><font color='blue'>Last observation carried forward (LOCF)</font> and
+<font color='blue'>baseline observation carried forward (BOCF)</font> are for longitudinal data.</p></li>
+<li><p>LOCF can yield biased estimation even under MCAR.</p></li>
+</ul>
+<p><img src="/figures/flexible_imputation_fig1_5.png" width="90%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="indicator-method" class="section level3">
+<h3>Indicator method</h3>
+<ul>
+<li>Not for imputation, but for building predictive models</li>
+<li>Only works for missing in covariates, not the target variables</li>
+</ul>
+</div>
+<div id="summary-of-ad-hoc-imputation-methods" class="section level3">
+<h3>Summary of ad-hoc imputation methods</h3>
+<ul>
+<li>Note: the unbiasness of regression coefficients are assess with the variable containing missing values as the target variable</li>
+</ul>
+<p><img src="/figures/flexible_imputation_tab1_1.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="multiple-imputation-in-a-nutshell" class="section level1">
+<h1>Multiple Imputation in a Nutshell</h1>
+<div id="multiple-imputation-creates-m1-complete-datasets" class="section level3">
+<h3><font color='blue'>Multiple imputation</font> creates <span class="math inline">\(m&gt;1\)</span> complete datasets</h3>
+<ul>
+<li>Three steps of multiple imputation
+<ol style="list-style-type: decimal">
+<li>Imputation</li>
+<li>Analysis: train separate models</li>
+<li>Pooling: variance among <span class="math inline">\(m\)</span> parameter estimates combines the conventional sampling variance (within-imputation variance) and the extra variance caused by the missing data (between-imputation variance)</li>
+</ol></li>
+</ul>
+<p><img src="/figures/flexible_imputation_fig1_6.png" width="70%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="why-using-multiple-imputation" class="section level3">
+<h3>Why using multiple imputation?</h3>
+<ul>
+<li>It provides a mechanism to deal with the inherent uncertainty of the imputations</li>
+<li>It separate the solution of the missing data problem from the solution of the complete-data problem (train predictive models on complete data)</li>
+</ul>
+</div>
+<div id="multiple-imputation-example-using-the-mice-package" class="section level3">
+<h3>Multiple imputation example using the mice package</h3>
+<pre class="r"><code>## Load the mice package
+library(mice); 
+## Impute 20 times, using preditive mean matching
+imp &lt;- mice(airquality, seed = 1, m = 20, print = FALSE)
+## Fit linear regressions
+fit &lt;- with(imp, lm(Ozone ~ Wind + Temp + Solar.R))
+## Pooled regression estimates
+pander(summary(pool(fit)))</code></pre>
+<table style="width:93%;">
+<colgroup>
+<col width="19%" />
+<col width="15%" />
+<col width="16%" />
+<col width="16%" />
+<col width="11%" />
+<col width="13%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">term</th>
+<th align="center">estimate</th>
+<th align="center">std.error</th>
+<th align="center">statistic</th>
+<th align="center">df</th>
+<th align="center">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">(Intercept)</td>
+<td align="center">-60.21</td>
+<td align="center">21.57</td>
+<td align="center">-2.791</td>
+<td align="center">100.3</td>
+<td align="center">0.006</td>
+</tr>
+<tr class="even">
+<td align="center">Wind</td>
+<td align="center">-3.174</td>
+<td align="center">0.644</td>
+<td align="center">-4.927</td>
+<td align="center">83.29</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td align="center">Temp</td>
+<td align="center">1.584</td>
+<td align="center">0.228</td>
+<td align="center">6.959</td>
+<td align="center">125.7</td>
+<td align="center">0</td>
+</tr>
+<tr class="even">
+<td align="center">Solar.R</td>
+<td align="center">0.058</td>
+<td align="center">0.023</td>
+<td align="center">2.454</td>
+<td align="center">79.63</td>
+<td align="center">0.016</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li><p>Van Buuren, S. (2018). Flexible Imputation of Missing Data, 2nd Edition. CRC press.</p>
+<ul>
+<li><a href="https://stefvanbuuren.name/fimd/" class="uri">https://stefvanbuuren.name/fimd/</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

@@ -1,0 +1,384 @@
+---
+title: 'Book Notes: Intro to Time Series and Forecasting -- Ch5 ARMA Models Estimation and Forecasting'
+author: ''
+date: '2020-03-20'
+slug: book-notes-intro-to-time-series-and-forecasting-ch5-modeling-and-forecasting-with-arma-processes
+categories:
+  - Book notes
+tags:
+  - Time Series
+  - Slides
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 2
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#yule-walker-estimation">Yule-Walker Estimation</a></li>
+<li><a href="#maximum-likelihood-estimation">Maximum Likelihood Estimation</a></li>
+<li><a href="#order-selection">Order Selection</a></li>
+<li><a href="#diagnostic-checking">Diagnostic Checking</a></li>
+</ul>
+</div>
+
+<p><strong><em>For the pdf slides, click <a href="/pdf/010119_time_series_ch5.pdf">here</a></em></strong></p>
+<div id="parameter-estimation-for-armap-q" class="section level3">
+<h3>Parameter estimation for ARMA<span class="math inline">\((p, q)\)</span></h3>
+<ul>
+<li><strong>When the orders <span class="math inline">\(p, q\)</span> are known</strong>, estimate the parameters
+<span class="math display">\[
+\boldsymbol\phi = (\phi_1, \ldots, \phi_p), \quad
+\boldsymbol\theta = (\theta_1, \ldots, \theta_q), \quad 
+\sigma^2
+\]</span>
+<ul>
+<li>There are <span class="math inline">\(p+q+1\)</span> parameters in total</li>
+</ul></li>
+<li>Preliminary estimations
+<ul>
+<li>Yule-Walker and Burg’s algorithm: good for AR<span class="math inline">\((p)\)</span></li>
+<li>Innovation algorithm: good for MA<span class="math inline">\((q)\)</span></li>
+<li>Hannan-Rissanen algorithm: good for ARMA<span class="math inline">\((p, q)\)</span></li>
+</ul></li>
+<li><p>More efficient estimation: MLE</p></li>
+<li><strong>When the orders <span class="math inline">\(p, q\)</span> are unknown</strong>, use model selection methods to
+select orders
+<ul>
+<li>Minimize one-step MSE: FPE</li>
+<li>Penalized likelihood methods: AIC, AICC, BIC</li>
+</ul></li>
+</ul>
+</div>
+<div id="yule-walker-estimation" class="section level1">
+<h1>Yule-Walker Estimation</h1>
+<div id="yule-walker-equations" class="section level3">
+<h3>Yule-Walker equations</h3>
+<ul>
+<li><p><span class="math inline">\(\{X_t\}\)</span> is a casual AR<span class="math inline">\((p)\)</span> process
+<span class="math display">\[
+X_t  = \phi_1 X_{t-1} + \cdots + \phi_p X_{t-p} + Z_t
+\]</span></p></li>
+<li><p>Multiplying each side by <span class="math inline">\(X_t, X_{t-1}, \ldots, X_{t-p}\)</span>, respectively, and taking
+expectation, we got the <font color='blue'>Yule-Walker equations</font>
+<span class="math display">\[
+\sigma^2 = \gamma(0) - \phi_1 \gamma(1) - \cdots \phi_p \gamma(p)
+\]</span>
+<span class="math display">\[
+\underbrace{\left[
+\begin{array}{cccc}
+\gamma(0)   &amp; \gamma(1)   &amp; \cdots  &amp;\gamma(p-1)  \\
+\gamma(1)   &amp; \gamma(0)   &amp; \cdots  &amp;\gamma(p-2)  \\
+\vdots      &amp; \vdots      &amp; \vdots  &amp; \vdots      \\
+\gamma(p-1) &amp; \gamma(p-2) &amp; \cdots  &amp;\gamma(0)    \\
+\end{array}
+\right]}_{\boldsymbol\Gamma_p}
+\underbrace{
+\left[
+\begin{array}{c}
+\phi_1  \\
+\phi_2  \\
+\vdots  \\
+\phi_p  \\
+\end{array}
+\right]}_{\boldsymbol\phi}
+=
+\underbrace{
+\left[
+\begin{array}{c}
+\gamma(1) \\
+\gamma(2) \\
+\vdots    \\
+\gamma(p) \\
+\end{array}
+\right]}_{\boldsymbol\gamma_p}
+\]</span></p></li>
+<li><p>Vector representation
+<span class="math display">\[
+\boldsymbol\Gamma_p \boldsymbol\phi = \boldsymbol\gamma_p, \quad
+\sigma^2 = \gamma(0) - \boldsymbol\phi&#39; \boldsymbol\gamma_p
+\]</span></p></li>
+</ul>
+</div>
+<div id="yule-walker-estimator-and-its-properties" class="section level3">
+<h3>Yule-Walker estimator and its properties</h3>
+<ul>
+<li><p><font color='blue'>Yule-Walker estimators</font> <span class="math inline">\(\hat{\boldsymbol\phi} = (\hat{\phi}_1, \cdots, \hat{\phi}_p)\)</span> are obtained by
+<strong>solving the hatted version of the Yule-Walker equations</strong>
+<span class="math display">\[
+\hat{\boldsymbol\phi} = \hat{\boldsymbol\Gamma}_p^{-1}\hat{\boldsymbol\gamma}_p,
+\quad
+\hat{\sigma}^2 = \hat{\gamma}(0) - \hat{\boldsymbol\phi}&#39; \hat{\boldsymbol\gamma}_p
+\]</span></p></li>
+<li><p><font color='red'>The fitted model is causal</font> and <span class="math inline">\(\hat{\sigma}^2 \geq 0\)</span>
+<span class="math display">\[
+X_t  = \hat{\phi}_1 X_{t-1} + \cdots + \hat{\phi}_p X_{t-p} + Z_t, \quad
+Z_t \sim \textrm{WN}(0, \hat{\sigma}^2)
+\]</span></p></li>
+<li><p><font color='red'>Asymptotic normality</font>
+<span class="math display">\[
+\hat{\boldsymbol\phi} \stackrel{\cdot}{\sim} \textrm{N}\left( 
+\boldsymbol\phi, \frac{\sigma^2 \boldsymbol\Gamma_p^{-1}}{n}\right)
+\]</span></p></li>
+</ul>
+</div>
+<div id="yule-walker-estimator-is-a-moment-estimator-because-it-is-obtained-by-equating-theoretical-and-sample-moments" class="section level3">
+<h3>Yule-Walker estimator is a moment estimator: because it is obtained by equating theoretical and sample moments</h3>
+<ul>
+<li><p>Usually moment estimators have much higher variance than MLE</p></li>
+<li><p>But Yule-Walker estimators of AR<span class="math inline">\((p)\)</span> process have the same asymptotic
+distribution as the MLE</p></li>
+<li><p>Moment estimators can fail for MA<span class="math inline">\((q)\)</span> and general ARMA</p>
+<ul>
+<li>For example, MA<span class="math inline">\((1)\)</span>: <span class="math inline">\(X_t = Z_t + \theta Z_{t+1}\)</span> with
+<span class="math inline">\(\{Z_t\}\sim \textrm{WN} (0, \sigma^2)\)</span>.
+<span class="math display">\[
+\gamma(0) = (1+\theta^2)\sigma^2, \quad
+\gamma(1) = \theta \sigma^2 \quad \Longrightarrow \quad
+\rho(1) = \frac{\theta}{1+\theta^2}
+\]</span>
+Moment estimator of <span class="math inline">\(\theta\)</span> is obtained by solving
+<span class="math display">\[
+\hat{\rho}(1) = \frac{\hat{\theta}}{1+\hat{\theta}^2}
+\quad \Longrightarrow \quad
+\hat{\theta} = \frac{1 \pm \sqrt{1 - 4 \hat{\rho}(1)^2}}{2 \hat{\rho}(1)}
+\]</span>
+This can yield complex <span class="math inline">\(\hat{\theta}\)</span> if <span class="math inline">\(|\hat{\rho}(1)| &gt; 1/2\)</span>, which
+can happen if <span class="math inline">\(\rho(1) = 1/2\)</span>, i.e., <span class="math inline">\(\theta = 1\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="innovations-algorithm-estimate-ma-coefficients" class="section level3">
+<h3>Innovations algorithm: estimate MA coefficients</h3>
+<ul>
+<li><p>Fitted innovations MA<span class="math inline">\((m)\)</span> model
+<span class="math display">\[
+X_t = Z_t + \hat{\theta}_{m1} Z_{t-1} + \cdots + \cdots + \hat{\theta}_{mm}Z_{t-m},
+\quad \{Z_t\} \sim \textrm{WN}(0, \hat{v}_m)
+\]</span>
+where <span class="math inline">\(\hat{\boldsymbol\theta}_m\)</span> and <span class="math inline">\(\hat{v}_m\)</span> are from the innovations algorithm
+with ACVF replaced by the sample ACVF</p></li>
+<li><p>For a MA<span class="math inline">\((q)\)</span> process, the innovations algorithm estimator
+<span class="math inline">\(\hat{\boldsymbol\theta}_q = (\hat{\theta}_{q1}, \ldots, \hat{\theta}_{qq})&#39;\)</span>
+is NOT consistent for <span class="math inline">\((\theta_1, \ldots, \theta_q)&#39;\)</span></p></li>
+<li><p>Choice of <span class="math inline">\(m\)</span>: increase <span class="math inline">\(m\)</span> until the vector
+<span class="math inline">\((\hat{\theta}_{m1}, \ldots, \hat{\theta}_{mq})&#39;\)</span> stabilizes</p></li>
+</ul>
+</div>
+</div>
+<div id="maximum-likelihood-estimation" class="section level1">
+<h1>Maximum Likelihood Estimation</h1>
+<div id="likelihood-function-of-a-gaussian-time-series" class="section level3">
+<h3>Likelihood function of a Gaussian time series</h3>
+<ul>
+<li><p>Suppose <span class="math inline">\(\{X_t\}\)</span> is a Gaussian time series with mean zero</p></li>
+<li><p>Assume that covariance matrix <span class="math inline">\(\boldsymbol\Gamma_n = E(\mathbf{X}_n \mathbf{X}_n&#39;)\)</span>
+is nonsingular</p></li>
+<li><p>One-step predictors using innovations algorithm: <span class="math inline">\(\hat{X}_1 = 0\)</span> and
+<span class="math display">\[
+\hat{X}_{j+1} = P_{j} X_{j+1} % =  \phi_{j1}X_j + \ldots + \phi_{jj} X_1 
+\]</span>
+with MSE <span class="math inline">\(v_j = E\left(X_{j+1} - \hat{X}_{j+1}\right)^2\)</span></p>
+<ul>
+<li><font color='green'>Example: AR<span class="math inline">\((1)\)</span></font>
+<span class="math display">\[
+\hat{X}_j = 
+  \begin{cases}
+  0, &amp; j = 1 \\
+  \phi \hat{X}_{j-1}  &amp; j \geq 2
+  \end{cases},
+  \quad 
+v_j = 
+  \begin{cases}
+  \frac{\sigma^2}{1-\phi^2}, &amp; j = 0 \\
+  \sigma^2  &amp; j \geq 1
+  \end{cases}
+\]</span></li>
+</ul></li>
+<li><p>Likelihood function
+<span class="math display">\[\begin{align*}
+L &amp; \propto \left| \boldsymbol\Gamma_n \right|^{-1/2}
+  \exp \left( -\frac{1}{2} \mathbf{X}_n&#39; \boldsymbol\Gamma_n^{-1}
+  \mathbf{X}_n\right)\\
+&amp; = \left( v_0 v_1 \cdots v_{n-1} \right)^{-1/2}
+  \exp \left[ -\frac{1}{2} \sum_{j=1}^n \frac{(X_j - \hat{X}_j)^2}{v_{j-1}}\right]
+\end{align*}\]</span></p></li>
+</ul>
+</div>
+<div id="maximum-likelihood-estimation-of-armap-q" class="section level3">
+<h3>Maximum likelihood estimation of ARMA<span class="math inline">\((p, q)\)</span></h3>
+<ul>
+<li><p>Innovations MSE <span class="math inline">\(v_j = \sigma^2 r_j\)</span>, where <span class="math inline">\(r_j\)</span> depends on <span class="math inline">\(\boldsymbol\phi\)</span>
+and <span class="math inline">\(\boldsymbol\theta\)</span></p></li>
+<li><p>Maximizing the likelihood is equivalent to minimizing
+<span class="math display">\[
+-2\log L(\boldsymbol\phi, \boldsymbol\theta, \sigma^2) 
+= n\log(\sigma^2) + \sum_{j=1}^n \log(r_{j-1}) + 
+\frac{S(\boldsymbol\phi, \boldsymbol\theta)}{\sigma^2},
+\]</span>
+where
+<span class="math display">\[ 
+S(\boldsymbol\phi, \boldsymbol\theta) = \sum_{j=1}^n 
+\frac{(X_j - \hat{X}_j)^2}{r_{j-1}}
+\]</span></p></li>
+<li><p>MLE <span class="math inline">\(\hat{\sigma}^2\)</span> can be expressed with MLE
+<span class="math inline">\(\hat{\boldsymbol\phi}, \hat{\boldsymbol\theta}\)</span>
+<span class="math display">\[
+\hat{\sigma}^2 = 
+\frac{S\left(\hat{\boldsymbol\phi}, \hat{\boldsymbol\theta}\right)}{n}
+\]</span></p></li>
+<li><p>MLE <span class="math inline">\(\hat{\boldsymbol\phi}, \hat{\boldsymbol\theta}\)</span> are obtained by
+minimizing
+<span class="math display">\[
+\log\left[ \frac{S(\boldsymbol\phi, \boldsymbol\theta)}{n} \right]+ \frac{1}{n} \sum_{j=1}^n \log(r_{j-1})
+\]</span>
+Not depend on <span class="math inline">\(\sigma^2\)</span>!</p></li>
+</ul>
+</div>
+<div id="asymptotic-normality-of-mle" class="section level3">
+<h3>Asymptotic normality of MLE</h3>
+<ul>
+<li><p>When <span class="math inline">\(n\)</span> is large, for a causal and invertible ARMA<span class="math inline">\((p, q)\)</span> process,
+<span class="math display">\[
+\left[
+\begin{array}{c}
+\hat{\boldsymbol\phi}\\
+\hat{\boldsymbol\theta}
+\end{array}
+\right]
+\stackrel{\cdot}{\sim}\textrm{N}_{p+1}
+\left(
+\left[
+\begin{array}{c}
+\hat{\boldsymbol\phi}\\
+\hat{\boldsymbol\theta}
+\end{array}
+\right], 
+\frac{\mathbf{V}}{n}
+\right)
+\]</span></p></li>
+<li><p><font color='red'>For an AR<span class="math inline">\((p)\)</span> process, MLE has the same asymptotic distribution as
+the Yule-Walker estimator</font>
+<span class="math display">\[
+\mathbf{V} = \sigma^2 \boldsymbol\Gamma_p^{-1} \quad \Longrightarrow \quad
+\hat{\boldsymbol\phi} \stackrel{\cdot}{\sim} \textrm{N}\left( 
+\boldsymbol\phi, \frac{\sigma^2 \boldsymbol\Gamma_p^{-1}}{n}\right)
+\]</span></p></li>
+</ul>
+</div>
+<div id="examples-of-mathbfv" class="section level3">
+<h3>Examples of <span class="math inline">\(\mathbf{V}\)</span></h3>
+<ul>
+<li><p>AR<span class="math inline">\((1)\)</span>
+<span class="math display">\[
+\mathbf{V} = 1 - \phi_1^2
+\]</span></p></li>
+<li><p>AR<span class="math inline">\((2)\)</span>
+<span class="math display">\[
+\mathbf{V} = 
+\left[
+\begin{array}{cc}
+1 - \phi_2^2        &amp; -\phi_1(1 + \phi_2)\\
+-\phi_1(1 + \phi_2) &amp; 1 - \phi_2^2\\
+\end{array}
+\right]
+\]</span></p></li>
+<li><p>MA<span class="math inline">\((1)\)</span>
+<span class="math display">\[
+\mathbf{V} = 1 - \theta_1^2
+\]</span></p></li>
+<li><p>MA<span class="math inline">\((2)\)</span>
+<span class="math display">\[
+\mathbf{V} = 
+\left[
+\begin{array}{cc}
+1 - \theta_2^2        &amp; \theta_1(1 - \theta_2)\\
+\theta_1(1 - \theta_2)&amp; 1 - \theta_2^2\\
+\end{array}
+\right]
+\]</span></p></li>
+<li><p>ARMA<span class="math inline">\((1,1)\)</span>
+<span class="math display">\[
+\mathbf{V} = 
+\frac{1 + \phi \theta}{(\phi + \theta)^2}
+\left[
+\begin{array}{cc}
+(1 - \phi^2)(1 + \phi \theta)   &amp; -(1 - \theta^2)(1 - \phi^2)   \\
+-(1 - \theta^2)(1 - \phi^2)     &amp; (1 - \phi^2)(1 + \phi \theta) \\
+\end{array}
+\right]
+\]</span></p></li>
+</ul>
+</div>
+</div>
+<div id="order-selection" class="section level1">
+<h1>Order Selection</h1>
+<div id="order-selection-1" class="section level3">
+<h3>Order selection</h3>
+<ul>
+<li><p>Why? Harm of using too large <span class="math inline">\(p, q\)</span> to fit models:</p>
+<ul>
+<li>Large errors arising from parameter estimation of the model</li>
+<li>Large MSEs of forecasts</li>
+</ul></li>
+<li><p>FPE: only for AR<span class="math inline">\((p)\)</span> processes
+<span class="math display">\[
+\text{FPE} = \hat{\sigma}^2 \frac{n+p}{n-p}
+\]</span></p></li>
+<li><p>AIC: for ARMA<span class="math inline">\((p, q)\)</span>; approximate Kullback-Leibler discrepancy of the fitted
+model and the true model, a penalized likelihood method
+<span class="math display">\[
+\text{AIC} = -2\log (\hat{L}) + 2(p + q + 1)
+\]</span></p></li>
+<li><p>AICC: for ARMA<span class="math inline">\((p, q)\)</span>; a bias-corrected version of AIC, a penalized likelihood method
+<span class="math display">\[
+\text{AICC} = -2\log (\hat{L}) + 2(p + q + 1) \cdot \frac{n}{n-p-q-2}
+\]</span></p></li>
+</ul>
+</div>
+</div>
+<div id="diagnostic-checking" class="section level1">
+<h1>Diagnostic Checking</h1>
+<div id="residuals-and-rescaled-residuals" class="section level3">
+<h3>Residuals and rescaled residuals</h3>
+<ul>
+<li><font color='blue'>Residuals of an ARMA<span class="math inline">\((p, q)\)</span> process</font>
+<span class="math display">\[
+\hat{W}_t = \frac{X_t - \hat{X}_t\left(\hat{\boldsymbol\phi}, 
+\hat{\boldsymbol\theta}\right)}
+{\sqrt{r_{t-1}\left(\hat{\boldsymbol\phi}, 
+\hat{\boldsymbol\theta}\right)}}, \quad t = 1, \ldots, n
+\]</span>
+<ul>
+<li>Residuals <span class="math inline">\(\{\hat{W}_t\}\)</span> should be similar to white noises <span class="math inline">\(\{Z_t\}\)</span></li>
+</ul></li>
+<li><font color='blue'>Rescaled residuals</font>
+<span class="math display">\[
+\hat{R}_t = \frac{\hat{W}_t}{\hat{\sigma}}, \quad
+\hat{\sigma} = \sqrt{\frac{\sum_{t=1}^n \hat{W}_t^2}{n}}
+\]</span>
+<ul>
+<li>Residuals residuals should be approximately <span class="math inline">\(\textrm{WN}(0, 1)\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="residual-diagnostics" class="section level3">
+<h3>Residual diagnostics</h3>
+<ol style="list-style-type: decimal">
+<li><p>Plot <span class="math inline">\(\{\hat{R}_t\}\)</span> and look for patterns</p></li>
+<li>Compute the sample ACF of <span class="math inline">\(\{\hat{R}_t\}\)</span>
+<ul>
+<li>It should be close to the <span class="math inline">\(\textrm{WN}(0, 1)\)</span> sample ACF</li>
+</ul></li>
+<li><p>Apply Chapter 1 tests for IID noises</p></li>
+</ol>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li>Brockwell, Peter J. and Davis, Richard A. (2016), <em>Introduction to Time Series and Forecasting, Third Edition</em>. New York: Springer</li>
+</ul>
+</div>
+</div>

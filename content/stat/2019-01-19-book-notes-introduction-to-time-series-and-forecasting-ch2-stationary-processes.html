@@ -1,0 +1,726 @@
+---
+title: 'Book Notes: Introduction to Time Series and Forecasting --  Ch2 Stationary
+  Processes'
+author: ''
+date: '2019-01-19'
+slug: book-notes-introduction-to-time-series-and-forecasting-ch2-stationary-processes
+categories:
+  - Book notes
+tags:
+  - Introduction
+  - Time Series
+  - Slides
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 2
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#linear-processes">Linear Processes</a></li>
+<li><a href="#introduction-to-arma-processes">Introduction to ARMA Processes</a><ul>
+<li><a href="#arma11-process">ARMA<span class="math inline">\((1,1)\)</span> process</a></li>
+</ul></li>
+<li><a href="#properties-of-the-sample-acvf-and-sample-acf">Properties of the Sample ACVF and Sample ACF</a><ul>
+<li><a href="#bartletts-formula">Bartlett’s Formula</a></li>
+</ul></li>
+<li><a href="#forecast-stationary-time-series">Forecast Stationary Time Series</a><ul>
+<li><a href="#best-linear-predictor-minimizes-mse">Best linear predictor: minimizes MSE</a></li>
+<li><a href="#recursive-methods-the-durbin-levinson-and-innovation-algorithms">Recursive methods: the Durbin-Levinson and Innovation Algorithms</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p><strong><em>For the pdf slides, click <a href="/pdf/121018_time_series_ch2.pdf">here</a></em></strong></p>
+<div id="best-linear-predictor" class="section level3">
+<h3>Best linear predictor</h3>
+<ul>
+<li><p>Goal: find a function of <span class="math inline">\(X_n\)</span> that gives the “best” predictor of <span class="math inline">\(X_{n+h}\)</span>.</p>
+<ul>
+<li>We mean “best” by achieving minimum mean squared error</li>
+<li>Under joint normality assumption of <span class="math inline">\(X_n\)</span> and <span class="math inline">\(X_{n+h}\)</span>, the best estimator is
+<span class="math display">\[
+  m(X_n) = E(X_{n+h} \mid X_n) = \mu + \rho(h)(X_n - \mu)
+  \]</span></li>
+</ul></li>
+<li><p><font color='blue'>Best linear predictor</font>
+<span class="math display">\[
+\ell(X_n) = a X_n + b
+\]</span></p>
+<ul>
+<li>For Gaussian processes, <span class="math inline">\(\ell(X_n)\)</span> and <span class="math inline">\(m(X_n)\)</span> are the same.</li>
+<li>The best linear predictor only depends on the mean and ACF of the series
+<span class="math inline">\(\{X_n\}\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="properties-of-acvf-gammacdot-and-acf-rhocdot" class="section level3">
+<h3>Properties of ACVF <span class="math inline">\(\gamma(\cdot)\)</span> and ACF <span class="math inline">\(\rho(\cdot)\)</span></h3>
+<ul>
+<li><p><span class="math inline">\(\gamma(0) \geq 0\)</span></p></li>
+<li><p><span class="math inline">\(|\gamma(h)| \leq \gamma(0)\)</span> for all <span class="math inline">\(h\)</span></p></li>
+<li><p><span class="math inline">\(\gamma(h)\)</span> is a even function, i.e., <span class="math inline">\(\gamma(h) = \gamma(-h)\)</span> for all <span class="math inline">\(h\)</span></p></li>
+<li><p>A function <span class="math inline">\(\kappa: \mathbb{N} \rightarrow \mathbb{R}\)</span> is <font color='blue'>nonnegative definite</font> if
+<span class="math display">\[
+\sum_{i, j= 1}^n a_i \kappa(i - j) a_j \geq 0
+\]</span>
+for all <span class="math inline">\(n \in \mathbb{N}^+\)</span> and vectors <span class="math inline">\(\mathbf{a} = (a_1, \ldots, a_n)&#39; \in \mathbb{R}^n\)</span></p></li>
+<li><p><font color='red'>Theorem: a real-value function defined on the integers is the autocovariance function of a stationary time series if and only if it is even and nonnegative definite</font></p></li>
+<li><p>ACF <span class="math inline">\(\rho(\cdot)\)</span> has all above properties of ACVF <span class="math inline">\(\gamma(\cdot)\)</span></p>
+<ul>
+<li>Plus one more: <span class="math inline">\(\rho(0) = 1\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="maq-process-q-dependent-and-q-correlated" class="section level3">
+<h3>MA<span class="math inline">\((q)\)</span> process, <span class="math inline">\(q\)</span>-dependent, and <span class="math inline">\(q\)</span>-correlated</h3>
+<ul>
+<li><p>A time series <span class="math inline">\(\{X_t\}\)</span> is</p>
+<ul>
+<li><p><font color='blue'><span class="math inline">\(q\)</span>-dependent</font>: if <span class="math inline">\(X_s\)</span> and <span class="math inline">\(X_t\)</span> are independent
+for all <span class="math inline">\(|t-s| &gt; q\)</span>.</p></li>
+<li><p><font color='blue'><span class="math inline">\(q\)</span>-correlated</font>: if <span class="math inline">\(\rho(h) = 0\)</span> for all <span class="math inline">\(|h| &gt; q\)</span>.</p></li>
+</ul></li>
+<li><p><font color='blue'>Moving-average process of order <span class="math inline">\(q\)</span></font>:
+<span class="math inline">\(\{X_t\}\)</span> is a MA<span class="math inline">\((q)\)</span> process if
+<span class="math display">\[
+X_t = Z_t + \theta_1 Z_{t-1} + \cdots + \theta_q Z_{t-q}
+\]</span>
+where <span class="math inline">\(\{Z_t\} \sim \textrm{WN}(0, \sigma^2)\)</span></p></li>
+<li><p>A MA<span class="math inline">\((q)\)</span> process is <span class="math inline">\(q\)</span>-correlated</p></li>
+<li><p><font color='red'>Theorem: a stationary <span class="math inline">\(q\)</span>-correlated time series with mean 0 can be represented as a MA<span class="math inline">\((q)\)</span> process</font></p></li>
+</ul>
+</div>
+<div id="linear-processes" class="section level1">
+<h1>Linear Processes</h1>
+<div id="linear-processes-definitions" class="section level3">
+<h3>Linear processes: definitions</h3>
+<ul>
+<li><p>A time series <span class="math inline">\(\{X_t\}\)</span> is a <font color='blue'>linear process</font> if
+<span class="math display">\[
+X_t = \sum_{j = -\infty}^{\infty} \psi_j Z_{t-j}
+\]</span>
+where <span class="math inline">\(\{Z_t\} \sim \textrm{WN}(0, \sigma^2)\)</span>, and the constants <span class="math inline">\(\{\psi_j\}\)</span> satisfy
+<span class="math display">\[
+\sum_{j = -\infty}^{\infty} |\psi_j| &lt; \infty
+\]</span></p></li>
+<li><p>Equivalent representation using backward shift operator <span class="math inline">\(B\)</span>
+<span class="math display">\[
+X_t = \psi(B) Z_t, \quad \psi(B) = \sum_{j = -\infty}^{\infty} \psi_j B^j
+\]</span></p></li>
+<li><p>Special case: <font color='blue'>moving average</font> MA<span class="math inline">\((\infty)\)</span>
+<span class="math display">\[
+X_t = \sum_{j = 0}^{\infty} \psi_j Z_{t-j}
+\]</span></p></li>
+</ul>
+</div>
+<div id="linear-processes-properties" class="section level3">
+<h3>Linear processes: properties</h3>
+<ul>
+<li><p>In the linear process <span class="math inline">\(X_t = \sum_{j = -\infty}^{\infty} \psi_j Z_{t-j}\)</span> definition,
+the condition <span class="math inline">\(\sum_{j = -\infty}^{\infty} |\psi_j| &lt; \infty\)</span> ensures</p>
+<ul>
+<li>The infinite sum <span class="math inline">\(X_t\)</span> converges with probability 1</li>
+<li><span class="math inline">\(\sum_{j = -\infty}^{\infty} \psi_j^2 &lt; \infty\)</span>, and hence
+<span class="math inline">\(X_t\)</span> converges in mean square,
+i.e., <span class="math inline">\(X_t\)</span> is the mean square limit of the partial sum
+<span class="math inline">\(\sum_{j = -n}^{n} \psi_j Z_{t-j}\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="apply-a-linear-filter-to-a-stationary-time-series-then-the-output-series-is-also-stationary" class="section level3">
+<h3>Apply a linear filter to a stationary time series, then the output series is also stationary</h3>
+<ul>
+<li><p><font color='red'>Theorem:</font> let <span class="math inline">\(\{Y_t\}\)</span> be a stationary time series with mean 0
+and ACVF <span class="math inline">\(\gamma_Y\)</span>. If <span class="math inline">\(\sum_{j = -\infty}^{\infty} |\psi_j| &lt; \infty\)</span>, then
+the time series
+<span class="math display">\[
+X_t = \sum_{j = -\infty}^{\infty} \psi_j Y_{t-j} = \psi(B) Y_t
+\]</span>
+is stationary with mean 0 and ACVF
+<span class="math display">\[
+\gamma_X(h) = \sum_{j = -\infty}^{\infty}\sum_{k = -\infty}^{\infty}
+\psi_j \psi_k \gamma_Y(h + k - j)
+\]</span></p></li>
+<li><p><font color='green'>Special case of the above result</font>:
+If <span class="math inline">\(\{X_t\}\)</span> is a linear process, then its ACVF is
+<span class="math display">\[
+\gamma_X(h) = \sum_{j = -\infty}^{\infty}
+\psi_j \psi_{j + h} \sigma^2
+\]</span></p></li>
+</ul>
+</div>
+<div id="combine-multiple-linear-filters" class="section level3">
+<h3>Combine multiple linear filters</h3>
+<ul>
+<li>Linear filters with absoluately summable coefficients
+<span class="math display">\[
+\alpha(B) = \sum_{j = -\infty}^{\infty} \alpha_j B^j, \quad
+\beta(B) = \sum_{j = -\infty}^{\infty} \beta_j B^j
+\]</span>
+can be applied successively to a stationary series <span class="math inline">\(\{Y_t\}\)</span> to generate
+a new stationary series
+<span class="math display">\[
+W_t = \sum_{j = -\infty}^{\infty} \psi_j Y_{t-j}, \quad
+\psi_j = \sum_{k-\infty}^{\infty} \alpha_k \beta_{j-k} 
+= \sum_{k-\infty}^{\infty} \beta_k \alpha_{j-k} 
+\]</span>
+or equivalently,
+<span class="math display">\[
+W_t = \psi(B) Y_t, \quad
+\psi(B) = \alpha(B) \beta(B) = \beta(B)\alpha(B) 
+\]</span></li>
+</ul>
+</div>
+<div id="ar1-process-x_t---phi-x_t-1-z_t-in-linear-process-formats" class="section level3">
+<h3>AR<span class="math inline">\((1)\)</span> process <span class="math inline">\(X_t - \phi X_{t-1} = Z_t\)</span>, in linear process formats</h3>
+<ul>
+<li><p>If <span class="math inline">\(|\phi| &lt; 1\)</span>, then
+<span class="math display">\[
+X_t = \sum_{j=0}^{\infty} \phi^j Z_{t-j}
+\]</span></p>
+<ul>
+<li>Since <span class="math inline">\(X_t\)</span> only depends on <span class="math inline">\(\{Z_s, s \leq t\}\)</span>, we say <span class="math inline">\(\{X_t\}\)</span>
+is <font color='blue'>causal</font> or <font color='blue'>future-independent</font></li>
+</ul></li>
+<li><p>If <span class="math inline">\(|\phi| &gt; 1\)</span>, then
+<span class="math display">\[
+X_t = -\sum_{j=1}^{\infty} \phi^{-j} Z_{t+j}
+\]</span></p>
+<ul>
+<li>This is because <span class="math inline">\(X_t = -\phi^{-1} Z_{t+1} + \phi^{-1} X_{t+1}\)</span></li>
+<li>Since <span class="math inline">\(X_t\)</span> depends on <span class="math inline">\(\{Z_s, s \geq t\}\)</span>, we say <span class="math inline">\(\{X_t\}\)</span>
+is <font color='blue'>noncausal</font></li>
+</ul></li>
+<li><p>If <span class="math inline">\(\phi = \pm 1\)</span>, then there is no stationary linear process solution</p></li>
+</ul>
+</div>
+</div>
+<div id="introduction-to-arma-processes" class="section level1">
+<h1>Introduction to ARMA Processes</h1>
+<div id="arma11-process" class="section level2">
+<h2>ARMA<span class="math inline">\((1,1)\)</span> process</h2>
+<div id="arma11-process-definitions" class="section level3">
+<h3>ARMA<span class="math inline">\((1,1)\)</span> process: definitions</h3>
+<ul>
+<li><p>The time series <span class="math inline">\(\{X_t\}\)</span> is a <font color='blue'>ARMA<span class="math inline">\((1, 1)\)</span></font> process if it is
+<strong>stationary</strong> and satisfies
+<span class="math display">\[
+X_t - \phi X_{t-1} = Z_t + \theta Z_{t-1}
+\]</span>
+where <span class="math inline">\(\{Z_t\} \sim \textrm{WN}(0, \sigma^2)\)</span> and <span class="math inline">\(\phi + \theta \neq 0\)</span></p></li>
+<li><p>Equivalent represention using the backward shift operator
+<span class="math display">\[
+\phi(B) X_t = \theta(B) Z_t, \quad\text{where } 
+\phi(B) = 1 - \phi B, \ \theta(B) = 1 + \theta B,
+\]</span></p></li>
+</ul>
+</div>
+<div id="arma1-1-process-in-linear-process-format" class="section level3">
+<h3>ARMA<span class="math inline">\((1, 1)\)</span> process in linear process format</h3>
+<ul>
+<li><p>If <span class="math inline">\(\phi \neq \pm 1\)</span>, by letting <span class="math inline">\(\chi(z) = 1/\phi(z)\)</span>,
+we can write an ARMA<span class="math inline">\((1, 1)\)</span> as
+<span class="math display">\[
+X_t = \chi(B) \theta(B) Z_t = \psi(B) Z_t, \quad \text{where }
+\psi(B) = \sum_{j=-\infty}^{\infty} \psi_j B^j
+\]</span></p>
+<ul>
+<li><p>If <span class="math inline">\(|\phi| &lt; 1\)</span>, then <span class="math inline">\(\chi(z) = \sum_{j=0}^{\infty} \phi^j z^j\)</span>, and
+<span class="math display">\[
+\psi_j = 
+\begin{cases}
+0, &amp; \text{if } j \leq -1,\\
+1, &amp; \text{if } j = 0, \\
+(\phi + \theta) \phi^{j-1}, &amp; \text{if } j \geq 1
+\end{cases}
+\quad \text{Causal}
+\]</span></p></li>
+<li><p>If <span class="math inline">\(|\phi| &gt; 1\)</span>, then <span class="math inline">\(\chi(z) = -\sum_{j=-\infty}^{-1} \phi^{j} z^{j}\)</span>, and
+<span class="math display">\[
+\psi_j = 
+\begin{cases}
+-(\theta + \phi) \phi^{j-1}, &amp; \text{if } j \leq -1,\\
+-\theta\phi^{-1}, &amp; \text{if } j = 0, \\
+0, &amp; \text{if } j \geq 1
+\end{cases}
+\quad \text{Noncausal}
+\]</span></p></li>
+</ul></li>
+<li><p>If <span class="math inline">\(\phi = \pm 1\)</span>, then there is no such stationary ARMA<span class="math inline">\((1, 1)\)</span> process</p></li>
+</ul>
+</div>
+<div id="invertibility" class="section level3">
+<h3>Invertibility</h3>
+<ul>
+<li><font color='blue'>Invertibility</font> is the dual concept of causaility
+<ul>
+<li>Causal: <span class="math inline">\(X_t\)</span> can be expressed by <span class="math inline">\(\{Z_s, s \leq t\}\)</span></li>
+<li>Invertible: <span class="math inline">\(Z_t\)</span> can be expressed by <span class="math inline">\(\{X_s, s \leq t\}\)</span></li>
+</ul></li>
+<li>For an ARMA<span class="math inline">\((1, 1)\)</span> process,
+<ul>
+<li>If <span class="math inline">\(|\theta|&lt; 1\)</span>, then it is invertible</li>
+<li>If <span class="math inline">\(|\theta|&gt; 1\)</span>, then it is noninvertible</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="properties-of-the-sample-acvf-and-sample-acf" class="section level1">
+<h1>Properties of the Sample ACVF and Sample ACF</h1>
+<div id="estimation-of-the-series-mean-mu-ex_t" class="section level3">
+<h3>Estimation of the series mean <span class="math inline">\(\mu = E(X_t)\)</span></h3>
+<ul>
+<li><p>The sample mean <span class="math inline">\(\bar{X}_n = \frac{1}{n} \sum_{i=1}^n X_i\)</span>
+is an unbised estimator of <span class="math inline">\(\mu\)</span></p>
+<ul>
+<li>Mean squared error
+<span class="math display">\[
+  E(\bar{X}_n - \mu)^2 = \frac{1}{n} \sum_{h = -n}^n 
+  \left( 1 - \frac{|h|}{n} \right) \gamma(h)
+  \]</span></li>
+</ul></li>
+<li><p><font color='red'>Theorem</font>: If <span class="math inline">\(\{X_t\}\)</span> is a stationary time series with mean 0 and
+ACVF <span class="math inline">\(\gamma(\cdot)\)</span>, then as <span class="math inline">\(n \rightarrow \infty\)</span>,
+<span class="math display">\[
+V(\bar{X}_t) = E(\bar{X}_n - \mu)^2 \longrightarrow 0, \quad
+\text{if } \gamma(n) \rightarrow 0,
+\]</span>
+<span class="math display">\[
+n E(\bar{X}_n - \mu)^2 \longrightarrow \sum_{|h| &lt;\infty} \gamma(h), \quad
+\text{if } \sum_{h = -\infty}^{\infty} |\gamma(h)| &lt; \infty
+\]</span></p></li>
+</ul>
+</div>
+<div id="confidence-bounds-of-mu" class="section level3">
+<h3>Confidence bounds of <span class="math inline">\(\mu\)</span></h3>
+<ul>
+<li><p>If <span class="math inline">\(\{X_t\}\)</span> is Gaussian, then
+<span class="math display">\[
+\sqrt{n} (\bar{X}_n - \mu) \sim \textrm{N} 
+\left( 0, \sum_{|h| &lt; n} \left( 1 - \frac{|h|}{n} \right) \gamma(h) \right)
+\]</span></p></li>
+<li>For many common time series, such as linear and ARMA models, when <span class="math inline">\(n\)</span> is large,
+<span class="math inline">\(\bar{X}_n\)</span> is approximately normal:
+<span class="math display">\[
+\bar{X}_n \sim \textrm{N}\left(\mu, \frac{v}{n} \right), \quad 
+v = \sum_{|h|&lt;\infty} \gamma(h)
+\]</span>
+<ul>
+<li>An approximate 95% confidence interval for <span class="math inline">\(\mu\)</span> is
+<span class="math display">\[
+  \left(\bar{X}_n - 1.96 v^{1/2}/\sqrt{n}, \ 
+  \bar{X}_n + 1.96 v^{1/2}/\sqrt{n}\right)
+  \]</span></li>
+<li>To estimate <span class="math inline">\(v\)</span>, we can use
+<span class="math display">\[
+  \hat{v} = \sum_{|h|&lt; \sqrt{n}} \left( 1 - \frac{|h|}{\sqrt{n}} \right) \hat{\gamma}(h)
+  \]</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="estimation-of-acvf-gammacdot-and-acf-rhocdot" class="section level3">
+<h3>Estimation of ACVF <span class="math inline">\(\gamma(\cdot)\)</span> and ACF <span class="math inline">\(\rho(\cdot)\)</span></h3>
+<ul>
+<li>Use sample ACVF <span class="math inline">\(\hat{\gamma}(\cdot)\)</span> and sample ACF <span class="math inline">\(\hat{\rho}(\cdot)\)</span>
+<span class="math display">\[
+\hat{\gamma}(h) = \frac{1}{n} \sum_{t=1}^{n-|h|} 
+(X_{t + |h|} - \bar{X}_n)(X_t - \bar{X}_n), \quad
+\hat{\rho}(\cdot) = \hat{\gamma}(h) / \hat{\gamma}(0)
+\]</span>
+<ul>
+<li>Even if the factor <span class="math inline">\(1/n\)</span> is replaced by <span class="math inline">\(1/(n-h)\)</span>, they are
+still biased</li>
+<li>They are nearly unbiased for large <span class="math inline">\(n\)</span></li>
+</ul></li>
+<li><p>When <span class="math inline">\(h\)</span> is slightly smaller than <span class="math inline">\(n\)</span>, the estimators
+<span class="math inline">\(\hat{\gamma}(\cdot), \hat{\rho}(\cdot)\)</span> are unreliable since there are only
+few pairs of <span class="math inline">\((X_{t + h}, X_t)\)</span>.</p>
+<ul>
+<li>A useful guide for them to be reliable (by Jenkins):
+<span class="math display">\[ n \geq 50, \quad h \leq n/4\]</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="bartletts-formula" class="section level2">
+<h2>Bartlett’s Formula</h2>
+<div id="asymptotic-distribution-of-hatrhocdot" class="section level3">
+<h3>Asymptotic distribution of <span class="math inline">\(\hat{\rho}(\cdot)\)</span></h3>
+<ul>
+<li><p>For linear models, esp ARMA models, when <span class="math inline">\(n\)</span> is large,
+<span class="math inline">\(\hat{\boldsymbol\rho}_k = (\hat{\rho}(1), \ldots, \hat{\rho}(k))&#39;\)</span>
+is approximately normal
+<span class="math display">\[
+\hat{\boldsymbol\rho}_k \sim \textrm{N}(\boldsymbol\rho, n^{-1}W)
+\]</span></p></li>
+<li><p>By <font color='blue'>Bartlett’s formula</font>, <span class="math inline">\(W\)</span> is the covariance matrix with entries
+<span class="math display">\[\begin{align*}
+w_{ij} = \sum_{k=1}^{\infty} 
+&amp; \left[ \rho(k + i) + \rho(k - i) - 2 \rho(i)\rho(k) \right] \\
+&amp; \times
+\left[ \rho(k + j) + \rho(k - j) - 2 \rho(j)\rho(k) \right]
+\end{align*}\]</span></p></li>
+<li>Special cases
+<ul>
+<li><p>Marginally, for any <span class="math inline">\(j \geq 1\)</span>,
+<span class="math display">\[
+\hat{\rho}(j) \sim \textrm{N}(\rho(j), n^{-1} w_{jj})
+\]</span></p></li>
+<li><p>iid noise
+<span class="math display">\[
+w_{ij} = 
+\begin{cases}
+1, &amp; \text{if } i = j,\\
+0, &amp; \text{otherwise}
+\end{cases}
+\Longleftrightarrow \hat{\rho}(k) \sim \textrm{N}(0, 1/n), \ k = 1, \ldots, n
+\]</span></p></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="forecast-stationary-time-series" class="section level1">
+<h1>Forecast Stationary Time Series</h1>
+<div id="best-linear-predictor-minimizes-mse" class="section level2">
+<h2>Best linear predictor: minimizes MSE</h2>
+<div id="best-linear-predictor-definition" class="section level3">
+<h3>Best linear predictor: definition</h3>
+<ul>
+<li><p>For a stationary time series <span class="math inline">\(\{X_t\}\)</span> with known mean <span class="math inline">\(\mu\)</span> and ACVF <span class="math inline">\(\gamma\)</span>,
+our goal is to find the <font color='red'>linear combination</font> of <span class="math inline">\(1, X_n, X_{n-1}, \ldots, X_1\)</span>
+that forecasts <span class="math inline">\(X_{n+h}\)</span> with <font color='red'>minimum mean squared error</font></p></li>
+<li><p><font color='blue'>Best linear predictor</font>:
+<span class="math display">\[
+P_n X_{n + h} = a_0 + a_1 X_n + \cdots + a_n X_1 = a_0 + \sum_{i=1}^n a_i X_{n+1-i}
+\]</span></p>
+<ul>
+<li>We need to find the coefficients <span class="math inline">\(a_0, a_1, \ldots, a_n\)</span> that minimize
+<span class="math display">\[
+  E(X_{n + h} - a_0 - a_1 X_n - \cdots - a_n X_1)^2
+  \]</span></li>
+<li>We can take partial derivatives and solve a system of equations
+<span class="math display">\[\begin{align*}
+  &amp; E\left[ X_{n + h} - a_0 - \sum_{i=1}^n a_i X_{n+1-i}\right] = 0,\\
+  &amp; E\left[ \left(X_{n + h} - a_0 - \sum_{i=1}^n a_i X_{n+1-i}\right) X_{n+1-j}\right] 
+  = 0, \ j = 1, \ldots, n
+  \end{align*}\]</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="best-linear-predictor-the-solution" class="section level3">
+<h3>Best linear predictor: the solution</h3>
+<ul>
+<li><p>Plugging the solution <span class="math inline">\(a_0 = \mu \left( 1 - \sum_{i=1}^n a_i \right)\)</span> in,
+the linear pedictor becomes
+<span class="math display">\[
+P_n X_{n + h} = \mu + \sum_{i=1}^n a_i (X_{n+1-i} - \mu)
+\]</span></p></li>
+<li>The solution of coefficients
+<span class="math display">\[
+\mathbf{a}_n = (a_1, \ldots, a_n)&#39; = \boldsymbol\Gamma_n^{-1} \boldsymbol\gamma_n(h)
+\]</span>
+<ul>
+<li><span class="math inline">\(\boldsymbol\Gamma_n = \left[ \gamma(i-j) \right]_{i, j = 1}^n\)</span>
+and <span class="math inline">\(\boldsymbol\gamma_n (h) = \left( \gamma(h), \gamma(h+1), \ldots, \gamma(h + n - 1) \right)&#39;\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="best-linear-predictor-hatx_th-p_n-x_n-h-properties" class="section level3">
+<h3>Best linear predictor <span class="math inline">\(\hat{X}_{t+h} = P_n X_{n + h}\)</span>: properties</h3>
+<ul>
+<li><p>Unbiasness
+<span class="math display">\[
+E(\hat{X}_{t+h} - X_{t+h}) = 0
+\]</span></p></li>
+<li><p>Mean squared error (MSE)
+<span class="math display">\[\begin{align*}
+E(X_{t+h} - \hat{X}_{t+h})^2 
+&amp; = E(X_{t+h}^2) - E(\hat{X}_{t+h}^2)\\
+&amp; = \gamma(0) - \mathbf{a}_n&#39; \boldsymbol\gamma_n (h)
+% = \gamma(0) - \gamma_n (h)&#39; \boldsymbol\Gamma_n^{-1} \boldsymbol\gamma_n (h)
+\end{align*}\]</span></p></li>
+<li><p>Orthogonality
+<span class="math display">\[
+E\left[ (\hat{X}_{t+h} - X_{t+h}) X_j \right] = 0, \quad j = 1, \ldots, n
+\]</span></p>
+<ul>
+<li>In general, orthogonality means
+<span class="math display">\[
+  E\left[ (\textrm{Error}) \times (\textrm{PredictorVariable}) \right] = 0
+  \]</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="example-one-step-prediction-of-an-ar1-series" class="section level3">
+<h3>Example: one-step prediction of an AR<span class="math inline">\((1)\)</span> series</h3>
+<ul>
+<li><p>We predict <span class="math inline">\(X_{n+1}\)</span> from <span class="math inline">\(X_1, \ldots, X_n\)</span>
+<span class="math display">\[
+\hat{X}_{n+1} = \mu + a_1 (X_n - \mu) + \cdots a_n (X_1 - \mu)
+\]</span></p></li>
+<li><p>The coefficients <span class="math inline">\(\mathbf{a}_n = (a_1, \ldots, a_n)&#39;\)</span> satisfies
+<span class="math display">\[
+\left[  
+\begin{array}{ccccc}
+1         &amp; \phi      &amp; \phi^2    &amp; \cdots  &amp; \phi^{n-1}  \\
+\phi      &amp; 1         &amp; \phi      &amp; \cdots  &amp; \phi^{n-2}  \\
+\vdots    &amp; \vdots    &amp; \vdots    &amp; \vdots  &amp; \vdots      \\
+\phi^{n-1}&amp; \phi^{n-2}&amp; \phi^{n-3}&amp; \cdots  &amp; 1           \\
+\end{array}
+\right]
+\left[  
+\begin{array}{c}
+a_1   \\
+a_2   \\
+\vdots\\
+a_n   \\
+\end{array}
+\right]
+=
+\left[  
+\begin{array}{c}
+\phi_1   \\
+\phi^2   \\
+\vdots\\
+\phi^n   \\
+\end{array}
+\right]
+\]</span></p></li>
+<li><p>By guessing, we find a solution
+<span class="math inline">\((a_1, a_2, \ldots, a_n) = (\phi, 0, \ldots, 0)\)</span>, i.e.,
+<span class="math display">\[
+\hat{X}_{n+1} = \mu + \phi (X_n - \mu)
+\]</span></p>
+<ul>
+<li>Does not depend on <span class="math inline">\(X_{n-1}, \ldots, X_1\)</span></li>
+<li>MSE <span class="math inline">\(E(X_{t+1} - \hat{X}_{t+1})^2 = \sigma^2\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="wolg-we-can-assume-mu0-while-predicting" class="section level3">
+<h3>WOLG, we can assume <span class="math inline">\(\mu=0\)</span> while predicting</h3>
+<ul>
+<li><p>A stationary time series <span class="math inline">\(\{X_t\}\)</span> has mean <span class="math inline">\(\mu\)</span></p></li>
+<li><p>To predict its future values, we can first create another time series
+<span class="math display">\[
+Y_t = X_t - \mu
+\]</span>
+and predict <span class="math inline">\(\hat{Y}_{n+h} = P_n(\hat{Y}_{n+h})\)</span> by
+<span class="math display">\[
+\hat{Y}_{n+h} = a_1 Y_n + \cdots + a_n Y_1
+\]</span></p></li>
+<li><p>Since ACVF <span class="math inline">\(\gamma_Y(h) = \gamma_X(h)\)</span>, the coefficients <span class="math inline">\(a_1, \ldots, a_n\)</span>
+are the same for <span class="math inline">\(\{X_t\}\)</span> and <span class="math inline">\(\{Y_t\}\)</span></p></li>
+<li><p>The best linear predictor
+for <span class="math inline">\(\hat{X}_{n+h} = P_n(\hat{X}_{n+h})\)</span> is
+<span class="math display">\[
+\hat{X}_{n+h} - \mu = a_1 (X_n - \mu) + \cdots + a_n (X_1 - \mu)
+\]</span></p></li>
+</ul>
+</div>
+<div id="prediction-operator-pcdot-mid-mathbfw" class="section level3">
+<h3>Prediction operator <span class="math inline">\(P(\cdot \mid \mathbf{W})\)</span></h3>
+<ul>
+<li><p><span class="math inline">\(X\)</span> and <span class="math inline">\(W_1, \ldots, W_n\)</span> are random variables with finte 2nd moments</p>
+<ul>
+<li>Note: <span class="math inline">\(W_1, \ldots, W_n\)</span> does not need to be stationary</li>
+</ul></li>
+<li><p>Best linear predictor:
+<span class="math display">\[
+\hat{X} = P(X \mid \mathbf{W}) = E(X) + a_1 \left[W_n - E(W_n)\right] + 
+  \cdots + a_n \left[W_1- E(W_1)\right]
+\]</span></p></li>
+<li><p>Coefficients <span class="math inline">\(\mathbf{a} = (a_1, \ldots, a_n)&#39;\)</span> satisfies
+<span class="math display">\[
+\boldsymbol\Gamma \mathbf{a} = \boldsymbol\gamma
+\]</span>
+where <span class="math inline">\(\boldsymbol\Gamma = \left[ Cov(W_{n+1-i}, W_{n+1-j}) \right]^n_{i,j=1}\)</span>
+and <span class="math inline">\(\boldsymbol\gamma = \left[ Cov(X, W_n), \ldots, Cov(X, W_1) \right]&#39;\)</span></p></li>
+</ul>
+</div>
+<div id="properties-of-hatx-px-mid-mathbfw" class="section level3">
+<h3><font color='red'>Properties</font> of <span class="math inline">\(\hat{X} = P(X \mid \mathbf{W})\)</span></h3>
+<ul>
+<li><p>Unbiased <span class="math inline">\(E(\hat{X} - X) = 0\)</span></p></li>
+<li><p>Orthogonal <span class="math inline">\(E[(\hat{X} - X) W_i] = 0\)</span> for <span class="math inline">\(i = 1, \ldots n\)</span></p></li>
+<li><p>MSE
+<span class="math display">\[
+E(\hat{X} - X)^2 = Var(X) - (a_1, \ldots, a_n)
+\left[
+\begin{array}{c}
+Cov(X, W_n) \\
+\vdots      \\
+Cov(X, W_1) \\
+\end{array}
+\right]
+\]</span></p></li>
+<li><p>Linear
+<span class="math display">\[
+P(\alpha_1 X_1 + \alpha_2 X_2 + \beta \mid \mathbf{W})
+= \alpha_1 P(X_1 \mid \mathbf{W}) + \alpha_2 P(X_2 \mid \mathbf{W}) + \beta
+\]</span></p></li>
+<li>Extreme cases
+<ul>
+<li>Perfect prediction <span class="math display">\[
+  P(\sum_{i=1}^n \alpha_i W_j + \beta\mid \mathbf{W}) = 
+  \sum_{i=1}^n \alpha_i W_j + \beta
+  \]</span></li>
+<li>Uncorrelated: if <span class="math inline">\(Cov(X, W_i) = 0\)</span> for all <span class="math inline">\(i = 1, \ldots, n\)</span>, then
+<span class="math display">\[
+  P(X \mid \mathbf{W}) = E(X)
+  \]</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="examples-predictions-of-arp-series" class="section level3">
+<h3>Examples: predictions of AR<span class="math inline">\((p)\)</span> series</h3>
+<ul>
+<li><p>A time series <span class="math inline">\(\{X_t\}\)</span> is an <font color='blue'>autoregression of order <span class="math inline">\(p\)</span></font>,
+i.e., AR<span class="math inline">\((p)\)</span>, if it is <strong>stationary</strong> and satisfies
+<span class="math display">\[
+X_t = \phi_1 X_{t-1} + \phi_2 X_{t-2} + \cdots + \phi_p X_{t-p} + Z_t
+\]</span>
+where <span class="math inline">\(\{Z_t\} \sim \textrm{WN}(0, \sigma^2)\)</span>, and <span class="math inline">\(Cov(X_s, Z_t) = 0\)</span> for all
+<span class="math inline">\(s &lt; t\)</span></p></li>
+<li><p>When <span class="math inline">\(n&gt;p\)</span>, the <font color='green'>one-step prediction of an AR<span class="math inline">\((p)\)</span> series</font> is
+<span class="math display">\[
+P_n X_{n+1} = \phi_1 X_{n} + \phi_2 X_{n-1} + \cdots + \phi_p X_{n+1-p}
+\]</span>
+with MSE <span class="math inline">\(E\left(X_{n+1} - P_n X_{n+1} \right)^2 = E(Z_{n+1})^2 = \sigma^2\)</span></p></li>
+<li><p><font color='green'><span class="math inline">\(h\)</span>-step prediction of an AR<span class="math inline">\((1)\)</span> series</font> (proof by recursions)
+<span class="math display">\[
+P_n X_{n+h} = \phi^h X_n, \quad \textrm{MSE} = 
+\sigma^2\frac{1-\phi^{2h}}{1-\phi^2}
+\]</span></p></li>
+</ul>
+</div>
+</div>
+<div id="recursive-methods-the-durbin-levinson-and-innovation-algorithms" class="section level2">
+<h2>Recursive methods: the Durbin-Levinson and Innovation Algorithms</h2>
+<div id="recursive-methods-for-one-step-prediction" class="section level3">
+<h3>Recursive methods for one-step prediction</h3>
+<ul>
+<li><p>The best linear predictor solution <span class="math inline">\(\mathbf{a} = \boldsymbol\Gamma^{-1} \boldsymbol\gamma\)</span> needs matrix inversion</p></li>
+<li><p>Alternatively, we can use recursion to simplify one-step prediction of
+<span class="math inline">\(P_n X_{n + 1}\)</span>, based on <span class="math inline">\(P_j X_{j+1}\)</span> for <span class="math inline">\(j = 1, \ldots, n-1\)</span></p></li>
+<li>We will introduce
+<ul>
+<li>Durbin-Levinson algorithms: good for AR<span class="math inline">\((p)\)</span></li>
+<li>Innovation algorithm: good for MA<span class="math inline">\((q)\)</span>; innovations are uncorrelated</li>
+</ul></li>
+</ul>
+</div>
+<div id="durbin-levinson-algorithm" class="section level3">
+<h3>Durbin-Levinson algorithm</h3>
+<ul>
+<li>Assume <span class="math inline">\(\{X_t\}\)</span> is mean zero, stationary, with ACVF <span class="math inline">\(\gamma(h)\)</span>
+<span class="math display">\[
+\hat{X}_{n+1} = \phi_{n,1} X_n + \cdots \phi_{n,n} X_1, \quad
+\textrm{with MSE } v_n = E(\hat{X}_{n+1} - X_{n+1})^2
+\]</span></li>
+</ul>
+<ol style="list-style-type: decimal">
+<li>Start with <span class="math inline">\(\hat{X}_1 = 0\)</span> and <span class="math inline">\(v_0 = \gamma(0)\)</span></li>
+</ol>
+<p>For <span class="math inline">\(n = 1,2, \ldots\)</span>, <font color='green'>compute step 2-4 successively</font></p>
+<ol start="2" style="list-style-type: decimal">
+<li><p>Compute <span class="math inline">\(\phi_{n,n}\)</span> (<font color='blue'>partial autocorrelation function (PACF) at lag <span class="math inline">\(n\)</span></font>)
+<span class="math display">\[\phi_{n,n} = \left[ \gamma(n) - \sum_{j=1}^{n-1} \phi_{n-1, j} \gamma(n-j)  
+  \right]/v_{n-1}
+\]</span></p></li>
+<li><p>Compute <span class="math inline">\(\phi_{n, 1}, \ldots, \phi_{n, n-1}\)</span>
+<span class="math display">\[
+\left[
+\begin{array}{c}
+\phi_{n,1}    \\
+\vdots        \\
+\phi_{n, n-1} \\
+\end{array} 
+\right]
+=
+\left[
+\begin{array}{c}
+\phi_{n-1, 1}   \\
+\vdots          \\
+\phi_{n-1, n-1} \\
+\end{array}
+\right]- \phi_{n,n}
+\left[
+\begin{array}{c}
+\phi_{n-1, n-1} \\
+\vdots          \\
+\phi_{n-1, 1}   \\
+\end{array}
+\right]
+\]</span></p></li>
+<li><p>Compute <span class="math inline">\(v_n\)</span>
+<span class="math display">\[
+v_n = v_{n-1}(1 - \phi_{n, n}^2)
+\]</span></p></li>
+</ol>
+</div>
+<div id="innovation-algorithm" class="section level3">
+<h3>Innovation algorithm</h3>
+<ul>
+<li><p>Assume <span class="math inline">\(\{X_t\}\)</span> is any mean zero (not necessarily stationary) time series
+with covariance <span class="math inline">\(\kappa(i,j) = Cov(X_i, X_j)\)</span></p></li>
+<li><p>Predict <span class="math inline">\(\hat{X}_{n+1} = P_n X_{n+1}\)</span> based on
+<font color='blue'>innovations</font>, or one-step prediction errors
+<span class="math inline">\(X_j - \hat{X}_j\)</span>, <span class="math inline">\(j = 1, \ldots, n\)</span>
+<span class="math display">\[
+\hat{X}_{n+1} = \theta_{n,1} (X_n - \hat{X}_n) + \cdots +
+\theta_{n,n} (X_1 - \hat{X}_1)\quad
+\textrm{with MSE } v_n 
+\]</span></p></li>
+</ul>
+<ol style="list-style-type: decimal">
+<li>Start with <span class="math inline">\(\hat{X}_1 = 0\)</span> and <span class="math inline">\(v_0 = \kappa(1, 1)\)</span></li>
+</ol>
+<p>For <span class="math inline">\(n = 1,2, \ldots\)</span>, <font color='green'>compute step 2-3 successively</font></p>
+<ol start="2" style="list-style-type: decimal">
+<li><p>For <span class="math inline">\(k = 0, 1, \ldots, n-1\)</span>, compute coefficients
+<span class="math display">\[
+\theta_{n, n-k} = \left[ \kappa(n+1, k+1) - 
+\sum_{j=0}^{k-1} \theta_{k, k-j} \theta_{n, n-j} v_j \right]/v_k
+\]</span></p></li>
+<li><p>Compute the MSE
+<span class="math display">\[
+v_n = \kappa(n+1, n+1) - \sum_{j=0}^{n-1} \theta_{n, n-j}^2 v_j
+\]</span></p></li>
+</ol>
+</div>
+<div id="h-step-predictors-using-innovations" class="section level3">
+<h3><span class="math inline">\(h\)</span>-step predictors using innovations</h3>
+<ul>
+<li><p>For any <span class="math inline">\(k \geq 1\)</span>, orthoganlity ensures
+<span class="math display">\[
+E\left[ \left(X_{n+k} - P_{n+k-1} X_{n+k}\right) X_j \right] = 0, \quad
+j = 1, \ldots, n
+\]</span>
+Thus, we have
+<span class="math display">\[
+P_n(X_{n+k} - P_{n+k-1} X_{n+k}) = 0
+\]</span></p></li>
+<li><p>The <span class="math inline">\(h\)</span>-step prediction:
+<span class="math display">\[\begin{align*}
+P_n X_{n+h} 
+&amp;=  P_n P_{n+h-1} X_{n+h}\\
+&amp;=  P_n \left[ \sum_{j=1}^{n+h-1} \theta_{n+h-1, j} 
+  \left(X_{n+h-j}- \hat{X}_{n+h-j} \right) \right]\\
+&amp;=  \sum_{j=h}^{n+h-1} \theta_{n+h-1, j} 
+  \left(X_{n+h-j}- \hat{X}_{n+h-j} \right)
+\end{align*}\]</span></p></li>
+</ul>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li>Brockwell, Peter J. and Davis, Richard A. (2016), <em>Introduction to Time Series and Forecasting, Third Edition</em>. New York: Springer</li>
+</ul>
+</div>
+</div>
+</div>

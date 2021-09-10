@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Bayesian statistics on A Hugo website</title>
+    <link>/tags/bayesian-statistics/</link>
+    <description>Recent content in Bayesian statistics on A Hugo website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 03 Apr 2018 00:00:00 +0000</lastBuildDate><atom:link href="/tags/bayesian-statistics/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>My first post about statistics!</title>
+      <link>/stat/my-first-post-about-statistics/</link>
+      <pubDate>Tue, 03 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/stat/my-first-post-about-statistics/</guid>
+      <description>Finally, a post not about cooking &amp;hellip;
+I recently gave a 1.5-hours lecture to friends who were interested in Bayesian statistics, and the slides are here.
+This lecture covers (very briefly) the following topics
+  Bayes formula (i.e., conditional probablity)
+ Example: breast cancer screening    Bayesian parameter estimation (i.e., posterior distribution formula)
+ Beta-Binomial updating, with a coin flipping example Example: Bayesian inference on the Rotten Tomato &amp;ldquo;freshness&amp;rdquo; of the Harry Potter movie series (This is what the above picture is about) MCMC (very high-level intro)    Bayesian hypothesis testing</description>
+    </item>
+    
+  </channel>
+</rss>

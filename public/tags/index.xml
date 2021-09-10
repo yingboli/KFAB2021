@@ -1,0 +1,848 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on A Hugo website</title>
+    <link>/tags/</link>
+    <description>Recent content in Tags on A Hugo website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 30 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>玉米 Corn</title>
+      <link>/tags/%E7%8E%89%E7%B1%B3-corn/</link>
+      <pubDate>Sun, 30 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E7%8E%89%E7%B1%B3-corn/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>青豆 Peas</title>
+      <link>/tags/%E9%9D%92%E8%B1%86-peas/</link>
+      <pubDate>Fri, 21 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E9%9D%92%E8%B1%86-peas/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>小孩 Kids</title>
+      <link>/tags/%E5%B0%8F%E5%AD%A9-kids/</link>
+      <pubDate>Sun, 16 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E5%B0%8F%E5%AD%A9-kids/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>菜单 Menu</title>
+      <link>/tags/%E8%8F%9C%E5%8D%95-menu/</link>
+      <pubDate>Sun, 16 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E8%8F%9C%E5%8D%95-menu/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>胡萝卜 Carrot</title>
+      <link>/tags/%E8%83%A1%E8%90%9D%E5%8D%9C-carrot/</link>
+      <pubDate>Fri, 14 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E8%83%A1%E8%90%9D%E5%8D%9C-carrot/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>鸡肉 Chicken</title>
+      <link>/tags/%E9%B8%A1%E8%82%89-chicken/</link>
+      <pubDate>Wed, 28 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E9%B8%A1%E8%82%89-chicken/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>番茄 Tomato</title>
+      <link>/tags/%E7%95%AA%E8%8C%84-tomato/</link>
+      <pubDate>Sat, 24 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E7%95%AA%E8%8C%84-tomato/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>玛芬 Muffins</title>
+      <link>/tags/%E7%8E%9B%E8%8A%AC-muffins/</link>
+      <pubDate>Wed, 14 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E7%8E%9B%E8%8A%AC-muffins/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>蓝莓 Blueberry</title>
+      <link>/tags/%E8%93%9D%E8%8E%93-blueberry/</link>
+      <pubDate>Wed, 14 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E8%93%9D%E8%8E%93-blueberry/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>蛋糕 Cakes</title>
+      <link>/tags/%E8%9B%8B%E7%B3%95-cakes/</link>
+      <pubDate>Wed, 14 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E8%9B%8B%E7%B3%95-cakes/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>蒜 Garlic</title>
+      <link>/tags/%E8%92%9C-garlic/</link>
+      <pubDate>Mon, 12 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E8%92%9C-garlic/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>面包 Bread</title>
+      <link>/tags/%E9%9D%A2%E5%8C%85-bread/</link>
+      <pubDate>Mon, 12 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E9%9D%A2%E5%8C%85-bread/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>汤 Soup</title>
+      <link>/tags/%E6%B1%A4-soup/</link>
+      <pubDate>Sat, 27 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E6%B1%A4-soup/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>花菜 Cauliflower</title>
+      <link>/tags/%E8%8A%B1%E8%8F%9C-cauliflower/</link>
+      <pubDate>Sat, 27 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E8%8A%B1%E8%8F%9C-cauliflower/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>塔可饼 Taco</title>
+      <link>/tags/%E5%A1%94%E5%8F%AF%E9%A5%BC-taco/</link>
+      <pubDate>Fri, 26 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E5%A1%94%E5%8F%AF%E9%A5%BC-taco/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>墨西哥菜 Mexican Food</title>
+      <link>/tags/%E5%A2%A8%E8%A5%BF%E5%93%A5%E8%8F%9C-mexican-food/</link>
+      <pubDate>Fri, 26 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E5%A2%A8%E8%A5%BF%E5%93%A5%E8%8F%9C-mexican-food/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>梅花肉 Port Butt</title>
+      <link>/tags/%E6%A2%85%E8%8A%B1%E8%82%89-port-butt/</link>
+      <pubDate>Fri, 26 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E6%A2%85%E8%8A%B1%E8%82%89-port-butt/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>孢子甘蓝 Brussels Sprouts</title>
+      <link>/tags/%E5%AD%A2%E5%AD%90%E7%94%98%E8%93%9D-brussels-sprouts/</link>
+      <pubDate>Sun, 21 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E5%AD%A2%E5%AD%90%E7%94%98%E8%93%9D-brussels-sprouts/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>早餐 Breakfast</title>
+      <link>/tags/%E6%97%A9%E9%A4%90-breakfast/</link>
+      <pubDate>Sun, 21 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E6%97%A9%E9%A4%90-breakfast/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>燕麦片 Oat</title>
+      <link>/tags/%E7%87%95%E9%BA%A6%E7%89%87-oat/</link>
+      <pubDate>Sun, 21 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E7%87%95%E9%BA%A6%E7%89%87-oat/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>意大利菜 Italian</title>
+      <link>/tags/%E6%84%8F%E5%A4%A7%E5%88%A9%E8%8F%9C-italian/</link>
+      <pubDate>Tue, 12 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E6%84%8F%E5%A4%A7%E5%88%A9%E8%8F%9C-italian/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>意大利面 Pasta</title>
+      <link>/tags/%E6%84%8F%E5%A4%A7%E5%88%A9%E9%9D%A2-pasta/</link>
+      <pubDate>Tue, 12 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E6%84%8F%E5%A4%A7%E5%88%A9%E9%9D%A2-pasta/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>淡菜 Mussels</title>
+      <link>/tags/%E6%B7%A1%E8%8F%9C-mussels/</link>
+      <pubDate>Tue, 12 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E6%B7%A1%E8%8F%9C-mussels/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>虾 Shrimp</title>
+      <link>/tags/%E8%99%BE-shrimp/</link>
+      <pubDate>Tue, 12 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E8%99%BE-shrimp/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>蛤蜊 Clam</title>
+      <link>/tags/%E8%9B%A4%E8%9C%8A-clam/</link>
+      <pubDate>Tue, 12 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E8%9B%A4%E8%9C%8A-clam/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>鱿鱼 Squid</title>
+      <link>/tags/%E9%B1%BF%E9%B1%BC-squid/</link>
+      <pubDate>Tue, 12 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E9%B1%BF%E9%B1%BC-squid/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>plot</title>
+      <link>/tags/plot/</link>
+      <pubDate>Tue, 01 Dec 2020 21:13:14 -0500</pubDate>
+      
+      <guid>/tags/plot/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>R Markdown</title>
+      <link>/tags/r-markdown/</link>
+      <pubDate>Tue, 01 Dec 2020 21:13:14 -0500</pubDate>
+      
+      <guid>/tags/r-markdown/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>regression</title>
+      <link>/tags/regression/</link>
+      <pubDate>Tue, 01 Dec 2020 21:13:14 -0500</pubDate>
+      
+      <guid>/tags/regression/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>比利时菊苣 Belgian Endives</title>
+      <link>/tags/%E6%AF%94%E5%88%A9%E6%97%B6%E8%8F%8A%E8%8B%A3-belgian-endives/</link>
+      <pubDate>Thu, 22 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E6%AF%94%E5%88%A9%E6%97%B6%E8%8F%8A%E8%8B%A3-belgian-endives/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>空气炸锅 Air Fryer</title>
+      <link>/tags/%E7%A9%BA%E6%B0%94%E7%82%B8%E9%94%85-air-fryer/</link>
+      <pubDate>Thu, 22 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E7%A9%BA%E6%B0%94%E7%82%B8%E9%94%85-air-fryer/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>蘑菇 Mushroom</title>
+      <link>/tags/%E8%98%91%E8%8F%87-mushroom/</link>
+      <pubDate>Thu, 22 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E8%98%91%E8%8F%87-mushroom/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>水彩画 Watercolor</title>
+      <link>/tags/%E6%B0%B4%E5%BD%A9%E7%94%BB-watercolor/</link>
+      <pubDate>Fri, 16 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E6%B0%B4%E5%BD%A9%E7%94%BB-watercolor/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Generalized Linear Models</title>
+      <link>/tags/generalized-linear-models/</link>
+      <pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/generalized-linear-models/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Imbalanced Data</title>
+      <link>/tags/imbalanced-data/</link>
+      <pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/imbalanced-data/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Slides</title>
+      <link>/tags/slides/</link>
+      <pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/slides/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>西葫芦 Zucchini</title>
+      <link>/tags/%E8%A5%BF%E8%91%AB%E8%8A%A6-zucchini/</link>
+      <pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E8%A5%BF%E8%91%AB%E8%8A%A6-zucchini/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>鸡蛋 Egg</title>
+      <link>/tags/%E9%B8%A1%E8%9B%8B-egg/</link>
+      <pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E9%B8%A1%E8%9B%8B-egg/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Introduction</title>
+      <link>/tags/introduction/</link>
+      <pubDate>Mon, 28 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/introduction/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Multiple Testing</title>
+      <link>/tags/multiple-testing/</link>
+      <pubDate>Mon, 28 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/multiple-testing/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>红葱头 Shallots</title>
+      <link>/tags/%E7%BA%A2%E8%91%B1%E5%A4%B4-shallots/</link>
+      <pubDate>Sat, 19 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E7%BA%A2%E8%91%B1%E5%A4%B4-shallots/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Missing data</title>
+      <link>/tags/missing-data/</link>
+      <pubDate>Tue, 08 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/missing-data/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>日本菜 Japanese</title>
+      <link>/tags/%E6%97%A5%E6%9C%AC%E8%8F%9C-japanese/</link>
+      <pubDate>Wed, 12 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E6%97%A5%E6%9C%AC%E8%8F%9C-japanese/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>抹茶 Matcha</title>
+      <link>/tags/%E6%8A%B9%E8%8C%B6-matcha/</link>
+      <pubDate>Sun, 09 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E6%8A%B9%E8%8C%B6-matcha/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>毛豆 Edamame</title>
+      <link>/tags/%E6%AF%9B%E8%B1%86-edamame/</link>
+      <pubDate>Sun, 26 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E6%AF%9B%E8%B1%86-edamame/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>烤箱 Oven</title>
+      <link>/tags/%E7%83%A4%E7%AE%B1-oven/</link>
+      <pubDate>Sat, 25 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E7%83%A4%E7%AE%B1-oven/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>西兰花 Broccoli</title>
+      <link>/tags/%E8%A5%BF%E5%85%B0%E8%8A%B1-broccoli/</link>
+      <pubDate>Sat, 25 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E8%A5%BF%E5%85%B0%E8%8A%B1-broccoli/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>台湾菜 Taiwanness Cuisine</title>
+      <link>/tags/%E5%8F%B0%E6%B9%BE%E8%8F%9C-taiwanness-cuisine/</link>
+      <pubDate>Sun, 19 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E5%8F%B0%E6%B9%BE%E8%8F%9C-taiwanness-cuisine/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>川菜 Sichuan Cuisine</title>
+      <link>/tags/%E5%B7%9D%E8%8F%9C-sichuan-cuisine/</link>
+      <pubDate>Sun, 19 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E5%B7%9D%E8%8F%9C-sichuan-cuisine/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>茄子 Eggplant</title>
+      <link>/tags/%E8%8C%84%E5%AD%90-eggplant/</link>
+      <pubDate>Sun, 19 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E8%8C%84%E5%AD%90-eggplant/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Computation</title>
+      <link>/tags/computation/</link>
+      <pubDate>Sat, 13 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/computation/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Optimization</title>
+      <link>/tags/optimization/</link>
+      <pubDate>Sat, 13 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/optimization/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Survival Analysis</title>
+      <link>/tags/survival-analysis/</link>
+      <pubDate>Sat, 13 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/survival-analysis/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>坚果 Nuts</title>
+      <link>/tags/%E5%9D%9A%E6%9E%9C-nuts/</link>
+      <pubDate>Fri, 29 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E5%9D%9A%E6%9E%9C-nuts/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>杏仁 Almond</title>
+      <link>/tags/%E6%9D%8F%E4%BB%81-almond/</link>
+      <pubDate>Fri, 29 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E6%9D%8F%E4%BB%81-almond/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>腰果 Cashew</title>
+      <link>/tags/%E8%85%B0%E6%9E%9C-cashew/</link>
+      <pubDate>Fri, 29 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E8%85%B0%E6%9E%9C-cashew/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>饼干 Cookies</title>
+      <link>/tags/%E9%A5%BC%E5%B9%B2-cookies/</link>
+      <pubDate>Fri, 29 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E9%A5%BC%E5%B9%B2-cookies/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>味噌 Miso</title>
+      <link>/tags/%E5%91%B3%E5%99%8C-miso/</link>
+      <pubDate>Fri, 01 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E5%91%B3%E5%99%8C-miso/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>银鳕鱼 Chilean Sea Bass</title>
+      <link>/tags/%E9%93%B6%E9%B3%95%E9%B1%BC-chilean-sea-bass/</link>
+      <pubDate>Fri, 01 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E9%93%B6%E9%B3%95%E9%B1%BC-chilean-sea-bass/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>中式 Chinese</title>
+      <link>/tags/%E4%B8%AD%E5%BC%8F-chinese/</link>
+      <pubDate>Sat, 18 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E4%B8%AD%E5%BC%8F-chinese/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>五花肉 Pork Belly</title>
+      <link>/tags/%E4%BA%94%E8%8A%B1%E8%82%89-pork-belly/</link>
+      <pubDate>Sat, 18 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E4%BA%94%E8%8A%B1%E8%82%89-pork-belly/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>酱料 Sauce</title>
+      <link>/tags/%E9%85%B1%E6%96%99-sauce/</link>
+      <pubDate>Sat, 28 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E9%85%B1%E6%96%99-sauce/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Time Series</title>
+      <link>/tags/time-series/</link>
+      <pubDate>Sat, 21 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/time-series/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>油封 Confit</title>
+      <link>/tags/%E6%B2%B9%E5%B0%81-confit/</link>
+      <pubDate>Sat, 08 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E6%B2%B9%E5%B0%81-confit/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>法国菜 French</title>
+      <link>/tags/%E6%B3%95%E5%9B%BD%E8%8F%9C-french/</link>
+      <pubDate>Sat, 08 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E6%B3%95%E5%9B%BD%E8%8F%9C-french/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>鸭子 Duck</title>
+      <link>/tags/%E9%B8%AD%E5%AD%90-duck/</link>
+      <pubDate>Sat, 08 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E9%B8%AD%E5%AD%90-duck/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>快速面包 Quick bread</title>
+      <link>/tags/%E5%BF%AB%E9%80%9F%E9%9D%A2%E5%8C%85-quick-bread/</link>
+      <pubDate>Fri, 17 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E5%BF%AB%E9%80%9F%E9%9D%A2%E5%8C%85-quick-bread/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>香蕉 Banana</title>
+      <link>/tags/%E9%A6%99%E8%95%89-banana/</link>
+      <pubDate>Fri, 17 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E9%A6%99%E8%95%89-banana/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>牛排 Steak</title>
+      <link>/tags/%E7%89%9B%E6%8E%92-steak/</link>
+      <pubDate>Sat, 02 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E7%89%9B%E6%8E%92-steak/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>炖菜 Braised Dish</title>
+      <link>/tags/%E7%82%96%E8%8F%9C-braised-dish/</link>
+      <pubDate>Fri, 20 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E7%82%96%E8%8F%9C-braised-dish/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>蟹 Crab</title>
+      <link>/tags/%E8%9F%B9-crab/</link>
+      <pubDate>Sun, 08 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E8%9F%B9-crab/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>上海菜 Shanghainess</title>
+      <link>/tags/%E4%B8%8A%E6%B5%B7%E8%8F%9C-shanghainess/</link>
+      <pubDate>Mon, 07 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E4%B8%8A%E6%B5%B7%E8%8F%9C-shanghainess/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>菠菜 Spinach</title>
+      <link>/tags/%E8%8F%A0%E8%8F%9C-spinach/</link>
+      <pubDate>Mon, 07 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E8%8F%A0%E8%8F%9C-spinach/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>快手菜 Quick dish</title>
+      <link>/tags/%E5%BF%AB%E6%89%8B%E8%8F%9C-quick-dish/</link>
+      <pubDate>Sun, 30 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E5%BF%AB%E6%89%8B%E8%8F%9C-quick-dish/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>美洲鲫鱼 Tilapia</title>
+      <link>/tags/%E7%BE%8E%E6%B4%B2%E9%B2%AB%E9%B1%BC-tilapia/</link>
+      <pubDate>Sun, 30 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E7%BE%8E%E6%B4%B2%E9%B2%AB%E9%B1%BC-tilapia/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>山核桃 Pecans</title>
+      <link>/tags/%E5%B1%B1%E6%A0%B8%E6%A1%83-pecans/</link>
+      <pubDate>Thu, 27 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E5%B1%B1%E6%A0%B8%E6%A1%83-pecans/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>综合海鲜 Mixed Seafood</title>
+      <link>/tags/%E7%BB%BC%E5%90%88%E6%B5%B7%E9%B2%9C-mixed-seafood/</link>
+      <pubDate>Tue, 18 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E7%BB%BC%E5%90%88%E6%B5%B7%E9%B2%9C-mixed-seafood/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>鸡翅 Chicken Wings</title>
+      <link>/tags/%E9%B8%A1%E7%BF%85-chicken-wings/</link>
+      <pubDate>Mon, 26 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E9%B8%A1%E7%BF%85-chicken-wings/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>肉糜 Ground Pork</title>
+      <link>/tags/%E8%82%89%E7%B3%9C-ground-pork/</link>
+      <pubDate>Sun, 04 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E8%82%89%E7%B3%9C-ground-pork/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>无麦麸 Gluten-Free</title>
+      <link>/tags/%E6%97%A0%E9%BA%A6%E9%BA%B8-gluten-free/</link>
+      <pubDate>Sat, 03 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E6%97%A0%E9%BA%A6%E9%BA%B8-gluten-free/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>凤爪 Chicken Feet</title>
+      <link>/tags/%E5%87%A4%E7%88%AA-chicken-feet/</link>
+      <pubDate>Sun, 07 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E5%87%A4%E7%88%AA-chicken-feet/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>猪蹄 Pork Feet</title>
+      <link>/tags/%E7%8C%AA%E8%B9%84-pork-feet/</link>
+      <pubDate>Sun, 07 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E7%8C%AA%E8%B9%84-pork-feet/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>月饼 Mooncake</title>
+      <link>/tags/%E6%9C%88%E9%A5%BC-mooncake/</link>
+      <pubDate>Sun, 30 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E6%9C%88%E9%A5%BC-mooncake/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>山药 Japanese Yam</title>
+      <link>/tags/%E5%B1%B1%E8%8D%AF-japanese-yam/</link>
+      <pubDate>Tue, 25 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E5%B1%B1%E8%8D%AF-japanese-yam/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>扇贝 Scallop</title>
+      <link>/tags/%E6%89%87%E8%B4%9D-scallop/</link>
+      <pubDate>Sun, 20 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E6%89%87%E8%B4%9D-scallop/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>大比目鱼 Halibut</title>
+      <link>/tags/%E5%A4%A7%E6%AF%94%E7%9B%AE%E9%B1%BC-halibut/</link>
+      <pubDate>Sun, 13 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E5%A4%A7%E6%AF%94%E7%9B%AE%E9%B1%BC-halibut/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>凉菜 Appetizer</title>
+      <link>/tags/%E5%87%89%E8%8F%9C-appetizer/</link>
+      <pubDate>Sun, 29 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E5%87%89%E8%8F%9C-appetizer/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Bayesian statistics</title>
+      <link>/tags/bayesian-statistics/</link>
+      <pubDate>Tue, 03 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/bayesian-statistics/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>咖啡 Coffee</title>
+      <link>/tags/%E5%92%96%E5%95%A1-coffee/</link>
+      <pubDate>Sun, 01 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E5%92%96%E5%95%A1-coffee/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>饭 Rice</title>
+      <link>/tags/%E9%A5%AD-rice/</link>
+      <pubDate>Sun, 11 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E9%A5%AD-rice/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>炒牛肉 Beef Flank</title>
+      <link>/tags/%E7%82%92%E7%89%9B%E8%82%89-beef-flank/</link>
+      <pubDate>Sun, 11 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E7%82%92%E7%89%9B%E8%82%89-beef-flank/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>低温烹调 Sous Vide</title>
+      <link>/tags/%E4%BD%8E%E6%B8%A9%E7%83%B9%E8%B0%83-sous-vide/</link>
+      <pubDate>Sun, 28 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E4%BD%8E%E6%B8%A9%E7%83%B9%E8%B0%83-sous-vide/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>三文鱼 Salmon</title>
+      <link>/tags/%E4%B8%89%E6%96%87%E9%B1%BC-salmon/</link>
+      <pubDate>Sun, 07 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E4%B8%89%E6%96%87%E9%B1%BC-salmon/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

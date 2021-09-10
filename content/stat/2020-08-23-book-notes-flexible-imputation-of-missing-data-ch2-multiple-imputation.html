@@ -1,0 +1,295 @@
+---
+title: 'Book Notes: Flexible Imputation of Missing Data -- Ch2 Multiple Imputation'
+author: ''
+date: '2020-08-23'
+slug: book-notes-flexible-imputation-of-missing-data-ch2-multiple-imputation
+categories:
+  - Book notes
+tags:
+  - Missing data
+  - Introduction
+  - Slides
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 2
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#concepts-in-incomplete-data">Concepts in Incomplete Data</a></li>
+<li><a href="#why-and-when-multiple-imputation-works">Why and When Multiple Imputation Works</a></li>
+<li><a href="#more-about-imputation-methods">More about Imputation Methods</a></li>
+</ul>
+</div>
+
+<p><strong><em>For the pdf slides, click <a href="/pdf/081120_imputation_book_ch2.pdf">here</a></em></strong></p>
+<div id="concepts-in-incomplete-data" class="section level1">
+<h1>Concepts in Incomplete Data</h1>
+<div id="notations" class="section level3">
+<h3>Notations</h3>
+<ul>
+<li><span class="math inline">\(m\)</span>: number of multiple imputations</li>
+<li><span class="math inline">\(Y\)</span>: data of the sample
+<ul>
+<li>Includes both covariates and response</li>
+<li>Dimension <span class="math inline">\(n \times p\)</span></li>
+</ul></li>
+<li><span class="math inline">\(R\)</span>: observation indicator matrix, known
+<ul>
+<li>A <span class="math inline">\(n \times p\)</span> 0-1 matrix</li>
+<li><span class="math inline">\(r_{ij} =0\)</span> for missing and 1 for observed</li>
+</ul></li>
+<li><span class="math inline">\(Y_{\text{obs}}\)</span>: observed data</li>
+<li><span class="math inline">\(Y_{\text{mis}}\)</span>: missing data</li>
+<li><p><span class="math inline">\(Y = (Y_{\text{obs}}, Y_{\text{mis}})\)</span>: complete data</p></li>
+<li><span class="math inline">\(\psi\)</span>: the parameter for the missing mechanism</li>
+<li><p><span class="math inline">\(\theta\)</span>: the parameter for the full data <span class="math inline">\(Y\)</span></p></li>
+</ul>
+</div>
+<div id="concepts-of-mcar-mar-and-mnar-with-notations" class="section level3">
+<h3>Concepts of MCAR, MAR, and MNAR, with notations</h3>
+<ul>
+<li><p><font color='blue'>Missing completely at random (MCAR)</font>
+<span class="math display">\[
+P(R = 0 \mid Y_{\text{obs}}, Y_{\text{mis}}, \psi) = P(R = 0\mid \psi)
+\]</span></p></li>
+<li><p><font color='blue'>Missing at random (MAR)</font>
+<span class="math display">\[
+P(R = 0 \mid Y_{\text{obs}}, Y_{\text{mis}}, \psi) = P(R = 0\mid Y_{\text{obs}}, \psi)
+\]</span></p></li>
+<li><p><font color='blue'>Missing not at random (MNAR)</font>
+<span class="math display">\[
+P(R = 0 \mid Y_{\text{obs}}, Y_{\text{mis}}, \psi) \text{ does not simplify}
+\]</span></p></li>
+</ul>
+</div>
+<div id="ignorable" class="section level3">
+<h3><font color='blue'>Ignorable</font></h3>
+<ul>
+<li><p>The missing data mechanism is <font color='blue'>ignorable</font> for likelihood inference (on <span class="math inline">\(\theta\)</span>), if</p>
+<ol style="list-style-type: decimal">
+<li>MAR, and</li>
+<li>Distinctness: the parameters <span class="math inline">\(\theta\)</span> and <span class="math inline">\(\psi\)</span> are independent (from a Bayesian’s view)</li>
+</ol></li>
+<li><p>If the nonresponse if ignorable, then
+<span class="math display">\[
+P(Y_{\text{mis}} \mid Y_{\text{obs}}, R) = P(Y_{\text{mis}} \mid Y_{\text{obs}})
+\]</span>
+Thus, if the missing data model is ignorable, we can model <span class="math inline">\(\theta\)</span> just using the observed data</p></li>
+</ul>
+</div>
+</div>
+<div id="why-and-when-multiple-imputation-works" class="section level1">
+<h1>Why and When Multiple Imputation Works</h1>
+<div id="goal-of-multiple-imputation" class="section level3">
+<h3>Goal of multiple imputation</h3>
+<ul>
+<li><p><font color='red'>Note: for most multiple imputation practice, this goal is to train a (predictive) model with as small variances of the parameters as possible</font></p></li>
+<li><span class="math inline">\(Q\)</span>: estimand (the parameter to be estimated)</li>
+<li><span class="math inline">\(\hat{Q}\)</span>: estimate
+<ul>
+<li><font color='green'>Unbias</font>
+<span class="math display">\[
+  E(\hat{Q} \mid Y) = Q
+  \]</span></li>
+<li><font color='green'>Confidence valid</font>:
+<span class="math display">\[
+  E(U \mid Y) \geq V(\hat{Q}\mid Y)
+  \]</span>
+where <span class="math inline">\(U\)</span> is the estimated covariance matrix of <span class="math inline">\(\hat{Q}\)</span>, the expectation is over all possible samples,
+and <span class="math inline">\(V(\hat{Q}\mid Y)\)</span> is the variance caused by the sampling process</li>
+</ul></li>
+</ul>
+</div>
+<div id="within-variance-and-between-variance" class="section level3">
+<h3>Within-variance and between-variance</h3>
+<p><span class="math display">\[\begin{align*}
+E(Q \mid Y_{\text{obs}}) &amp;= E_{Y_{\text{mis}} \mid Y_{\text{obs}}}\{
+  E(Q \mid Y_{\text{obs}}, Y_{\text{mis}})\}\\
+V(Q \mid Y_{\text{obs}}) &amp;= \underbrace{E_{Y_{\text{mis}} \mid Y_{\text{obs}}}\{
+  V(Q \mid Y_{\text{obs}}, Y_{\text{mis}})\}}_{\text{within-variance}} +
+  \underbrace{V_{Y_{\text{mis}} \mid Y_{\text{obs}}}\{
+  E(Q \mid Y_{\text{obs}}, Y_{\text{mis}})\}}_{\text{between variance}}
+\end{align*}\]</span></p>
+<ul>
+<li><p>Within-variance: average of the repeated complete-data posterior variance of <span class="math inline">\(Q\)</span>, estimated by
+<span class="math display">\[
+\bar{U} = \frac{1}{m} \sum_{l=1}^m \bar{U}_l,
+\]</span>
+where <span class="math inline">\(\bar{U}_l\)</span> is the variance of <span class="math inline">\(\hat{Q}_l\)</span> in the <span class="math inline">\(l\)</span>th imputation</p></li>
+<li><p>Between-variance: variance between the complete-data posterior means of <span class="math inline">\(Q\)</span>, estimated by
+<span class="math display">\[
+B = \frac{1}{m-1}\sum_{l=1}^m\left(\hat{Q}_l - \bar{Q}\right)\left(\hat{Q}_l - \bar{Q}\right)&#39;, \quad \bar{Q} = \frac{1}{m} \sum_{l=1}^m \hat{Q}_l
+\]</span></p></li>
+</ul>
+</div>
+<div id="decomposition-of-total-variation" class="section level3">
+<h3>Decomposition of total variation</h3>
+<ul>
+<li><p>Since <span class="math inline">\(\bar{Q}\)</span> is estimated using finite <span class="math inline">\(m\)</span>, the contribution to the variance is about <span class="math inline">\(B/m\)</span>. Thus, <font color='red'>the total posterior variance of <span class="math inline">\(Q\)</span> can be decomposed into three parts:</font>
+<span class="math display">\[
+T = \bar{U} + B + B/m = \bar{U} + \left(1 + \frac{1}{m}\right) B 
+\]</span></p></li>
+<li><p><span class="math inline">\(\bar{U}\)</span>: the conventional variance, due to sampling rather than getting the entire population.</p></li>
+<li><p><span class="math inline">\(B\)</span>: the extra variance due to missing values</p></li>
+<li><p><span class="math inline">\(B/m\)</span>: the extra simulation variance because <span class="math inline">\(\bar{Q}\)</span> is estimated for finite <span class="math inline">\(m\)</span></p>
+<ul>
+<li>Traditionally choices are <span class="math inline">\(m = 3, 5, 10\)</span>, but the current advice is to use a larger <span class="math inline">\(m\)</span>, e.g., <span class="math inline">\(m = 50\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="properness-of-an-imputation-procedure" class="section level3">
+<h3>Properness of an imputation procedure</h3>
+<ul>
+<li><p>An imputation procedure is <font color='blue'>confidence proper</font> for complete-data statistics
+<span class="math inline">\(\hat{Q}, U\)</span>, if it satisfies the following three conditions approximately at large <span class="math inline">\(m\)</span>
+<span class="math display">\[\begin{align*}
+E\left(\bar{Q} \mid Y\right) &amp; = \hat{Q}\\
+E\left(\bar{U} \mid Y\right) &amp; = U\\
+\left(1 + \frac{1}{m}\right) E(B \mid Y) &amp; \geq V(\bar{Q})
+\end{align*}\]</span></p>
+<ul>
+<li>Here <span class="math inline">\(\hat{Q}\)</span> is the complete-sample estimator of <span class="math inline">\(Q\)</span>, and <span class="math inline">\(U\)</span> is its covariance</li>
+<li>If we replace the <span class="math inline">\(\geq\)</span> by <span class="math inline">\(&gt;\)</span> in the third formula,
+then the procedure is said to be <font color='blue'>proper</font></li>
+<li>It is not always easy to check whether a procedure is proper.</li>
+</ul></li>
+</ul>
+</div>
+<div id="scope-of-the-imputation-model" class="section level3">
+<h3>Scope of the imputation model</h3>
+<ul>
+<li><p><font color='green'>Broad</font>: one set of imputations to be used for all projects and analyses</p></li>
+<li><p><font color='green'>Intermediate</font>: one set of imputations per project and use this for all analyses</p></li>
+<li><p><font color='green'>Narrow</font>: a separate imputed dataset is created for each analysis</p></li>
+<li><p>Which one is better: depends on the use case</p></li>
+</ul>
+</div>
+<div id="variance-ratios" class="section level3">
+<h3>Variance ratios</h3>
+<ul>
+<li>Proportion of variation attributable to the missing data
+<span class="math display">\[
+\lambda = \frac{B + B/m}{T}
+\]</span>
+<ul>
+<li>If <span class="math inline">\(\lambda &gt; 0.5\)</span>, then the influence of the imputation model on the final result is larger than that of the complete-data model</li>
+</ul></li>
+<li><p><font color='blue'>Relative increase in variance due to nonresponse</font>
+<span class="math display">\[
+r = \frac{B + B/m}{\bar{U}} = \frac{\lambda}{1-\lambda}
+\]</span></p></li>
+<li><font color='blue'>Fraction of information about <span class="math inline">\(Q\)</span> missing due to nonresponse</font>
+<span class="math display">\[
+\gamma = \frac{r + 2/(\nu + 3)}{1 + r} = \frac{\nu + 1}{\nu + 3}\lambda + \frac{2}{\nu + 3}
+\]</span>
+<ul>
+<li>Here, <span class="math inline">\(\nu\)</span> is the degrees of freedom (see next)</li>
+<li>When <span class="math inline">\(\nu\)</span> is large, <span class="math inline">\(\gamma\)</span> is very close to <span class="math inline">\(\lambda\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="degrees-of-freedom-df" class="section level3">
+<h3>Degrees of freedom (df)</h3>
+<ul>
+<li><p>The degrees of freedom is the number of observations after accounting for the number of parameters in the model.</p></li>
+<li><p>The “old” formula (as in Rubin 1987): may produce values larger than the sample size in the complete data
+<span class="math display">\[
+\nu_{\text{old}} = (m-1) \left(1 + \frac{1}{r^2}\right) = \frac{m-1}{\lambda^2}
+\]</span></p></li>
+<li><p>Let <span class="math inline">\(\nu_\text{com}\)</span> be the conventional df in a complete-data inference problem. If the number of parameters in the model is <span class="math inline">\(k\)</span> and the sample size is <span class="math inline">\(n\)</span>, then <span class="math inline">\(\nu_\text{com} = n-k\)</span>. The estimated observed data df that accounts for the missing information is
+<span class="math display">\[
+\nu_{\text{obs}} = \frac{\nu_\text{com} + 1}{\nu_\text{com} + 3} \nu_\text{com} (1-\lambda)
+\]</span></p></li>
+<li><p>Barnard-Rubin correction: the adjusted df to be used for testing in multiple imputation is
+<span class="math display">\[
+\nu = \frac{\nu_{\text{old}} \nu_{\text{obs}}}{\nu_{\text{old}} + \nu_{\text{obs}}}
+\]</span></p></li>
+</ul>
+</div>
+<div id="a-numerical-example" class="section level3">
+<h3>A numerical example</h3>
+<pre class="r"><code>## Load the mice package
+library(mice); 
+imp &lt;- mice(nhanes, print = FALSE, m = 10, seed = 24415)
+fit &lt;- with(imp, lm(bmi ~ age))
+est &lt;- pool(fit); print(est, digits = 2)</code></pre>
+<pre><code>## Class: mipo    m = 10 
+##          term  m estimate ubar    b   t dfcom   df  riv lambda  fmi
+## 1 (Intercept) 10     30.8  3.4 2.52 6.2    23  9.2 0.82   0.45 0.54
+## 2         age 10     -2.3  0.9 0.39 1.3    23 12.3 0.48   0.32 0.41</code></pre>
+<ul>
+<li>Columns <code>ubar</code>, <code>b</code>, and <code>t</code> are the variances</li>
+<li>Column <code>dfcom</code> is <span class="math inline">\(\nu_\text{com}\)</span></li>
+<li>Column <code>df</code> is the Barnard-Rubin correction <span class="math inline">\(\nu\)</span></li>
+</ul>
+</div>
+<div id="t-test-for-regression-coefficients" class="section level3">
+<h3>T-test for regression coefficients</h3>
+<ul>
+<li>Use the Barnard-Rubin correction of <span class="math inline">\(\nu\)</span> as the shape parameter of t-distribution.</li>
+</ul>
+<pre class="r"><code>print(summary(est, conf.int = TRUE), digits = 1)</code></pre>
+<pre><code>##          term estimate std.error statistic df p.value 2.5 % 97.5 %
+## 1 (Intercept)       31         2        12  9   5e-07    25   36.4
+## 2         age       -2         1        -2 12   7e-02    -5    0.2</code></pre>
+</div>
+</div>
+<div id="more-about-imputation-methods" class="section level1">
+<h1>More about Imputation Methods</h1>
+<div id="imputation-evaluation-criteria" class="section level3">
+<h3>Imputation evaluation criteria</h3>
+<ul>
+<li>The following criteria are useful in simulation studies (when you know the true <span class="math inline">\(Q\)</span>)</li>
+</ul>
+<ol style="list-style-type: decimal">
+<li><p>Raw bias (RB): upper limit <span class="math inline">\(5\%\)</span>
+<span class="math display">\[
+\text{RB} = \left|\frac{E\left(\bar{Q}\right) - Q}{Q}\right|
+\]</span></p></li>
+<li><p>Coverage rate (CR): A CR below <span class="math inline">\(90\%\)</span> for the nominal <span class="math inline">\(95\%\)</span> interval is bad</p></li>
+<li><p>Average width (AW) of confidence interval</p></li>
+<li><p>Root mean squared error (RMSE): the smaller the better
+<span class="math display">\[
+\text{RMSE} = \sqrt{\left(E\left(\bar{Q}\right) - Q\right)^2}
+\]</span></p></li>
+</ol>
+</div>
+<div id="imputation-is-not-prediction" class="section level3">
+<h3>Imputation is not prediction</h3>
+<ul>
+<li>Shall we evaluate an imputation method by examine how it can closely recover the missing values?
+<ul>
+<li>For example, using the RMSE to see if the imputed values <span class="math inline">\(\dot{y}_i\)</span> are close to the true (removed)
+missing data <span class="math inline">\(y_i^{\text{mis}}\)</span>?
+<span class="math display">\[
+  \text{RMSE} = \sqrt{\frac{1}{n_{\text{mis}}}\sum_{i=1}^{n_{\text{mis}}}\left(y_i^{\text{mis}} - \dot{y}_i \right)^2}
+  \]</span></li>
+</ul></li>
+<li><font color='red'>NO! This will favor least squares estimates, and it will find the same values over and over; and thus it is single imputation. This ignores the inherent uncertainty of the missing values.</font></li>
+</ul>
+</div>
+<div id="when-not-to-use-multiple-imputation" class="section level3">
+<h3>When not to use multiple imputation</h3>
+<ul>
+<li><p>For predictive modeling, if the missing values are in the target variable <span class="math inline">\(Y\)</span>, then complete-case analysis and multiple imputation are equivalent.</p></li>
+<li><p>Two special cases where listwise deletion is better than multiple imputation</p></li>
+</ul>
+<ol style="list-style-type: decimal">
+<li><p>If the probability to be missing does not depend on <span class="math inline">\(Y\)</span></p></li>
+<li><p>If the complete data model is logistic regression, and the missing data are confined to <span class="math inline">\(Y\)</span>, not <span class="math inline">\(X\)</span></p></li>
+</ol>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li><p>Van Buuren, S. (2018). Flexible Imputation of Missing Data, 2nd Edition. CRC press.</p>
+<ul>
+<li><a href="https://stefvanbuuren.name/fimd/" class="uri">https://stefvanbuuren.name/fimd/</a></li>
+</ul></li>
+<li><p>Rubin, D. (1987). Multiple Imputation for Nonresponse in Surveys. New York: John Wiley &amp; Sons.</p></li>
+</ul>
+</div>
+</div>

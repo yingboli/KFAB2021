@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Optimization on A Hugo website</title>
+    <link>/tags/optimization/</link>
+    <description>Recent content in Optimization on A Hugo website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 13 Jun 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/optimization/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Book Notes: Pattern Recognition and Machine Learning -- Ch9 Mixture Models and EM Algorithm</title>
+      <link>/stat/book-notes-pattern-recognition-and-machine-learning-ch9-mixture-models-and-em-algorithm/</link>
+      <pubDate>Sat, 13 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/stat/book-notes-pattern-recognition-and-machine-learning-ch9-mixture-models-and-em-algorithm/</guid>
+      <description>K-means Clustering vs Mixtures of Gaussians K-means clustering Mixture of Gaussians  EM Algorithm The general EM algorithm A different view of the EM algorithm, related to variational inference    For the pdf slides, click here
+K-means Clustering vs Mixtures of Gaussians K-means clustering K-means clustering: problem  Data
+ \(D\)-dimensional observations: \(\mathbf{x}_1, \ldots, \mathbf{x}_N\)  Parameters
+ \(K\) clusters’ means: \(\boldsymbol\mu_1, \ldots, \boldsymbol\mu_K\) Binary indicator \(r_{nk} \in \{0, 1\}\): if object \(n\) is in class \(k\)  Goal: find values for \(\{\boldsymbol\mu_k\}\) and \(\{r_{nk}\}\) to minimize the objective function (called a distortion measure) \[ J = \sum_{n=1}^N \sum_{k = 1}^K r_{nk} \|\mathbf{x}_n - \boldsymbol\mu_k \|^2 \]</description>
+    </item>
+    
+  </channel>
+</rss>

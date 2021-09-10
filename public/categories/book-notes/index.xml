@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Book notes on A Hugo website</title>
+    <link>/categories/book-notes/</link>
+    <description>Recent content in Book notes on A Hugo website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 28 Sep 2020 00:00:00 +0000</lastBuildDate><atom:link href="/categories/book-notes/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Book Notes: Computer Age Statistical Inference -- Ch15 Multiple Testing</title>
+      <link>/stat/book-notes-computer-age-statistical-inference-ch-15-multiple-testing/</link>
+      <pubDate>Mon, 28 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/stat/book-notes-computer-age-statistical-inference-ch-15-multiple-testing/</guid>
+      <description>Classical (Before Computer Age) Multiple Testing Corrections Bonferroni Correction Family-wise Error Rate  False Discovery Rates Benjamini-Hochberg FDR control An empirical Bayes view  Local False Discovery Rates Empirical Null   For the pdf slides, click here
+Classical (Before Computer Age) Multiple Testing Corrections Background and notations  Before computer age, multiple testing may only involve 10 or 20 tests. With the emerge of biomedical (microarray) data, multiple testing may need to evaluate several thousands of tests</description>
+    </item>
+    
+    <item>
+      <title>Book Notes: Statistical Analysis with Missing Data -- Ch3 Complete Case Analysis and Weighting Methods</title>
+      <link>/stat/book-notes-statistical-analysis-with-missing-data-ch3-complete-case-analysis-and-weighting-methods/</link>
+      <pubDate>Tue, 08 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/stat/book-notes-statistical-analysis-with-missing-data-ch3-complete-case-analysis-and-weighting-methods/</guid>
+      <description>Weighted Complete-Case Analysis Available-Case Analysis   For the pdf slides, click here
+Complete-case (CC) analysis  Complete-case (CC) analysis: use only data points (units) where all variables are observed
+ Loss of information in CC analysis:
+ Loss of precision (larger variance) Bias, when the missingness mechanism is not MCAR. In this case, the complete units are not a random sample of the population  In this notes, I will focus on the bias issue</description>
+    </item>
+    
+    <item>
+      <title>Book Notes: Flexible Imputation of Missing Data -- Ch4 Multivariate Missing Data</title>
+      <link>/stat/book-notes-flexible-imputation-of-missing-data-ch4-multivariate-missing-data/</link>
+      <pubDate>Tue, 25 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/stat/book-notes-flexible-imputation-of-missing-data-ch4-multivariate-missing-data/</guid>
+      <description>Missing Data Pattern Fully Conditional Specification (FCS)   For the pdf slides, click here
+Notations in this chapter  \(Y\): a \(n \times p\) matrix which contains is missing data \(Y_j\): the \(j\)th column in \(Y\) \(Y_{-j}\): all but the \(j\)th column of \(Y\) \(R\): a \(n \times p\) missing indicator matrix  \(0\) is missing and \(1\) is observed    Missing Data Pattern Missing data pattern summary statistics  When the number of columns is small, we can use the md.</description>
+    </item>
+    
+    <item>
+      <title>Book Notes: Flexible Imputation of Missing Data -- Ch3 Univariate Missing Data</title>
+      <link>/stat/book-notes-flexible-imputation-of-missing-data-ch3-univariate-missing-data/</link>
+      <pubDate>Mon, 24 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/stat/book-notes-flexible-imputation-of-missing-data-ch3-univariate-missing-data/</guid>
+      <description>Imputation under the Normal Linear Model Predictive Mean Matching Imputation under CART Imputing Categorical and Other Types of Data   For the pdf slides, click here
+Notations  In this chapter, we assume that there is only one variable having missing values. We call this variable \(y\) the target variable.
+ \(y_\text{obs}\): the \(n_1\) observed data in \(y\) \(y_\text{mis}\): the \(n_0\) missing data in \(y\) \(\dot{y}\): imputed values in \(y\)  Suppose \(X\) are the variables (covariates) in the imputation model.</description>
+    </item>
+    
+    <item>
+      <title>Book Notes: Flexible Imputation of Missing Data -- Ch2 Multiple Imputation</title>
+      <link>/stat/book-notes-flexible-imputation-of-missing-data-ch2-multiple-imputation/</link>
+      <pubDate>Sun, 23 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/stat/book-notes-flexible-imputation-of-missing-data-ch2-multiple-imputation/</guid>
+      <description>Concepts in Incomplete Data Why and When Multiple Imputation Works More about Imputation Methods   For the pdf slides, click here
+Concepts in Incomplete Data Notations  \(m\): number of multiple imputations \(Y\): data of the sample  Includes both covariates and response Dimension \(n \times p\)  \(R\): observation indicator matrix, known  A \(n \times p\) 0-1 matrix \(r_{ij} =0\) for missing and 1 for observed  \(Y_{\text{obs}}\): observed data \(Y_{\text{mis}}\): missing data \(Y = (Y_{\text{obs}}, Y_{\text{mis}})\): complete data</description>
+    </item>
+    
+    <item>
+      <title>Book Notes: Flexible Imputation of Missing Data -- Ch1 Introduction</title>
+      <link>/stat/book-notes-flexible-imputation-of-missing-data-ch1-introduction/</link>
+      <pubDate>Sat, 22 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/stat/book-notes-flexible-imputation-of-missing-data-ch1-introduction/</guid>
+      <description>Concepts of MCAR, MAR, MNAR Ad-hoc Solutions Multiple Imputation in a Nutshell   For the pdf slides, click here
+Concepts of MCAR, MAR, MNAR Concepts of MCAR, MAR, MNAR  Missing completely at random (MCAR): the probability of being missing is the same for all cases  Cause of missing is unrelated to the data  Missing at random (MAR): the probability of being missing only depends on the observed data  Cause of missing is unrelated to the missing values  Missing not at random (MNAR): probability of being missing depends on the missing values themselves    Ad-hoc Solutions Listwise deletion and pairwise deletion  Listwise deletion (also called complete-case analysis): delete rows which contain one or more missing values  If data is MCAR, listwise deletion produces unbiased estimates of means, variances, and regression weights (if need to train a predictive model) If data is not MCAR, listwise deletion can severely bias the above estimates.</description>
+    </item>
+    
+    <item>
+      <title>Book Notes: Computer Age Statistical Inference -- Ch9 Survival Analysis</title>
+      <link>/stat/book-notes-computer-age-statistical-inference-ch-9-survival-analysis/</link>
+      <pubDate>Sat, 13 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/stat/book-notes-computer-age-statistical-inference-ch-9-survival-analysis/</guid>
+      <description>Survival Analysis Life Table and Kaplan-Meier Estimate Cox’s Proportional Hazards Model    For the pdf slides, click here
+Survival Analysis Life Table and Kaplan-Meier Estimate Life table  An insurance company’s life table shows information of clients by their age. For each age \(i\), it contains
+ \(n_i\): number of clients \(y_i\): number of death \(\hat{h}_i = y_i / n_i\): hazard rate \(\hat{S}_i\): survival probability estimate  An example life table</description>
+    </item>
+    
+    <item>
+      <title>Book Notes: Pattern Recognition and Machine Learning -- Ch9 Mixture Models and EM Algorithm</title>
+      <link>/stat/book-notes-pattern-recognition-and-machine-learning-ch9-mixture-models-and-em-algorithm/</link>
+      <pubDate>Sat, 13 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/stat/book-notes-pattern-recognition-and-machine-learning-ch9-mixture-models-and-em-algorithm/</guid>
+      <description>K-means Clustering vs Mixtures of Gaussians K-means clustering Mixture of Gaussians  EM Algorithm The general EM algorithm A different view of the EM algorithm, related to variational inference    For the pdf slides, click here
+K-means Clustering vs Mixtures of Gaussians K-means clustering K-means clustering: problem  Data
+ \(D\)-dimensional observations: \(\mathbf{x}_1, \ldots, \mathbf{x}_N\)  Parameters
+ \(K\) clusters’ means: \(\boldsymbol\mu_1, \ldots, \boldsymbol\mu_K\) Binary indicator \(r_{nk} \in \{0, 1\}\): if object \(n\) is in class \(k\)  Goal: find values for \(\{\boldsymbol\mu_k\}\) and \(\{r_{nk}\}\) to minimize the objective function (called a distortion measure) \[ J = \sum_{n=1}^N \sum_{k = 1}^K r_{nk} \|\mathbf{x}_n - \boldsymbol\mu_k \|^2 \]</description>
+    </item>
+    
+    <item>
+      <title>Book Notes: Intro to Time Series and Forecasting -- Ch6 ARIMA Models</title>
+      <link>/stat/book-notes-intro-to-time-series-and-forecasting-ch6-arima-models/</link>
+      <pubDate>Sat, 21 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/stat/book-notes-intro-to-time-series-and-forecasting-ch6-arima-models/</guid>
+      <description>ARIMA Models Transformation and Identification Techniques Unit Root Test Forecast ARIMA models  Seasonal ARIMA Models Regression with ARMA Errors   For the pdf slides, click here
+When data is not stationary  Implication of not stationary: sample ACF or sample PACF do not rapidly decrease to zero as lag increases
+ What shall we do?  Differencing, then fit an ARMA \(\rightarrow\) ARIMA Transformation, then fit an ARMA Seasonal model \(\rightarrow\) SARIMA    A non-stationary exmaple: Dow Jones utilities index data library(itsmr); ## Load the ITSM-R package par(mfrow = c(1, 3)); plot.</description>
+    </item>
+    
+    <item>
+      <title>Book Notes: Intro to Time Series and Forecasting -- Ch5 ARMA Models Estimation and Forecasting</title>
+      <link>/stat/book-notes-intro-to-time-series-and-forecasting-ch5-modeling-and-forecasting-with-arma-processes/</link>
+      <pubDate>Fri, 20 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/stat/book-notes-intro-to-time-series-and-forecasting-ch5-modeling-and-forecasting-with-arma-processes/</guid>
+      <description>Yule-Walker Estimation Maximum Likelihood Estimation Order Selection Diagnostic Checking   For the pdf slides, click here
+Parameter estimation for ARMA\((p, q)\)  When the orders \(p, q\) are known, estimate the parameters \[ \boldsymbol\phi = (\phi_1, \ldots, \phi_p), \quad \boldsymbol\theta = (\theta_1, \ldots, \theta_q), \quad \sigma^2 \]  There are \(p+q+1\) parameters in total  Preliminary estimations  Yule-Walker and Burg’s algorithm: good for AR\((p)\) Innovation algorithm: good for MA\((q)\) Hannan-Rissanen algorithm: good for ARMA\((p, q)\)  More efficient estimation: MLE</description>
+    </item>
+    
+    <item>
+      <title>Book Notes: Introduction to Time Series and Forecasting --  Ch3 ARMA Models</title>
+      <link>/stat/book-notes-introduction-to-time-series-and-forecasting-ch3-arma-models/</link>
+      <pubDate>Sat, 26 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/stat/book-notes-introduction-to-time-series-and-forecasting-ch3-arma-models/</guid>
+      <description>ARMA\((p, q)\) Processes Stationary solution Causality Invertibility  ACF and PACF of an ARMA\((p, q)\) Process Calculation of the ACVF Test for MAs and ARs from the ACF and PACF  Forecast ARMA Processes   For the pdf slides, click here
+ARMA\((p, q)\) Processes ARMA\((p, q)\) process: definitions  \(\{X_t\}\) is an ARMA\((p, q)\) process if it is stationary, and for all \(t\), \[ X_t - \phi_1 X_{t-1} - \cdots - \phi_p X_{t-p} = Z_t + \theta_1 Z_{t-1} + \cdots + \theta_q Z_{t-q} \] where \(\{Z_t\} \sim \textrm{WN}(0, \sigma^2)\) and the polynomials \[ \phi(z) = 1 - \phi_1 z - \cdots - \phi_p z^p, \quad \theta(z) = 1 + \theta_1 z + \cdots + \theta_q z^q \] have no common factors</description>
+    </item>
+    
+    <item>
+      <title>Book Notes: Introduction to Time Series and Forecasting --  Ch2 Stationary Processes</title>
+      <link>/stat/book-notes-introduction-to-time-series-and-forecasting-ch2-stationary-processes/</link>
+      <pubDate>Sat, 19 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/stat/book-notes-introduction-to-time-series-and-forecasting-ch2-stationary-processes/</guid>
+      <description>Linear Processes Introduction to ARMA Processes ARMA\((1,1)\) process  Properties of the Sample ACVF and Sample ACF Bartlett’s Formula  Forecast Stationary Time Series Best linear predictor: minimizes MSE Recursive methods: the Durbin-Levinson and Innovation Algorithms    For the pdf slides, click here
+Best linear predictor  Goal: find a function of \(X_n\) that gives the “best” predictor of \(X_{n+h}\).
+ We mean “best” by achieving minimum mean squared error Under joint normality assumption of \(X_n\) and \(X_{n+h}\), the best estimator is \[ m(X_n) = E(X_{n+h} \mid X_n) = \mu + \rho(h)(X_n - \mu) \]  Best linear predictor \[ \ell(X_n) = a X_n + b \]</description>
+    </item>
+    
+    <item>
+      <title>Book Notes: Introduction to Time Series and Forecasting --  Ch1 Introduction</title>
+      <link>/stat/book-notes-introduction-to-time-series-and-forecasting-ch1/</link>
+      <pubDate>Tue, 18 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/stat/book-notes-introduction-to-time-series-and-forecasting-ch1/</guid>
+      <description>Stationary Models and Autocorrelation Function Examples of Simple Time Series Models  Estimate and Eliminate Trend and Seasonal Components Trend Component Only Also with the Seasonal Component  Test Whether Estimated Noises are IID   For the pdf slides, click here
+Objective of time series models  Seasonal adjustment: recognize seasonal components and remove them to study long-term trends
+ Separate (or filter) noise from signals
+ Prediction</description>
+    </item>
+    
+  </channel>
+</rss>
