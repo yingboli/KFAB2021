@@ -1,9 +1,9 @@
-baseurl: /
+baseurl: http://liyingbo.com
 languageCode: en-us
-title: A Hugo website
+title: King Fox And Butterfly
 theme: hugo-lithium
-googleAnalytics: ''
-disqusShortname: ''
+googleAnalytics: 'UA-116913878-1'
+disqusShortname: 'kfab'
 ignoreFiles:
   - \.Rmd$
   - \.Rmarkdown$
@@ -12,18 +12,35 @@ ignoreFiles:
   - \.utf8\.md$
 permalinks:
   post: /:year/:month/:day/:slug/
+  cooking: /cooking/:year/:month/:day/:slug/
+  life: /life/:year/:month/:day/:slug/
+  stat: /stat/:year/:month/:day/:slug/
+
 menu:
   main:
-    - name: About
+    - name: Cooking
+      url: /cooking/
+      weight: 1
+    - name: Statistics
+      url: /stat/
+      weight: 2
+    - name: Life
+      url: /life/
+      weight: 3
+    - name: About Me
       url: /about/
-    - name: GitHub
-      url: https://github.com/rstudio/blogdown
-    - name: Twitter
-      url: https://twitter.com/rstudio
+      weight: 4
+    - name: Categories
+      url: /categories/
+      weight: 5
+    - name: Tags
+      url: /tags/
+      weight: 6
+
 params:
   MathJaxCDN: //cdnjs.cloudflare.com/ajax/libs
   MathJaxVersion: 2.7.5
-  description: A website built through Hugo and blogdown.
+  description: A blog for cooking and statistics.
   favicon: favicon.ico
   highlightjsCDN: //cdnjs.cloudflare.com/ajax/libs
   highlightjsLang:
@@ -34,7 +51,7 @@ params:
   logo:
     alt: Logo
     height: 50
-    url: logo.png
+    url: yingbo_headshot.jpg
     width: 50
 markup:
   defaultMarkdownHandler: goldmark

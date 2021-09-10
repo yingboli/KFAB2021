@@ -1,171 +1,162 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Categories on A Hugo website</title>
-    <link>/categories/</link>
-    <description>Recent content in Categories on A Hugo website</description>
+    <title>Categories on King Fox And Butterfly</title>
+    <link>http://liyingbo.com/categories/</link>
+    <description>Recent content in Categories on King Fox And Butterfly</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 30 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 30 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://liyingbo.com/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>蔬菜 Vegetable</title>
-      <link>/categories/%E8%94%AC%E8%8F%9C-vegetable/</link>
+      <link>http://liyingbo.com/categories/%E8%94%AC%E8%8F%9C-vegetable/</link>
       <pubDate>Sun, 30 May 2021 00:00:00 +0000</pubDate>
       
-      <guid>/categories/%E8%94%AC%E8%8F%9C-vegetable/</guid>
+      <guid>http://liyingbo.com/categories/%E8%94%AC%E8%8F%9C-vegetable/</guid>
       <description></description>
     </item>
     
     <item>
       <title>凉菜 Appetizer</title>
-      <link>/categories/%E5%87%89%E8%8F%9C-appetizer/</link>
+      <link>http://liyingbo.com/categories/%E5%87%89%E8%8F%9C-appetizer/</link>
       <pubDate>Fri, 14 May 2021 00:00:00 +0000</pubDate>
       
-      <guid>/categories/%E5%87%89%E8%8F%9C-appetizer/</guid>
+      <guid>http://liyingbo.com/categories/%E5%87%89%E8%8F%9C-appetizer/</guid>
       <description></description>
     </item>
     
     <item>
       <title>鸡肉 Poultry</title>
-      <link>/categories/%E9%B8%A1%E8%82%89-poultry/</link>
+      <link>http://liyingbo.com/categories/%E9%B8%A1%E8%82%89-poultry/</link>
       <pubDate>Wed, 28 Apr 2021 00:00:00 +0000</pubDate>
       
-      <guid>/categories/%E9%B8%A1%E8%82%89-poultry/</guid>
+      <guid>http://liyingbo.com/categories/%E9%B8%A1%E8%82%89-poultry/</guid>
       <description></description>
     </item>
     
     <item>
       <title>烘焙 Baking</title>
-      <link>/categories/%E7%83%98%E7%84%99-baking/</link>
+      <link>http://liyingbo.com/categories/%E7%83%98%E7%84%99-baking/</link>
       <pubDate>Wed, 14 Apr 2021 00:00:00 +0000</pubDate>
       
-      <guid>/categories/%E7%83%98%E7%84%99-baking/</guid>
+      <guid>http://liyingbo.com/categories/%E7%83%98%E7%84%99-baking/</guid>
       <description></description>
     </item>
     
     <item>
       <title>调料 Sauce</title>
-      <link>/categories/%E8%B0%83%E6%96%99-sauce/</link>
+      <link>http://liyingbo.com/categories/%E8%B0%83%E6%96%99-sauce/</link>
       <pubDate>Mon, 12 Apr 2021 00:00:00 +0000</pubDate>
       
-      <guid>/categories/%E8%B0%83%E6%96%99-sauce/</guid>
+      <guid>http://liyingbo.com/categories/%E8%B0%83%E6%96%99-sauce/</guid>
       <description></description>
     </item>
     
     <item>
       <title>猪肉 Pork</title>
-      <link>/categories/%E7%8C%AA%E8%82%89-pork/</link>
+      <link>http://liyingbo.com/categories/%E7%8C%AA%E8%82%89-pork/</link>
       <pubDate>Fri, 26 Feb 2021 00:00:00 +0000</pubDate>
       
-      <guid>/categories/%E7%8C%AA%E8%82%89-pork/</guid>
+      <guid>http://liyingbo.com/categories/%E7%8C%AA%E8%82%89-pork/</guid>
       <description></description>
     </item>
     
     <item>
       <title>海鲜 Seafood</title>
-      <link>/categories/%E6%B5%B7%E9%B2%9C-seafood/</link>
+      <link>http://liyingbo.com/categories/%E6%B5%B7%E9%B2%9C-seafood/</link>
       <pubDate>Tue, 12 Jan 2021 00:00:00 +0000</pubDate>
       
-      <guid>/categories/%E6%B5%B7%E9%B2%9C-seafood/</guid>
+      <guid>http://liyingbo.com/categories/%E6%B5%B7%E9%B2%9C-seafood/</guid>
       <description></description>
     </item>
     
     <item>
       <title>面 Noodles</title>
-      <link>/categories/%E9%9D%A2-noodles/</link>
+      <link>http://liyingbo.com/categories/%E9%9D%A2-noodles/</link>
       <pubDate>Tue, 12 Jan 2021 00:00:00 +0000</pubDate>
       
-      <guid>/categories/%E9%9D%A2-noodles/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>R</title>
-      <link>/categories/r/</link>
-      <pubDate>Tue, 01 Dec 2020 21:13:14 -0500</pubDate>
-      
-      <guid>/categories/r/</guid>
+      <guid>http://liyingbo.com/categories/%E9%9D%A2-noodles/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Painting</title>
-      <link>/categories/painting/</link>
+      <link>http://liyingbo.com/categories/painting/</link>
       <pubDate>Fri, 16 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>/categories/painting/</guid>
+      <guid>http://liyingbo.com/categories/painting/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Paper notes</title>
-      <link>/categories/paper-notes/</link>
+      <link>http://liyingbo.com/categories/paper-notes/</link>
       <pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>/categories/paper-notes/</guid>
+      <guid>http://liyingbo.com/categories/paper-notes/</guid>
       <description></description>
     </item>
     
     <item>
       <title>小吃 Street food</title>
-      <link>/categories/%E5%B0%8F%E5%90%83-street-food/</link>
+      <link>http://liyingbo.com/categories/%E5%B0%8F%E5%90%83-street-food/</link>
       <pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>/categories/%E5%B0%8F%E5%90%83-street-food/</guid>
+      <guid>http://liyingbo.com/categories/%E5%B0%8F%E5%90%83-street-food/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Book notes</title>
-      <link>/categories/book-notes/</link>
+      <link>http://liyingbo.com/categories/book-notes/</link>
       <pubDate>Mon, 28 Sep 2020 00:00:00 +0000</pubDate>
       
-      <guid>/categories/book-notes/</guid>
+      <guid>http://liyingbo.com/categories/book-notes/</guid>
       <description></description>
     </item>
     
     <item>
       <title>甜点 Dessert</title>
-      <link>/categories/%E7%94%9C%E7%82%B9-dessert/</link>
+      <link>http://liyingbo.com/categories/%E7%94%9C%E7%82%B9-dessert/</link>
       <pubDate>Sun, 09 Aug 2020 00:00:00 +0000</pubDate>
       
-      <guid>/categories/%E7%94%9C%E7%82%B9-dessert/</guid>
+      <guid>http://liyingbo.com/categories/%E7%94%9C%E7%82%B9-dessert/</guid>
       <description></description>
     </item>
     
     <item>
       <title>牛肉 Beef</title>
-      <link>/categories/%E7%89%9B%E8%82%89-beef/</link>
+      <link>http://liyingbo.com/categories/%E7%89%9B%E8%82%89-beef/</link>
       <pubDate>Sat, 02 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>/categories/%E7%89%9B%E8%82%89-beef/</guid>
+      <guid>http://liyingbo.com/categories/%E7%89%9B%E8%82%89-beef/</guid>
       <description></description>
     </item>
     
     <item>
       <title>饭 Rice</title>
-      <link>/categories/%E9%A5%AD-rice/</link>
+      <link>http://liyingbo.com/categories/%E9%A5%AD-rice/</link>
       <pubDate>Tue, 18 Dec 2018 00:00:00 +0000</pubDate>
       
-      <guid>/categories/%E9%A5%AD-rice/</guid>
+      <guid>http://liyingbo.com/categories/%E9%A5%AD-rice/</guid>
       <description></description>
     </item>
     
     <item>
       <title>中式面食 Chinese Main Dish</title>
-      <link>/categories/%E4%B8%AD%E5%BC%8F%E9%9D%A2%E9%A3%9F-chinese-main-dish/</link>
+      <link>http://liyingbo.com/categories/%E4%B8%AD%E5%BC%8F%E9%9D%A2%E9%A3%9F-chinese-main-dish/</link>
       <pubDate>Sun, 30 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>/categories/%E4%B8%AD%E5%BC%8F%E9%9D%A2%E9%A3%9F-chinese-main-dish/</guid>
+      <guid>http://liyingbo.com/categories/%E4%B8%AD%E5%BC%8F%E9%9D%A2%E9%A3%9F-chinese-main-dish/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Lecture notes</title>
-      <link>/categories/lecture-notes/</link>
+      <link>http://liyingbo.com/categories/lecture-notes/</link>
       <pubDate>Tue, 03 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/categories/lecture-notes/</guid>
+      <guid>http://liyingbo.com/categories/lecture-notes/</guid>
       <description></description>
     </item>
     

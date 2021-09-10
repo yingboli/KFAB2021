@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.88.1" />
+
+
+<title>Paper Notes: Proper Scoring Rules and Cost Weighted Loss Functions for Binary Classification - King Fox And Butterfly</title>
+<meta property="og:title" content="Paper Notes: Proper Scoring Rules and Cost Weighted Loss Functions for Binary Classification - King Fox And Butterfly">
+
+
+  <link href='http://liyingbo.com/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/yingbo_headshot.jpg"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/cooking/">Cooking</a></li>
+    
+    <li><a href="/stat/">Statistics</a></li>
+    
+    <li><a href="/life/">Life</a></li>
+    
+    <li><a href="/about/">About Me</a></li>
+    
+    <li><a href="/categories/">Categories</a></li>
+    
+    <li><a href="/tags/">Tags</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+
+    <h1 class="article-title">Paper Notes: Proper Scoring Rules and Cost Weighted Loss Functions for Binary Classification</h1>
+
+    
+
+    <div class="article-content">
+      
+
+<div id="TOC">
+<ul>
+<li><a href="#proper-scoring-rules">Proper Scoring Rules</a></li>
+<li><a href="#commonly-used-proper-scoring-rules">Commonly Used Proper Scoring Rules</a></li>
+<li><a href="#structure-of-proper-scoring-rules">Structure of Proper Scoring Rules</a></li>
+<li><a href="#proper-scoring-rules-are-mixtures-of-cost-weighted-misclassification-losses">Proper scoring rules are mixtures of cost-weighted misclassification losses</a></li>
+<li><a href="#beta-family-of-proper-scoring-rules">Beta Family of Proper Scoring Rules</a></li>
+<li><a href="#examples">Examples</a></li>
+</ul>
+</div>
+
+<p><strong><em><font color='red'>For the pdf slides, click <a href="/pdf/101120_proper_scoring_rules.pdf">here</a></font></em></strong></p>
+<div id="notations-in-binary-classification" class="section level3">
+<h3>Notations: in binary classification</h3>
+<ul>
+<li><p>We are interested in fitting a model <span class="math inline">\(q(\mathbf{x})\)</span> for the true conditional class 1 probability
+<span class="math display">\[
+\eta(\mathbf{x}) = P(Y = 1 \mid \mathbf{X} = \mathbf{x})
+\]</span></p></li>
+<li><p>Two types of problems</p>
+<ul>
+<li>Classification: estimating a region of the form <span class="math inline">\(\{\eta(\mathbf{x}) &gt; c\}\)</span></li>
+<li>Class probability estimation: approximate <span class="math inline">\(\eta(\mathbf{x})\)</span>,
+by fitting a model <span class="math inline">\(q(\mathbf{x}, \beta)\)</span>, where <span class="math inline">\(\beta\)</span> are parameters to be estimated</li>
+</ul></li>
+<li><p>Surrogate criteria for estimation, e.g.,</p>
+<ul>
+<li><font color='blue'>Log-loss</font>: <span class="math inline">\(L(y \mid q) = -y \log(q) - (1-y) \log (1-q)\)</span></li>
+<li><font color='blue'>Squared error loss</font>: <span class="math inline">\(L(y \mid q) = (y-q)^2 = y (1-q)^2 + (1-y) q^2\)</span></li>
+</ul></li>
+<li><p><font color='green'>Surrogate criteria of classification are exactly the primary criteria of class probability estimation</font></p></li>
+</ul>
+</div>
+<div id="proper-scoring-rules" class="section level1">
+<h1>Proper Scoring Rules</h1>
+<div id="proper-scoring-rule" class="section level3">
+<h3>Proper scoring rule</h3>
+<ul>
+<li><p>Fitting a binary model is to minimize a loss function
+<span class="math display">\[
+\mathcal{L}\left(q()\right) = \frac{1}{N}\sum_{n=1}^N L(y_n \mid q_n)
+\]</span></p></li>
+<li><p>In game theory, the agent’s goal is to maximize expected score (or minimize expected loss)</p>
+<ul>
+<li>A scoring rule is <font color='blue'>proper</font> if truthfulness maximizes expected score</li>
+<li>It is <font color='blue'>strictly proper</font> if truthfulness uniquely maximizes expected score</li>
+</ul></li>
+<li><p>In the context of binary response data, <font color='blue'>Fisher consistency</font> holds pointwise if
+<span class="math display">\[
+\arg\min_{q\in [0, 1]} E_{Y\sim \text{Bernoulli}(\eta)}L(Y\mid q) = \eta, \quad
+\forall \eta \in [0, 1]
+\]</span></p></li>
+<li><p><font color='green'>Fisher consistency is the defining property of proper scoring rules</font></p></li>
+</ul>
+</div>
+<div id="bernoulli-related-simplification-on-the-scoring-rules" class="section level3">
+<h3>Bernoulli related simplification on the scoring rules</h3>
+<ul>
+<li><p>Because <span class="math inline">\(Y\)</span> takes only two values, 0 and 1, <span class="math inline">\(L(y\mid q)\)</span> consists only two <font color='blue'>“partial losses”</font>, <span class="math inline">\(L(1\mid q)\)</span> and <span class="math inline">\(L(0 \mid q)\)</span></p></li>
+<li><p>For simplicity, we prefer to express both in term of increasing functions
+<span class="math display">\[
+L_1(1-q) = L(1 \mid q), \quad L_0(q) = L(0 \mid q)
+\]</span></p></li>
+<li><p><font color='blue'>Pointwise expected loss</font> is defined as
+<span class="math display">\[
+R(\eta\mid q) = E_Y L(Y\mid q) = \eta L_1(1-q) + (1 - \eta)L_0(q)
+\]</span></p></li>
+<li><p>Fisher consistency becomes
+<span class="math display">\[
+\arg\min_q R(\eta\mid q) = \eta
+\]</span></p></li>
+</ul>
+</div>
+<div id="visualization-of-two-proper-scoring-rules" class="section level3">
+<h3>Visualization of two proper scoring rules</h3>
+<ul>
+<li>Left: log-loss, or Beta loss with <span class="math inline">\(\alpha=\beta=0\)</span></li>
+<li><p>Right: Beta loss with <span class="math inline">\(\alpha=1, \beta=3\)</span></p>
+<ul>
+<li>Tailored for classification with false positive cost <span class="math inline">\(c = \frac{\alpha}{\alpha+\beta} = 0.25\)</span> and false negative cost <span class="math inline">\(1-c = 0.75\)</span></li>
+</ul></li>
+</ul>
+<p><img src="/figures/Buja_etal_2005_fig1.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="commonly-used-proper-scoring-rules" class="section level1">
+<h1>Commonly Used Proper Scoring Rules</h1>
+<div id="how-to-check-property-of-a-scoring-rule-for-binary-response-data" class="section level3">
+<h3>How to check property of a scoring rule for binary response data</h3>
+<ul>
+<li><p>Suppose the partial losses <span class="math inline">\(L_1(1-q), L_0(q)\)</span> are smooth,
+then the proper scoring rule property implies
+<span class="math display">\[\begin{align*}
+0 &amp; = \left.\frac{\partial}{\partial q}\right|_{q=\eta} R(\eta \mid q)\\
+&amp; = -\eta L_1&#39;(1-\eta) + (1-\eta) L_0&#39;(\eta)
+\end{align*}\]</span></p></li>
+<li><p>Therefore, a scoring rule is proper if
+<span class="math display">\[
+\eta L_1&#39;(1-\eta) = (1-\eta) L_0&#39;(\eta)
+\]</span></p></li>
+<li><p>A scoring rule is strictly proper if
+<span class="math display">\[
+\left.\frac{\partial^2}{\partial q^2}\right|_{q=\eta} R(\eta \mid q) &gt; 0
+\]</span></p></li>
+</ul>
+</div>
+<div id="log-loss" class="section level3">
+<h3><font color='blue'>Log-loss</font></h3>
+<ul>
+<li><p>Log-loss is the negative log likelihood of the Bernoulli distribution
+<span class="math display">\[
+\mathcal{L} = \frac{1}{N}\sum_{n=1}^N\left[-y_n \log(q_n) - (1-y_n) \log(1 - q_n)  \right]
+\]</span></p></li>
+<li><p>Partial losses for log-loss
+<span class="math display">\[
+L_1(1-q) = -\log(q), \quad L_0(q) = -\log(1-q)
+\]</span></p></li>
+<li><p>Expected loss for log-loss
+<span class="math display">\[
+R(\eta \mid q) = -\eta \log(q) - (1-\eta)\log(1-q)
+\]</span></p></li>
+<li><p><font color='green'>Log-loss is a strictly proper scoring rule</font></p></li>
+</ul>
+</div>
+<div id="squared-error-loss" class="section level3">
+<h3><font color='blue'>Squared error loss</font></h3>
+<ul>
+<li><p>Squared error loss is also known as Brier score
+<span class="math display">\[
+\mathcal{L} = \frac{1}{N}\sum_{n=1}^N\left[y_n (1 - q_n)^2 - (1-y_n)q_n^2  \right]
+\]</span></p></li>
+<li><p>Partial losses for squared error loss
+<span class="math display">\[
+L_1(1-q) = (1 - q)^2, \quad L_0(q) = q^2
+\]</span></p></li>
+<li><p>Expected loss for squared error loss
+<span class="math display">\[
+R(\eta \mid q) = \eta (1 - q)^2 + (1-\eta)q^2
+\]</span></p></li>
+<li><p><font color='green'>Squared error loss is a strictly proper scoring rule</font></p></li>
+</ul>
+</div>
+<div id="misclassification-loss" class="section level3">
+<h3><font color='blue'>Misclassification loss</font></h3>
+<ul>
+<li><p>Usually, misclassification loss uses <span class="math inline">\(c=0.5\)</span> as the cutoff
+<span class="math display">\[
+\mathcal{L} = \frac{1}{N}\sum_{n=1}^N\left[y_n \mathbf{1}_{\{q_n \leq 0.5\}} + (1-y_n)\mathbf{1}_{\{q_n &gt; 0.5\}}  \right]
+\]</span></p></li>
+<li><p>Partial losses for misclassification loss
+<span class="math display">\[
+L_1(1-q) = \mathbf{1}_{\{q_n \leq 0.5\}}, \quad L_0(q) = \mathbf{1}_{\{q_n &gt; 0.5\}}
+\]</span></p></li>
+<li><p>Expected loss for misclassification loss
+<span class="math display">\[
+R(\eta \mid q) = \eta \mathbf{1}_{\{q \leq 0.5\}} + (1-\eta) \mathbf{1}_{\{q &gt; 0.5\}}
+\]</span></p></li>
+<li><p>Since any <span class="math inline">\(q&gt;0.5\)</span> for events and any <span class="math inline">\(q \leq 0.5\)</span> for non-events minimize the misclassification loss,
+<font color='green'>misclassification loss is a proper score rule</font>, <font color='red'>but it is not strictly proper</font></p></li>
+</ul>
+</div>
+<div id="a-counter-example-of-proper-scoring-rule-absolute-loss" class="section level3">
+<h3><font color='red'>A counter-example of proper scoring rule: absolute loss</font></h3>
+<ul>
+<li><p>Because <span class="math inline">\(y\in \{0, 1\}\)</span>, the <font color='blue'>absolute deviation</font> <span class="math inline">\(L(y\mid q) = |y-q|\)</span> becomes
+<span class="math display">\[\begin{align*}
+L(y\mid q) &amp; = y(1-q) + (1-y) q\\
+R(\eta \mid q)&amp; =\eta(1-q) + (1-\eta) q
+\end{align*}\]</span></p></li>
+<li><p><font color='red'>Absolute deviation is not a proper scoring rule</font>, because <span class="math inline">\(R(\eta \mid q)\)</span> is minimized by <span class="math inline">\(q=1\)</span> for <span class="math inline">\(\eta &gt; 1/2\)</span>, and <span class="math inline">\(q=0\)</span> for <span class="math inline">\(\eta &lt; 1/2\)</span></p></li>
+</ul>
+</div>
+</div>
+<div id="structure-of-proper-scoring-rules" class="section level1">
+<h1>Structure of Proper Scoring Rules</h1>
+<div id="structure-of-proper-scoring-rules-1" class="section level3">
+<h3>Structure of proper scoring rules</h3>
+<ul>
+<li><p><strong>Theorem</strong>: Let <span class="math inline">\(\omega(dt)\)</span> be a positive measure on <span class="math inline">\((0, 1)\)</span> that is finite on intervals <span class="math inline">\((\epsilon, 1-\epsilon), \forall \epsilon &gt; 0\)</span>. Then the following defines a proper scoring rule:
+<span class="math display">\[
+L_1(1-q) = \int_q^{f_1} (1-t)\omega(dt), \quad
+L_0(q) = \int_{f_0}^q t\omega(dt)
+\]</span></p></li>
+<li><p>The proper scoring rule is strict iff <span class="math inline">\(\omega(dt)\)</span> has non-zero mass on every open interval of (0, 1)</p></li>
+<li><p>The fixed limits <span class="math inline">\(f_0\geq 0\)</span> and <span class="math inline">\(f_1 \leq 1\)</span> are somewhat arbitrary</p></li>
+<li><p>Note that for log-loss, <span class="math inline">\(L_1(1-q)\)</span> is unbounded (goes to infinity) below near <span class="math inline">\(q=1\)</span>,
+and <span class="math inline">\(L_0(q)\)</span> is unbounded below near <span class="math inline">\(q=0\)</span></p></li>
+<li><p>Except for log-loss, all other common proper scoring rules seem to satisfy
+<span class="math display">\[
+\int_0^1 t (1-t) \omega(dt) &lt; \infty
+\]</span></p></li>
+</ul>
+</div>
+</div>
+<div id="proper-scoring-rules-are-mixtures-of-cost-weighted-misclassification-losses" class="section level1">
+<h1>Proper scoring rules are mixtures of cost-weighted misclassification losses</h1>
+<div id="connection-between-the-false-positive-fp-false-negative-fn-costs-and-the-classification-cutoff" class="section level3">
+<h3>Connection between the false positive (FP) / false negative (FN) costs and the classification cutoff</h3>
+<ul>
+<li><p>Suppose the costs of FP and FN sum up to 1:</p>
+<ul>
+<li>FP: has a cost <span class="math inline">\(c\)</span>, and expected cost
+<span class="math inline">\(c P(Y=0) = c(1-\eta)\)</span></li>
+<li>FN: has a cost <span class="math inline">\(1 - c\)</span>, and expected cost
+<span class="math inline">\((1-c) P(Y=1) = (1-c)\eta\)</span></li>
+</ul></li>
+<li><p>The optimal classification is therefore class 1 iff
+<span class="math display">\[
+(1-c)\eta \geq c(1-\eta) \Longleftrightarrow \eta \geq c
+\]</span></p>
+<ul>
+<li>Since we don’t know the truth <span class="math inline">\(\eta\)</span>, we classify as class 1 when <span class="math inline">\(q \geq c\)</span></li>
+</ul></li>
+<li><p>Therefore, <font color='green'>the classification cutoff equals</font>
+<span class="math display">\[
+\frac{\text{cost of FP}}{\text{cost of FP} + \text{cost of FN}}
+\]</span></p>
+<ul>
+<li>Standard classification assumes costs of FP and FN are the same, so the classification cutoff is <span class="math inline">\(0.5\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="cost-weighted-misclassification-errors" class="section level3">
+<h3>Cost-weighted misclassification errors</h3>
+<ul>
+<li><p><font color='blue'>Cost-weighted misclassification errors</font>:
+<span class="math display">\[\begin{align*}
+L_c(y\mid q) &amp; = y (1-c) \cdot \mathbf{1}_{\{q \leq c\}} + (1-y) c \cdot \mathbf{1}_{\{q &gt; c\}} \\
+L_{1, c}(1-q) &amp;= (1-c) \cdot \mathbf{1}_{\{q \leq c\}}, \quad L_{0, c}(q) = c \cdot \mathbf{1}_{\{q &gt; c\}}
+\end{align*}\]</span></p></li>
+<li><p><strong>Shuford-Albert-Massengil-Savage-Schervish theorem</strong>:
+<font color='green'>an intergral representation of proper scoring rules</font>
+<span class="math display">\[
+L(y\mid q) = \int_0^1 L_c(y\mid q) \omega(dc) = \int_0^1 L_c(y\mid q) \omega(c) dc
+\]</span></p>
+<ul>
+<li>The second equality holds if <span class="math inline">\(w(dc)\)</span> is absolutely continuous wrt Lebesgue measure</li>
+<li>This can be used to tailor losses to specific classification problems with cutoffs other than <span class="math inline">\(1/2\)</span> of <span class="math inline">\(\eta(x)\)</span>, by designing suitable weight functions <span class="math inline">\(\omega()\)</span></li>
+</ul></li>
+<li><p>The paper proposes to use Iterative Reweighted Least Squares (IRLS) to fit linear models with proper scoring rules</p></li>
+</ul>
+</div>
+</div>
+<div id="beta-family-of-proper-scoring-rules" class="section level1">
+<h1>Beta Family of Proper Scoring Rules</h1>
+<div id="beta-family-of-proper-scoring-rules-1" class="section level3">
+<h3><font color='blue'>Beta family of proper scoring rules</font></h3>
+<ul>
+<li><p>This paper introduced a flexible 2-parameter family of proper scoring rules
+<span class="math display">\[
+\omega(t) =  t^{\alpha-1} (1-t)^{\beta-1}, \quad \text{where } \alpha &gt; -1, \beta &gt; -1
+\]</span></p></li>
+<li><p><strong>Loss function of the Beta family proper scoring rules</strong>
+<span class="math display">\[\begin{align*}L(y \mid q) =~&amp;  y \int_q^1 t^{\alpha-1} (1-t)^{\beta} dt + (1-y)\int_0^q t^{\alpha} (1-t)^{\beta-1} dt\\
+=~&amp;  y B(\alpha, \beta+1) \left[1 - I_q(\alpha, \beta+1)\right]\\
+&amp; + (1-y) B(\alpha+1, \beta) I_q(\alpha+1, \beta)
+\end{align*}\]</span></p>
+<ul>
+<li>See the definitions of <span class="math inline">\(B(a, b)\)</span> and <span class="math inline">\(I_x(a, b)\)</span> in the next page</li>
+</ul></li>
+<li><p>Log-loss and squared error loss are special cases</p>
+<ul>
+<li>Log-loss: <span class="math inline">\(\alpha=\beta=0\)</span></li>
+<li>Squared error loss: <span class="math inline">\(\alpha=\beta=1\)</span></li>
+<li>Misclassification loss: <span class="math inline">\(\alpha=\beta \rightarrow \infty\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="special-functions-and-python-r-implementations" class="section level3">
+<h3>Special functions and Python / R implementations</h3>
+<ul>
+<li><p><font color='blue'>Beta function</font>
+<span class="math display">\[
+  B(a, b)  = \int_0^1 t^{a-1} (1-t)^{b-1} dt %= \frac{\Gamma(a) \Gamma(b)}{\Gamma(a+b)}
+  \]</span></p>
+<ul>
+<li>Python implementation:
+<a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.beta.html#scipy.special.beta"><code>scipy.special.beta(a,b)</code></a></li>
+<li>R implementation: <a href="https://stat.ethz.ch/R-manual/R-devel/library/base/html/Special.html"><code>beta(a, b)</code></a></li>
+</ul></li>
+<li><p><font color='blue'>Incomplete Beta function</font>
+<span class="math display">\[\begin{align*}
+  I_x(a, b) 
+  %&amp; =  \frac{\Gamma(a+b)}{\Gamma(a) \Gamma(b)}\int_0^x t^{a-1} (1-t)^{b-1} dt \\
+    &amp; = \frac{1}{B(a, b)} \int_0^x t^{a-1} (1-t)^{b-1} dt
+  \end{align*}\]</span></p>
+<ul>
+<li>Python implementation:
+<a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.betainc.html"><code>scipy.special.betainc(a, b, x)</code></a></li>
+<li>R implementation:
+<a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/Beta.html"><code>pbeta(x, a, b)</code></a></li>
+</ul></li>
+</ul>
+</div>
+<div id="tailor-proper-scoring-rules-for-cost-weighted-misclassification" class="section level3">
+<h3>Tailor proper scoring rules for cost-weighted misclassification</h3>
+<ul>
+<li><p>We can use <span class="math inline">\(\alpha\neq \beta\)</span> when FP and FN costs are not viewed equal</p></li>
+<li><p>Since Beta family proper scoring rule is like adding a Beta distribution on the FP cost <span class="math inline">\(c\)</span>,
+we can use mean/variance matching to elicit <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>
+<span class="math display">\[\begin{align*}
+\mu &amp; = \frac{\alpha}{\alpha + \beta} = c\\
+\sigma^2 &amp;= \frac{\alpha\beta}{(\alpha + \beta)^2 (\alpha + \beta+1)} = \frac{c(1-c)}{\alpha + \beta+1}
+\end{align*}\]</span></p></li>
+<li><p>Alternatively, we can match the mode
+<span class="math display">\[
+c = q_{\text{mode}} = \frac{\alpha-1}{\alpha+\beta -2}
+\]</span></p></li>
+</ul>
+</div>
+</div>
+<div id="examples" class="section level1">
+<h1>Examples</h1>
+<div id="a-simulation-example" class="section level3">
+<h3>A simulation example</h3>
+<ul>
+<li><p>In the simulation data with bivariate <span class="math inline">\(x\)</span>, where decision boundaries of different <span class="math inline">\(\eta\)</span> are not in parallel
+(grey lines)</p></li>
+<li><p>The logit link Beta family linear model with <span class="math inline">\(\alpha = 6, \beta = 14\)</span> estimates the <span class="math inline">\(c=0.3\)</span>
+classification boundary better than the logistic regression</p></li>
+</ul>
+<p><img src="/figures/Buja_etal_2005_fig4.png" width="50%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="on-the-pima-indians-diabetes-data" class="section level3">
+<h3>On the Pima Indians diabetes data</h3>
+<ul>
+<li><p>Comparing logistic regression with a proper scoring rule tailored for high class 1 probabilities: <span class="math inline">\(\alpha = 9, \beta = 1\)</span>.</p></li>
+<li><p>Black lines: empirical QQ curves of 200 cost-weighted misclassification costs computed on randomly selected test sets</p></li>
+</ul>
+<p><img src="/figures/Buja_etal_2005_fig6.png" width="56%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li><p>Buja, A., Stuetzle, W., &amp; Shen, Y. (2005). Loss functions for binary class probability estimation and classification: Structure and applications. Working draft, November, 3.
+<a href="http://www-stat.wharton.upenn.edu/~buja/PAPERS/paper-proper-scoring.pdf" class="uri">http://www-stat.wharton.upenn.edu/~buja/PAPERS/paper-proper-scoring.pdf</a></p></li>
+<li><p>For a game theory definition of proper scoring rule, see
+<a href="https://www.cis.upenn.edu/~aaroth/courses/slides/agt17/lect23.pdf" class="uri">https://www.cis.upenn.edu/~aaroth/courses/slides/agt17/lect23.pdf</a></p></li>
+<li><p>Fitting linear models with custom loss functions in Python:
+<a href="https://alex.miller.im/posts/linear-model-custom-loss-function-regularization-python/" class="uri">https://alex.miller.im/posts/linear-model-custom-loss-function-regularization-python/</a></p></li>
+<li><p>Fitting XGBoost with custom loss functions in Python:
+<a href="https://xgboost.readthedocs.io/en/latest/tutorials/custom_metric_obj.html" class="uri">https://xgboost.readthedocs.io/en/latest/tutorials/custom_metric_obj.html</a></p></li>
+</ul>
+</div>
+</div>
+
+    </div>
+  </article>
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//kfab.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-116913878-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+  </body>
+</html>
+
