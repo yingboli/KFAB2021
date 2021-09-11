@@ -191,6 +191,9 @@
     <loc>http://liyingbo.com/tags/imbalanced-data/</loc>
     <lastmod>2020-10-12T00:00:00+00:00</lastmod>
   </url><url>
+    <loc>http://liyingbo.com/stat/</loc>
+    <lastmod>2020-10-12T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>http://liyingbo.com/categories/paper-notes/</loc>
     <lastmod>2020-10-12T00:00:00+00:00</lastmod>
   </url><url>
@@ -198,9 +201,6 @@
     <lastmod>2020-10-12T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/tags/slides/</loc>
-    <lastmod>2020-10-12T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://liyingbo.com/stat/</loc>
     <lastmod>2020-10-12T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/categories/%E5%B0%8F%E5%90%83-street-food/</loc>
@@ -621,6 +621,5 @@
     <lastmod>2018-01-07T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/about/</loc>
-    <lastmod>2016-11-05T21:05:33+05:30</lastmod>
   </url>
 </urlset>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Stats on King Fox And Butterfly</title>
+    <title>My Notes on Statistics and Machine Learning Books and Papers on King Fox And Butterfly</title>
     <link>http://liyingbo.com/stat/</link>
-    <description>Recent content in Stats on King Fox And Butterfly</description>
+    <description>Recent content in My Notes on Statistics and Machine Learning Books and Papers on King Fox And Butterfly</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 12 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://liyingbo.com/stat/index.xml" rel="self" type="application/rss+xml" />
@@ -18,7 +18,7 @@ Notations: in binary classification  We are interested in fitting a model \(q(\m
     </item>
     
     <item>
-      <title>Paper Notes: Generalized R Squared </title>
+      <title>Paper Notes: Generalized R Squared</title>
       <link>http://liyingbo.com/stat/2020/10/05/paper-notes-generalized-r-squared/</link>
       <pubDate>Mon, 05 Oct 2020 00:00:00 +0000</pubDate>
       
