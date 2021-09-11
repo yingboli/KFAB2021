@@ -1,7 +1,7 @@
 baseurl: http://liyingbo.com
 languageCode: en-us
 title: King Fox And Butterfly
-theme: hugo-lithium
+theme: hugo-xmin
 googleAnalytics: 'UA-116913878-1'
 disqusShortname: 'kfab'
 ignoreFiles:
@@ -18,43 +18,27 @@ permalinks:
 
 menu:
   main:
-    - name: Cooking
-      url: /cooking/
+    - name: Home
+      url: ""
       weight: 1
-    - name: Statistics
-      url: /stat/
-      weight: 2
-    - name: Life
-      url: /life/
-      weight: 3
     - name: About Me
       url: /about/
-      weight: 4
+      weight: 2
     - name: Categories
       url: /categories/
-      weight: 5
+      weight: 3
     - name: Tags
       url: /tags/
-      weight: 6
+      weight: 4
+    - name: Subscribe
+      url: index.xml
+      weight: 5
 
 params:
-  MathJaxCDN: //cdnjs.cloudflare.com/ajax/libs
-  MathJaxVersion: 2.7.5
-  description: A blog for cooking and statistics.
-  favicon: favicon.ico
-  highlightjsCDN: //cdnjs.cloudflare.com/ajax/libs
-  highlightjsLang:
-    - r
-    - yaml
-  highlightjsTheme: github
-  highlightjsVersion: 9.12.0
-  logo:
-    alt: Logo
-    height: 50
-    url: yingbo_headshot.jpg
-    width: 50
+  description: "A blog about cooking and statistics."
+  footer: "&copy; [Yingbo Li](https://liyingbo.com) 2018 -- 2021 | [Github](https://github.com/yingboli) | [Linkedin](https://www.linkedin.com/in/yingbo-li-08321723/)"
+
 markup:
-  defaultMarkdownHandler: goldmark
   goldmark:
     renderer:
-      unsafe: yes
+      unsafe: true
