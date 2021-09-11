@@ -2,7 +2,7 @@
 title: About Me
 ---
 
-* I am from Shanghai and I'm living in Dallas 
+* I am from Shanghai and I am living in Dallas 
 
 * My goal is to become
 
