@@ -1,33 +1,60 @@
 baseurl: http://liyingbo.com
-title: King Fox And Butterfly
-theme: hugo-creative-portfolio-theme
 languageCode: en-us
+title: King Fox And Butterfly
+theme: hugo-lithium
 googleAnalytics: 'UA-116913878-1'
 disqusShortname: 'kfab'
+ignoreFiles:
+  - \.Rmd$
+  - \.Rmarkdown$
+  - _cache$
+  - \.knit\.md$
+  - \.utf8\.md$
+permalinks:
+  post: /:year/:month/:day/:slug/
+  cooking: /cooking/:year/:month/:day/:slug/
+  life: /life/:year/:month/:day/:slug/
+  stat: /stat/:year/:month/:day/:slug/
+
+menu:
+  main:
+    - name: Cooking
+      url: /cooking/
+      weight: 1
+    - name: Statistics
+      url: /stat/
+      weight: 2
+    - name: Life
+      url: /life/
+      weight: 3
+    - name: About Me
+      url: /about/
+      weight: 4
+    - name: Categories
+      url: /categories/
+      weight: 5
+    - name: Tags
+      url: /tags/
+      weight: 6
+
 params:
   MathJaxCDN: //cdnjs.cloudflare.com/ajax/libs
   MathJaxVersion: 2.7.5
-  copyright: '&copy; Yingbo Li 2018 -- 2021'
-  description: A blog about cooking and statistics.
-  email: you@yoursite.com
-  navlinks:
-    - home: yes
-      name: Cooking
-      url: cooking/
-    - name: Statistics
-      url: stat/
-    - name: About Me
-      url: about/
-    - name: Categories
-      url: categories/
-    - name: Tags
-      url: tags/
-  sidebarAbout:
-    - I am a home cook and statistian, both with more than 10 years of
-      experience.
-    - Originally from Shanghai, currently based in Dallas.
-  social:
-    github: https://github.com/yingboli
-    linkedin: https://www.linkedin.com/in/yingbo-li-08321723/
-  style: blue
-
+  description: A blog for cooking and statistics.
+  favicon: favicon.ico
+  highlightjsCDN: //cdnjs.cloudflare.com/ajax/libs
+  highlightjsLang:
+    - r
+    - yaml
+  highlightjsTheme: github
+  highlightjsVersion: 9.12.0
+  logo:
+    alt: Logo
+    height: 50
+    url: yingbo_headshot.jpg
+    width: 50
+markup:
+  defaultMarkdownHandler: goldmark
+  goldmark:
+    renderer:
+      unsafe: yes
