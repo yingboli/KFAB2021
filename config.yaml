@@ -31,7 +31,3 @@ params:
     linkedin: https://www.linkedin.com/in/yingbo-li-08321723/
   style: blue
 
-markup:
-  goldmark:
-    renderer:
-      unsafe: true

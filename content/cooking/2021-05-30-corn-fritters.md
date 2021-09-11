@@ -7,6 +7,7 @@ categories:
   - 蔬菜 Vegetable
 tags:
   - 玉米 Corn
+image: img/2021-05-30-corn-fritters.jpg
 ---
 
 ![Corn Fritters](/img/2021-05-30-corn-fritters.jpg)

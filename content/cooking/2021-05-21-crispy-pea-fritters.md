@@ -7,6 +7,7 @@ categories:
   - 蔬菜 Vegetable
 tags:
   - 青豆 Peas
+image: img/2021-05-21-pea-fritters.jpg
 ---
 
 ![Crispy Pea Fritters](/img/2021-05-21-pea-fritters.jpg)
