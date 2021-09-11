@@ -9,10 +9,10 @@
     <lastBuildDate>Sat, 13 Jun 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://liyingbo.com/tags/computation/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Book Notes: Pattern Recognition and Machine Learning -- Ch9 Mixture Models and EM Algorithm</title>
-      <link>http://liyingbo.com/stat/2020/06/13/book-notes-pattern-recognition-and-machine-learning-ch9-mixture-models-and-em-algorithm/</link>
+      <link>http://liyingbo.com/stat/book-notes-pattern-recognition-and-machine-learning-ch9-mixture-models-and-em-algorithm/</link>
       <pubDate>Sat, 13 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://liyingbo.com/stat/2020/06/13/book-notes-pattern-recognition-and-machine-learning-ch9-mixture-models-and-em-algorithm/</guid>
+      <guid>http://liyingbo.com/stat/book-notes-pattern-recognition-and-machine-learning-ch9-mixture-models-and-em-algorithm/</guid>
       <description>K-means Clustering vs Mixtures of Gaussians K-means clustering Mixture of Gaussians  EM Algorithm The general EM algorithm A different view of the EM algorithm, related to variational inference    For the pdf slides, click here
 K-means Clustering vs Mixtures of Gaussians K-means clustering K-means clustering: problem  Data
  \(D\)-dimensional observations: \(\mathbf{x}_1, \ldots, \mathbf{x}_N\)  Parameters

@@ -1,0 +1,149 @@
+---
+title: 'Paper Notes: Generalized R Squared '
+author: ''
+date: '2020-10-05'
+slug: paper-notes-generalized-r-squared
+categories:
+  - Paper notes
+tags:
+  - Generalized Linear Models
+  - Slides
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE);
+
+#Color Format
+col_text = function(color, x){
+  outputFormat = knitr::opts_knit$get('rmarkdown.pandoc.to');
+  if(outputFormat == 'latex'){
+    if(color == 'green'){
+      paste('\\textcolor[RGB]{0, 128, 0}{', x, '}', sep = '');
+    } else {
+      paste('\\textcolor{', color, '}{', x, '}', sep = '');
+    }
+  } else if(outputFormat == 'beamer'){
+    paste('\\', color, '{', x, '}', sep = '');
+  } else if(outputFormat %in% c('html', 'slidy')){
+    paste("<font color='", color, "'>", x, '</font>', sep = '');
+  } else{
+    x;
+  }
+}
+
+blue = function(x){col_text('blue', x);}
+red = function(x){col_text('red', x);}
+green = function(x){col_text('green', x);}
+```
+
+***`r red('For the pdf slides, click [here](/pdf/100420_generalized_R2.pdf)')`***
+
+### $R^2$ for normal linear regression
+
+* $R^2$, also called `r blue('coefficient of determination')` or `r blue('multiple correlation coefficient')`, 
+is defined for normal linear regression, 
+as the proportion of variance "explained" by the regression model
+\begin{equation}\label{eq:R2}
+R^2 = \frac{\sum_i \left( y_i - \hat{y}_i \right)^2}{\sum_i \left( y_i - \bar{y} \right)^2}
+\end{equation}
+
+* Note that under the MLE, where $\hat{\sigma}^2 = \sum_i \left( y_i - \hat{y}_i \right)^2 / n$, 
+the deviance (i.e., negative two times log likelihood) is
+\begin{align*}
+-2 l\left(\hat{\beta}\right) & = -2 \log L(\hat{\beta})\\
+& = n \log(2\pi\hat{\sigma}^2) + \frac{\sum_i \left( y_i - \hat{y}_i \right)^2}{\hat{\sigma}^2}\\
+& = n \left[ \log\left( \frac{\sum_i \left( y_i - \hat{y}_i \right)^2}{n} \right) + \log(2\pi) + 1 \right]
+\end{align*}
+
+    - I list this derivation here to make clear that the following generalized $R^2$ contains \eqref{eq:R2} as a special case for normal linear regression
+
+# Generalized $R^2$ by Cox and Snell 
+
+### Generalized $R^2$, proposed by Cox and Snell [1989] (and also Magee [1990] and Maddala [1983])
+
+* The `r blue('genralized $R^2$')` for more general models where 
+
+    1. the concept of residual variance cannot be easily define, and
+    2. maximum likelihood is the criterion of fit, is
+\begin{equation} \label{eq:generalized_R2_v1}
+R^2 = 1 - \exp\left\{ -\frac{2}{n}\left[l\left(\hat{\beta}\right) - l(\hat{0})  \right] \right\} 
+= 1 - \left[L(0)/L\left(\hat{\beta}\right)\right]^{2/n}
+\end{equation}
+
+* Here, $L\left(\hat{\beta}\right)$ and $L(0)$ are the likelihood of the fitted and the null models, respectively.
+
+* For normal linear regression, this generalized $R^2$  \eqref{eq:generalized_R2_v1} becomes the classical $R^2$ \eqref{eq:R2}
+
+### Desirable properties of the generalized $R^2$, as in Eq \eqref{eq:generalized_R2_v1}
+
+1. `r green('Consistent with classical $R^2$')`
+
+2. `r green('Consistent with maximum likelihood as an estimation method')`
+
+3. `r green('Asymptotically independent of the sample size $n$')`
+
+4. `r green('$1-R^2$ has an interpretation as the propotion of unexplained "variation"')`
+
+    - For example, if we have three nested models, from smallest to largest, $M_1, M_2$, and $M_3$, then we have
+    \[
+    (1 - R^2_{3, 1}) = (1 - R^2_{3, 2})(1 - R^2_{2, 1})
+    \]
+    
+* For more desirable properties (7 in total), please check out the Nagelkerke[1991] paper
+
+# Generalized $R^2$ by Nagelkerke 
+
+### Generalized $R^2$, proposed by Nagelkerke [1991]
+
+* `r red('An undesirable property: for discrete models, the maximum $R^2$ is always less than 1')`
+\[
+\max(R^2) = 1 - L(0)^{2/n} 
+\]
+
+    - This is because the likelihood of discrete target variables are from pmf (rather than from pdf, as of continuous targets)
+    
+* `r blue('A new definition of the generalized $R^2$')`
+\begin{equation}\label{eq:generalized_R2_v2}
+\bar{R}^2 = \frac{R^2}{\max(R^2)} 
+= \frac{1 - \left[L(0)/L\left(\hat{\beta}\right)\right]^{2/n}}{1 - L(0)^{2/n}}
+\end{equation}
+
+    - Majority of the desirable properties of \eqref{eq:generalized_R2_v1}, including the ones listed on the previous page, are still satisfied
+    
+    - Nagelkerke's general $R^2$ \eqref{eq:generalized_R2_v2} seems to be a popular version. For example, the biostat textbook by Steyerberg uses this version
+
+## Generalized $R^2$ for binary data    
+### Generalized $R^2$ for binary data
+
+* Denote the estimated binary probabilities as $\hat{p}_i$ for the fitted model, and $\bar{p}$ for the null model
+
+* Cox and Snell $R^2$
+\[
+R^2 
+= 1 - \left[L(0)/L\left(\hat{\beta}\right)\right]^{2/n}
+= 1 - \left[ \prod_i \left(\frac{\bar{p}}{\hat{p}_i}  \right)^{y_i} 
+  \left(\frac{1-\bar{p}}{1-\hat{p}_i}  \right)^{1-y_i}\right]^{2/n}
+\]
+
+* Nagelkerke $R^2$
+\[
+\bar{R}^2 
+= \frac{1 - \left[L(0)/L\left(\hat{\beta}\right)\right]^{2/n}}
+{1 - L(0)^{2/n}}
+= \frac{1 - \left[\prod_i \left(\frac{\bar{p}}{\hat{p}_i}  \right)^{y_i} 
+  \left(\frac{1-\bar{p}}{1-\hat{p}_i}  \right)^{1-y_i}\right]^{2/n}}
+  {1 - \left[\prod_i \bar{p}^{y_i} 
+  \left(1-\bar{p}\right)^{1-y_i}\right]^{2/n}}
+\]
+
+### References
+
+* Nagelkerke, N. J. D. (1991). A Note on a General Definition of the Coefficient of Determination. Biometrika, 78(3), 691-692.
+
+* A nice comparison of different versions of generalized $R^2$: https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-what-are-pseudo-r-squareds/
+
+* Steyerberg, E. W. (2019). Clinical prediction models. Springer International Publishing.

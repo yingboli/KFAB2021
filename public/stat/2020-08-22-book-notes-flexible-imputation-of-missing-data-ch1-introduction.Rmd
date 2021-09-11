@@ -1,0 +1,175 @@
+---
+title: 'Book Notes: Flexible Imputation of Missing Data -- Ch1 Introduction'
+author: ''
+date: '2020-08-22'
+slug: book-notes-flexible-imputation-of-missing-data-ch1-introduction
+categories:
+  - Book notes
+tags:
+  - Introduction
+  - Missing data
+  - Slides
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 2
+---
+
+***For the pdf slides, click [here](/pdf/081120_imputation_book_ch1.pdf)***
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE);
+
+#Color Format
+col_text = function(color, x){
+  outputFormat = knitr::opts_knit$get('rmarkdown.pandoc.to');
+  if(outputFormat == 'latex'){
+    if(color == 'green'){
+      paste('\\textcolor[RGB]{0, 128, 0}{', x, '}', sep = '');
+    } else {
+      paste('\\textcolor{', color, '}{', x, '}', sep = '');
+    }
+  } else if(outputFormat == 'beamer'){
+    paste('\\', color, '{', x, '}', sep = '');
+  } else if(outputFormat %in% c('html', 'slidy')){
+    paste("<font color='", color, "'>", x, '</font>', sep = '');
+  } else{
+    x;
+  }
+}
+
+blue = function(x){col_text('blue', x);}
+red = function(x){col_text('red', x);}
+green = function(x){col_text('green', x);}
+```
+
+# Concepts of MCAR, MAR, MNAR
+
+### Concepts of MCAR, MAR, MNAR
+
+* `r blue('Missing completely at random (MCAR)')`: the probability of being missing is the same for all cases
+    - Cause of missing is unrelated to the data
+
+* `r blue('Missing at random (MAR)')`: the probability of being missing only depends on the observed data
+    - Cause of missing is unrelated to the missing values
+    
+* `r blue('Missing not at random (MNAR)')`: probability of being missing depends on the missing values themselves
+
+# Ad-hoc Solutions
+
+### Listwise deletion and pairwise deletion
+
+* `r blue('Listwise deletion (also called complete-case analysis)')`: delete rows which contain one or more missing values
+    - If data is MCAR, listwise deletion produces unbiased estimates of means, variances, and regression weights (if need to train a predictive model)
+    - If data is not MCAR, listwise deletion can severely bias the above estimates.
+
+* `r blue('Pairwise deletion (also called available-case analysis)')`
+   - Mean and variance of variable $X$ are based on all cases with observed data on $X$
+   - Covariance and correlation of $X$ and $Y$ is based on all data which both $X$ and $Y$ have non-missing values
+   
+### Mean imputation
+
+* Compared with the observed data, in the imputed data (observed + imputed values)
+    - Standard deviations decrease
+    - Correlation decreases 
+    - Means can be biased if the data is not MCAR.
+
+```{r, out.width='100%', fig.align='center'}
+knitr::include_graphics('/figures/flexible_imputation_fig1_2.png', error = FALSE)
+```
+
+### `r blue('Regression imputation')`
+
+1. Build a regression model from the observed data
+2. Impute the missing values in the response variable with the predicted values from the fitted regression
+    
+* The impute values are the most likely values under the model
+    - However, it decreases the variance of the target variable
+    - And it increases the correlations between the target and covariates
+    
+* `r red('Regression imputation, and its modern incarnations in machine learning is probably the most dangerous of all ad-hoc methods')`
+
+```{r, out.width='70%', fig.align='center'}
+knitr::include_graphics('/figures/flexible_imputation_fig1_3.png', error = FALSE)
+```
+
+### `r blue('Stochastic regression imputation')`
+
+1. Build a regression model from the observed data
+2. Impute a missing value in the response variable with the predicted value *plus a random draw from the residual*
+
+* Preserves variance and correlation.
+* Imputed values can exceed the range (e.g., a negative Ozone level). A more suitable model may resolve this.
+
+```{r, out.width='70%', fig.align='center'}
+knitr::include_graphics('/figures/flexible_imputation_fig1_4.png', error = FALSE)
+```
+
+### LOCF and BOCF
+
+* `r blue('Last observation carried forward (LOCF)')` and 
+`r blue('baseline observation carried forward (BOCF)')` are for longitudinal data.
+
+* LOCF can yield biased estimation even under MCAR.
+
+```{r, out.width='90%', fig.align='center'}
+knitr::include_graphics('/figures/flexible_imputation_fig1_5.png', error = FALSE)
+```
+
+### Indicator method
+
+* Not for imputation, but for building predictive models
+* Only works for missing in covariates, not the target variables
+
+### Summary of ad-hoc imputation methods
+
+* Note: the unbiasness of regression coefficients are assess with the variable containing missing values as the target variable
+
+```{r, out.width='100%', fig.align='center'}
+knitr::include_graphics('/figures/flexible_imputation_tab1_1.png', error = FALSE)
+```
+
+# Multiple Imputation in a Nutshell
+
+### `r blue('Multiple imputation')` creates $m>1$ complete datasets
+
+* Three steps of multiple imputation
+    1. Imputation
+    2. Analysis: train separate models
+    3. Pooling: variance among $m$ parameter estimates combines the conventional sampling variance (within-imputation variance) and the extra variance caused by the missing data (between-imputation variance)
+
+```{r, out.width='70%', fig.align='center'}
+knitr::include_graphics('/figures/flexible_imputation_fig1_6.png', error = FALSE)
+```
+
+### Why using multiple imputation?
+
+* It provides a mechanism to deal with the inherent uncertainty of the imputations 
+* It separate the solution of the missing data problem from the solution of the complete-data problem (train predictive models on complete data)
+
+### Multiple imputation example using the mice package
+
+```{r, echo = FALSE}
+library(pander)
+panderOptions('round', 3)
+```
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE, fig.height = 3, fig.width = 9}
+## Load the mice package
+library(mice); 
+## Impute 20 times, using preditive mean matching
+imp <- mice(airquality, seed = 1, m = 20, print = FALSE)
+## Fit linear regressions
+fit <- with(imp, lm(Ozone ~ Wind + Temp + Solar.R))
+## Pooled regression estimates
+pander(summary(pool(fit)))
+```
+
+
+### References
+
+* Van Buuren, S. (2018). Flexible Imputation of Missing Data, 2nd Edition. CRC press.
+
+    - https://stefvanbuuren.name/fimd/
+

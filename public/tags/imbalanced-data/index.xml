@@ -9,10 +9,10 @@
     <lastBuildDate>Mon, 12 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://liyingbo.com/tags/imbalanced-data/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Paper Notes: Proper Scoring Rules and Cost Weighted Loss Functions for Binary Classification</title>
-      <link>http://liyingbo.com/stat/2020/10/12/paper-notes-proper-scoring-rules-and-cost-weighted-loss-functions-for-binary-classification/</link>
+      <link>http://liyingbo.com/stat/paper-notes-proper-scoring-rules-and-cost-weighted-loss-functions-for-binary-classification/</link>
       <pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://liyingbo.com/stat/2020/10/12/paper-notes-proper-scoring-rules-and-cost-weighted-loss-functions-for-binary-classification/</guid>
+      <guid>http://liyingbo.com/stat/paper-notes-proper-scoring-rules-and-cost-weighted-loss-functions-for-binary-classification/</guid>
       <description>Proper Scoring Rules Commonly Used Proper Scoring Rules Structure of Proper Scoring Rules Proper scoring rules are mixtures of cost-weighted misclassification losses Beta Family of Proper Scoring Rules Examples   For the pdf slides, click here
 Notations: in binary classification  We are interested in fitting a model \(q(\mathbf{x})\) for the true conditional class 1 probability \[ \eta(\mathbf{x}) = P(Y = 1 \mid \mathbf{X} = \mathbf{x}) \]</description>
     </item>
