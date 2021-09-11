@@ -9,20 +9,20 @@
     <lastBuildDate>Mon, 12 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://liyingbo.com/tags/generalized-linear-models/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Paper Notes: Proper Scoring Rules and Cost Weighted Loss Functions for Binary Classification</title>
-      <link>http://liyingbo.com/stat/2020/10/12/paper-notes-proper-scoring-rules-and-cost-weighted-loss-functions-for-binary-classification/</link>
+      <link>http://liyingbo.com/stat/paper-notes-proper-scoring-rules-and-cost-weighted-loss-functions-for-binary-classification/</link>
       <pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://liyingbo.com/stat/2020/10/12/paper-notes-proper-scoring-rules-and-cost-weighted-loss-functions-for-binary-classification/</guid>
+      <guid>http://liyingbo.com/stat/paper-notes-proper-scoring-rules-and-cost-weighted-loss-functions-for-binary-classification/</guid>
       <description>Proper Scoring Rules Commonly Used Proper Scoring Rules Structure of Proper Scoring Rules Proper scoring rules are mixtures of cost-weighted misclassification losses Beta Family of Proper Scoring Rules Examples   For the pdf slides, click here
 Notations: in binary classification  We are interested in fitting a model \(q(\mathbf{x})\) for the true conditional class 1 probability \[ \eta(\mathbf{x}) = P(Y = 1 \mid \mathbf{X} = \mathbf{x}) \]</description>
     </item>
     
     <item>
       <title>Paper Notes: Generalized R Squared </title>
-      <link>http://liyingbo.com/stat/2020/10/05/paper-notes-generalized-r-squared/</link>
+      <link>http://liyingbo.com/stat/paper-notes-generalized-r-squared/</link>
       <pubDate>Mon, 05 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://liyingbo.com/stat/2020/10/05/paper-notes-generalized-r-squared/</guid>
+      <guid>http://liyingbo.com/stat/paper-notes-generalized-r-squared/</guid>
       <description>Generalized \(R^2\) by Cox and Snell Generalized \(R^2\) by Nagelkerke Generalized \(R^2\) for binary data    For the pdf slides, click here
 \(R^2\) for normal linear regression  \(R^2\), also called coefficient of determination or multiple correlation coefficient, is defined for normal linear regression, as the proportion of variance “explained” by the regression model \[\begin{equation}\label{eq:R2} R^2 = \frac{\sum_i \left( y_i - \hat{y}_i \right)^2}{\sum_i \left( y_i - \bar{y} \right)^2} \end{equation}\]</description>
     </item>

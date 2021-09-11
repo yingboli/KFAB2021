@@ -1,0 +1,423 @@
+---
+title: 'Book Notes: Introduction to Time Series and Forecasting --  Ch3 ARMA Models'
+author: ''
+date: '2019-01-26'
+slug: book-notes-introduction-to-time-series-and-forecasting-ch3-arma-models
+categories:
+  - Book notes
+tags:
+  - Introduction
+  - Time Series
+  - Slides
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 2
+---
+
+***For the pdf slides, click [here](/pdf/122918_time_series_ch3.pdf)***
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE);
+
+#Color Format
+col_text = function(color, x){
+  outputFormat = knitr::opts_knit$get('rmarkdown.pandoc.to');
+  if(outputFormat == 'latex'){
+    if(color == 'green'){
+      paste('\\textcolor[RGB]{0, 128, 0}{', x, '}', sep = '');
+    } else {
+      paste('\\textcolor{', color, '}{', x, '}', sep = '');
+    }
+  } else if(outputFormat == 'beamer'){
+    paste('\\', color, '{', x, '}', sep = '');
+  } else if(outputFormat %in% c('html', 'slidy')){
+    paste("<font color='", color, "'>", x, '</font>', sep = '');
+  } else{
+    x;
+  }
+}
+
+blue = function(x){col_text('blue', x);}
+red = function(x){col_text('red', x);}
+green = function(x){col_text('green', x);}
+```
+
+# ARMA$(p, q)$ Processes
+
+
+### ARMA$(p, q)$ process: definitions
+
+* $\{X_t\}$ is an `r blue('ARMA$(p, q)$ process')` if it is **stationary**, 
+and for all $t$,
+\[
+X_t - \phi_1 X_{t-1} - \cdots - \phi_p X_{t-p} = 
+  Z_t + \theta_1 Z_{t-1} + \cdots + \theta_q Z_{t-q}
+\]
+where $\{Z_t\} \sim \textrm{WN}(0, \sigma^2)$ and the polynomials
+\[
+\phi(z) = 1 - \phi_1 z - \cdots - \phi_p z^p, \quad
+\theta(z) = 1 + \theta_1 z + \cdots + \theta_q z^q
+\]
+have no common factors
+
+* Equivalent formula using the backward shift operator
+\[
+\phi(B) X_t = \theta(B) Z_t
+\]
+
+* An ARMA$(p,q)$ process with mean $\mu$: we can study $\{X_t - \mu\}$
+\[
+(X_t-\mu) - \phi_1 (X_{t-1}-\mu) - \cdots - \phi_p (X_{t-p}-\mu) = 
+  Z_t + \theta_1 Z_{t-1} + \cdots + \theta_q Z_{t-q}
+\]
+
+## Stationary solution
+
+### Stationary solution: existence and uniqueness
+
+* A stationary solution exists and is unique if and only if 
+\[
+\phi(z) \neq 0, \quad \text{for all complex } z \text{ with } |z| = 1
+\]
+
+* `r blue('The unit circle')`: the region in $z \in \mathbb{C}$ defined by 
+  $|z|=1$
+  
+* Stationary solution:
+\[
+X_t = \theta(B) / \phi(B) Z_t = \psi(B) Z_t = \sum_{j=-\infty}^{\infty}
+  \psi_j Z_{t-j}
+\]
+
+## Causality
+
+### Causality: $\phi(z)$ has no zeros inside the unit circle
+
+* An ARMA$(p, q)$ process is `r red('causal')`: if there exist $\psi_0, \psi_1, \ldots$
+\[
+\sum_{j=0}^{\infty} |\psi_j| < \infty, \quad \text{and}
+\]
+\[
+X_t = \sum_{j=0}^{\infty}\psi_j Z_{t-j}, \quad \text{for all } t
+\]
+
+* `r red('Theorem (equivalent condition of causaility)')`:
+\[
+\phi(z) = 1 - \phi_1 z - \cdots - \phi_p z^p \neq 0, \quad \text{for all }
+  |z| \leq 1
+\]
+
+* `r green('Example: ARMA$(1, 1)$')` $X_t - \phi X_{t-1} = Z_t + \theta Z_{t-1}$
+  \[
+  1-\phi z = 0 \Longrightarrow \text{ only zero } z = 1/\phi
+  \]
+  So $|z| = 1/|\phi| > 1$, i.e., $|\phi| < 1$ is equivalent of causality
+
+### How do we get $\psi_j$'s?
+
+* Letting $\theta_0 = 1$ and matching coefficients of $z^j$ based on 
+\[
+1 + \theta_1 z + \cdots \theta_q z^q
+  = (1 - \phi_1 z - \cdots \phi_p z^p)(\psi_0 + \psi_1 z + \cdots),
+\]
+gives
+\[
+\theta_j \mathbf{1}_{[j \leq q]} = \psi_j - \sum_{j=1}^p \phi_k \psi_{j-k}, \quad
+j = 0, 1, \ldots
+\]
+
+* `r green('Example: causal ARMA$(1, 1)$')`  
+\begin{align*}
+1 & = \psi_0\\
+\theta & = \psi_1 - \phi \psi_0 \Longrightarrow \psi_1 = \theta + \psi\\
+0 & = \psi_j - \phi \psi_{j-1} \text{ for } j \geq 2
+  \Longrightarrow \psi_j = \phi \psi_{j-1}
+\end{align*}
+
+Therefore,
+\[
+\psi_0 = 1, \quad \psi_j = \phi^{j-1}(\theta + \psi) \text{ for } j \geq 1
+\]
+
+## Invertibility
+
+### Invertibility: $\theta(z)$ has no zeros inside the unit circle
+
+* An ARMA$(p, q)$ process is `r red('invertible')`: if there exist 
+$\pi_0, \pi_1, \ldots$
+\[
+\sum_{j=0}^{\infty} |\pi_j| < \infty, \quad \text{and}
+\]
+\[
+Z_t = \sum_{j=0}^{\infty}\pi_j X_{t-j}, \quad \text{for all } t
+\]
+
+* `r red('Theorem (equivalent condition of invertibility)')`:
+\[
+\theta(z) = 1 + \theta_1 z + \cdots + \theta_q z^q \neq 0, \quad \text{for all }
+  |z| \leq 1
+\]
+
+* `r green('Example: ARMA$(1, 1)$')` $X_t - \phi X_{t-1} = Z_t + \theta Z_{t-1}$
+  \[
+  1 + \theta z = 0 \Longrightarrow \text{ only zero } z = -1/\theta
+  \]
+  So $|z| = 1/|\theta| > 1$, i.e., $|\theta| < 1$ is equivalent of invertibility
+
+### How do we get $\pi_j$'s?
+
+* Letting $\phi_0 = -1$ and matching coefficients of $z^j$ based on 
+\[
+1 - \phi_1 z - \cdots \phi_p z^p
+  = (1 + \theta_1 z + \cdots \theta_q z^q)(\pi_0 + \pi_1 z + \cdots),
+\]
+gives
+\[
+-\phi_j \mathbf{1}_{[j \leq p]} = \pi_j + \sum_{j=1}^q \theta_k \pi_{j-k}, \quad
+j = 0, 1, \ldots
+\]
+
+* `r green('Example: invertible ARMA$(1, 1)$')`  
+\begin{align*}
+1 & = \pi_0\\
+-\phi & = \pi_1 + \theta \psi_0 \Longrightarrow \pi_1 = -(\psi +\theta)\\
+0 & = \pi_j + \theta \pi_{j-1} \text{ for } j \geq 2
+  \Longrightarrow \pi_j = -\theta \pi_{j-1}
+\end{align*}
+
+Therefore,
+\[
+\pi_0 = 1, \quad \pi_j = (-1)^j \theta^{j-1}(\psi + \theta) \text{ for } j \geq 1
+\]
+
+
+# ACF and PACF of an ARMA$(p, q)$ Process
+
+## Calculation of the ACVF
+
+### Calculation of the ACVF
+
+* Assume the ARMA$(p, q)$ process $\{X_t\}$ is causal and invertible
+
+* Method 1: If
+  $X_t = \sum_{j=0}^{\infty} \psi_j Z_{t-j}$, then
+\[
+\gamma(h) = E(X_{t+h} E_t) = \sigma^2 \sum_{j=0}^{\infty} \psi_j \psi_{j + |h|}
+\]
+
+* Method 2 (difference equation method): multiple the ARMA formula with 
+      $X_t, X_{t-1}, \ldots$ and take expectation
+      
+### `r green('Example: ARMA$(1, 1)$')`  
+
+* Recall that for a causal ARMA$(1, 1)$, in $X_t = \sum_{j=0}^{\infty} \psi_j Z_{t-j}$,
+\[
+\psi_0 = 1, \quad \psi_j = \phi^{j-1}(\theta + \psi) \text{ for } j \geq 1
+\]
+
+* Lag-0 autocorrelation
+\[
+\gamma(0) = \sigma^2 \sum_{j=0}^{\infty} \psi_j^2 
+  = \sigma^2\left[ 1 + (\theta+\phi)^2 \sum_{j=0}^{\infty}\phi^{2j}\right]
+  = \sigma^2\left[ 1 + \frac{(\theta+\phi)^2}{1-\phi^2} \right]
+\]
+
+* Lag-1 autocorrelation
+\[
+\gamma(1) = \sigma^2 \sum_{j=0}^{\infty} \psi_j \psi_{j+1} 
+%  = \sigma^2\left[ \theta+\phi + (\theta+\phi)^2\phi
+%    \sum_{j=0}^{\infty}\phi^{2j}\right]
+  = \sigma^2\left[ \theta+\phi + \frac{(\theta+\phi)^2 \phi}{1-\phi^2} \right]
+\]
+
+* Lag-$k$ autocorrelation ($k \geq 2$)
+\[
+\gamma(k) = \phi^{k-1} \gamma(1), \quad k \geq 2
+\]
+
+### Use the difference equation method on `r green('ARMA$(1, 1)$')`  
+
+1. Multiple $X_t - \phi X_{t-1} = Z_t + \theta Z_{t-1}$ by $X_t$, 
+then take expectation
+\[
+E(X_t^2) - \phi E(X_t X_{t-1}) = E(X_t Z_t) + \theta E(X_t Z_{t-1})
+\]
+Since $E(X_t Z_k) = E[(\sum_{j=0}^{\infty} \psi_j Z_{t-j})Z_k] 
+= \psi_{t-k} \sigma^2$, we have
+\[
+\gamma(0) - \phi \gamma(1) = \sigma^2 + \theta (\theta + \phi) \sigma^2 
+\]
+
+2. Multiply by $X_{t-1}$
+\[
+E(X_{t-1} X_t) - \phi E(X_{t-1}^2) = E(X_{t-1} Z_t) + \theta E(X_{t-1} Z_{t-1})
+\]
+\[
+\gamma(1) - \phi \gamma(0) = 0 + \theta \sigma^2 \psi_0 = \theta \sigma^2
+\]
+
+**Using the two equations from 1 and 2, we can solve $\gamma(0), \gamma(1)$**
+
+3. Multiply by $X_{t-k}$, for $k \geq 2$
+\[
+E(X_{t-k} X_t) - \phi E(X_{t-k} X_{t-1}) = E(X_{t-k} Z_t) + \theta E(X_{t-k} Z_{t-1})
+\]
+\[
+\gamma(k) - \phi \gamma(k-1) = 0 \Longrightarrow \gamma(k) = \phi \gamma(k-1)
+\]
+
+## Test for MAs and ARs from the ACF and PACF
+
+### ACF of an MA$(q)$ process
+
+* Suppose $\{X_t\}$ is an MA$(q)$, then $\rho(h) = 0$ for all $h > q$
+* By asymptotic normality 
+\[
+\hat{\rho}(q + 1) \stackrel{\cdot}{\sim} 
+  \textrm{N}\left(0, \frac{w_{q+1, q+1}}{n}\right)
+\]
+and Bartlett
+\begin{align*}
+w_{q+1, q+1} & = \sum_{k=1}^{\infty}
+  \left[ \rho(k+q+1) + \rho(k-q-1) - 2 \rho(k+1) \rho(q)  \right]^2 \\
+  & = \sum_{k=1}^{\infty}\rho(k-q-1)^2\\
+  & = 1 + 2 \sum_{j=1}^q \rho(j)^2
+\end{align*}
+
+### `r red('Test for an MA$(q)$: from the ACF')`
+
+1. Hypotheses
+\[
+H_0: \{X_t\} \sim \textrm{MA}(q) \quad \longleftrightarrow \quad
+H_A: \text{Not } H_0
+\]
+
+2. Test statistic
+\[
+Z = \frac{\hat{\rho}(q + 1) - 0}{\sqrt{\frac{1 + 2 \sum_{j=1}^q \hat{\rho}(j)^2}{n}}}
+\]
+
+3. Reject $H_0$ if $|Z| \geq z_{\alpha/2}$
+
+* Note: under the null hypothesis, we use the sample ACF plot with bounds
+$\pm 1.96 \times \sqrt{\frac{1 + 2 \sum_{j=1}^q \hat{\rho}(j)^2}{n}}$ to check
+if $\hat{\rho}(h)$ for all $h \geq q+1$ are inside the bounds. 
+But this may have some multiple testing problems.
+
+### Partial autocorrelation function (PACF)
+
+
+* We define the `r blue('partial autocorrelation function (PACF)')` 
+of an ARMA process as the function $\alpha(\cdot)$
+\[
+\alpha(0) = 1, \quad \alpha(h) = \phi_{hh}, \text{ for } h \geq 1
+\]
+Here, $\phi_{hh}$ is the last entry of 
+\[
+\boldsymbol\phi_h = \boldsymbol\Gamma_h^{-1} \boldsymbol\gamma_h, \quad \text{where }
+\boldsymbol\Gamma_h = [\gamma(i-j)]_{i,j=1}^h, \ 
+\boldsymbol\gamma_h = [\gamma(1), \ldots, \gamma(h)]'
+\]
+
+* `r blue('Sample PACF')` $\hat{\alpha}(\cdot)$: 
+  change all $\gamma(\cdot)$ above to $\hat{\gamma}(\cdot)$
+
+* Recall: in DL algorithm $\hat{X}_{n+1} = \phi_{n1}X_n + \cdots + \phi_{nn} X_1$,
+\[
+\phi_{nn} = \alpha(n), \quad \text{PACF at lag }n
+\]
+
+### PACF property
+
+* $\phi_{nn}$ is the correlation between the prediction errors
+\[
+\alpha(n) = \text{Corr}
+\left( X_n - P(X_n | X_1, \ldots, X_{n-1}),
+X_0 - P(X_0 | X_1, \ldots, X_{n-1})\right)
+\]
+
+* `r red('Theorem')`: A stationary series is AR$(p)$ if and only if
+\[
+\alpha(h) = 0 \text{ for all } h > p
+\]
+
+* If $\{X_t\}$ is an AR$(p)$, then we have asymptotic normality
+\[
+\hat{\alpha}(h) \stackrel{\cdot}{\sim} \textrm{N}\left(0, \frac{1}{n}\right),
+\quad \text{for all } h > p
+\]
+
+
+### `r red('Test for an AR$(p)$: from the PACF')`
+
+1. Hypotheses
+\[
+H_0: \{X_t\} \sim \textrm{AR}(p) \quad \longleftrightarrow \quad
+H_A: \text{Not } H_0
+\]
+
+2. Test statistic
+\[
+Z = \frac{\hat{\alpha}(p + 1) - 0}{\sqrt{\frac{1}{n}}}
+\]
+
+3. Reject $H_0$ if $|Z| \geq z_{\alpha/2}$
+
+* Note: under the null hypothesis, we use the sample PACF plot with bounds
+$\pm 1.96 / \sqrt{n}$ to check
+if $\hat{\alpha}(h)$ for all $h \geq p+1$ are inside the bounds. 
+But this may have some multiple testing problems.
+
+# Forecast ARMA Processes
+
+### Forecast ARMA$(p, q)$ using the innovation algorithm
+
+* Let $m = \max(p, q)$
+
+* One-step prediction 
+\[
+\hat{X}_{n+1} =  
+\begin{cases}
+  \sum_{j=1}^n \theta_{nj}\left( X_{n+1-j} - \hat{X}_{n+1-j} \right),
+  &  n < m\\
+  \sum_{i=1}^p \phi_i X_{n+1-i} + 
+  \sum_{j=1}^q \theta_{nj}\left( X_{n+1-j} - \hat{X}_{n+1-j} \right),
+  &  n \geq m\\
+  \end{cases}
+\]
+
+    - Special case: AR$(p)$ process
+    \[
+    \hat{X}_{n+1} = \sum_{i=1}^p \phi_k X_{n+1-i}, \quad n\geq p
+    \]
+
+* $h$-step prediction: for $n>m$ and all $h \geq 1$, 
+\[
+P_n X_{n+h} =
+  \sum_{i=1}^p \phi_i P_n X_{n+h-i} + 
+  \sum_{j=h}^q \theta_{n+h-1,j}\left( X_{n+1-j} - \hat{X}_{n+1-j} \right)
+\]
+
+### Innovation algorithm parameters vs MA parameters
+
+* `r red('Innovation algorithm parameters converges to the MA parameters')`: 
+If $\{X_t\}$ is invertible, then as $n\rightarrow \infty$, 
+\[
+\theta_{nj} \longrightarrow \theta_j, \quad j = 1, 2, \ldots, q
+\]
+
+* `r red('Prediction MSE converges to ')` $\sigma^2$:
+Let 
+\[
+v_n = E(X_{n+1} - \hat{X}_{n+1})^2, \quad \text{and } v_n = r_n \sigma^2
+\]
+If $\{X_t\}$ is invertible, then as $n\rightarrow \infty$, 
+\[
+r_n \longrightarrow 1
+\]
+
+### References
+
+* Brockwell, Peter J. and Davis, Richard A. (2016), *Introduction to Time Series and Forecasting, Third Edition*. New York: Springer

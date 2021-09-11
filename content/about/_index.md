@@ -1,4 +1,5 @@
 ---
+date: "2016-11-05T21:05:33+05:30"
 title: About Me
 ---
 
@@ -16,6 +17,3 @@ title: About Me
     - Translate my recipes to English
     - Learn some statistics
 
-* [My Linkedin page](https://www.linkedin.com/in/yingbo-li-08321723/) 
-* [My Github page](https://github.com/yingboli) 
-    
