@@ -9,10 +9,10 @@
     <lastBuildDate>Tue, 08 Sep 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://liyingbo.com/tags/missing-data/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Book Notes: Statistical Analysis with Missing Data -- Ch3 Complete Case Analysis and Weighting Methods</title>
-      <link>http://liyingbo.com/stat/book-notes-statistical-analysis-with-missing-data-ch3-complete-case-analysis-and-weighting-methods/</link>
+      <link>http://liyingbo.com/stat/2020/09/08/book-notes-statistical-analysis-with-missing-data-ch3-complete-case-analysis-and-weighting-methods/</link>
       <pubDate>Tue, 08 Sep 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://liyingbo.com/stat/book-notes-statistical-analysis-with-missing-data-ch3-complete-case-analysis-and-weighting-methods/</guid>
+      <guid>http://liyingbo.com/stat/2020/09/08/book-notes-statistical-analysis-with-missing-data-ch3-complete-case-analysis-and-weighting-methods/</guid>
       <description>Weighted Complete-Case Analysis Available-Case Analysis   For the pdf slides, click here
 Complete-case (CC) analysis  Complete-case (CC) analysis: use only data points (units) where all variables are observed
  Loss of information in CC analysis:
@@ -21,20 +21,20 @@ Complete-case (CC) analysis  Complete-case (CC) analysis: use only data points (
     
     <item>
       <title>Book Notes: Flexible Imputation of Missing Data -- Ch4 Multivariate Missing Data</title>
-      <link>http://liyingbo.com/stat/book-notes-flexible-imputation-of-missing-data-ch4-multivariate-missing-data/</link>
+      <link>http://liyingbo.com/stat/2020/08/25/book-notes-flexible-imputation-of-missing-data-ch4-multivariate-missing-data/</link>
       <pubDate>Tue, 25 Aug 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://liyingbo.com/stat/book-notes-flexible-imputation-of-missing-data-ch4-multivariate-missing-data/</guid>
+      <guid>http://liyingbo.com/stat/2020/08/25/book-notes-flexible-imputation-of-missing-data-ch4-multivariate-missing-data/</guid>
       <description>Missing Data Pattern Fully Conditional Specification (FCS)   For the pdf slides, click here
 Notations in this chapter  \(Y\): a \(n \times p\) matrix which contains is missing data \(Y_j\): the \(j\)th column in \(Y\) \(Y_{-j}\): all but the \(j\)th column of \(Y\) \(R\): a \(n \times p\) missing indicator matrix  \(0\) is missing and \(1\) is observed    Missing Data Pattern Missing data pattern summary statistics  When the number of columns is small, we can use the md.</description>
     </item>
     
     <item>
       <title>Book Notes: Flexible Imputation of Missing Data -- Ch3 Univariate Missing Data</title>
-      <link>http://liyingbo.com/stat/book-notes-flexible-imputation-of-missing-data-ch3-univariate-missing-data/</link>
+      <link>http://liyingbo.com/stat/2020/08/24/book-notes-flexible-imputation-of-missing-data-ch3-univariate-missing-data/</link>
       <pubDate>Mon, 24 Aug 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://liyingbo.com/stat/book-notes-flexible-imputation-of-missing-data-ch3-univariate-missing-data/</guid>
+      <guid>http://liyingbo.com/stat/2020/08/24/book-notes-flexible-imputation-of-missing-data-ch3-univariate-missing-data/</guid>
       <description>Imputation under the Normal Linear Model Predictive Mean Matching Imputation under CART Imputing Categorical and Other Types of Data   For the pdf slides, click here
 Notations  In this chapter, we assume that there is only one variable having missing values. We call this variable \(y\) the target variable.
  \(y_\text{obs}\): the \(n_1\) observed data in \(y\) \(y_\text{mis}\): the \(n_0\) missing data in \(y\) \(\dot{y}\): imputed values in \(y\)  Suppose \(X\) are the variables (covariates) in the imputation model.</description>
@@ -42,20 +42,20 @@ Notations  In this chapter, we assume that there is only one variable having mis
     
     <item>
       <title>Book Notes: Flexible Imputation of Missing Data -- Ch2 Multiple Imputation</title>
-      <link>http://liyingbo.com/stat/book-notes-flexible-imputation-of-missing-data-ch2-multiple-imputation/</link>
+      <link>http://liyingbo.com/stat/2020/08/23/book-notes-flexible-imputation-of-missing-data-ch2-multiple-imputation/</link>
       <pubDate>Sun, 23 Aug 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://liyingbo.com/stat/book-notes-flexible-imputation-of-missing-data-ch2-multiple-imputation/</guid>
+      <guid>http://liyingbo.com/stat/2020/08/23/book-notes-flexible-imputation-of-missing-data-ch2-multiple-imputation/</guid>
       <description>Concepts in Incomplete Data Why and When Multiple Imputation Works More about Imputation Methods   For the pdf slides, click here
 Concepts in Incomplete Data Notations  \(m\): number of multiple imputations \(Y\): data of the sample  Includes both covariates and response Dimension \(n \times p\)  \(R\): observation indicator matrix, known  A \(n \times p\) 0-1 matrix \(r_{ij} =0\) for missing and 1 for observed  \(Y_{\text{obs}}\): observed data \(Y_{\text{mis}}\): missing data \(Y = (Y_{\text{obs}}, Y_{\text{mis}})\): complete data</description>
     </item>
     
     <item>
       <title>Book Notes: Flexible Imputation of Missing Data -- Ch1 Introduction</title>
-      <link>http://liyingbo.com/stat/book-notes-flexible-imputation-of-missing-data-ch1-introduction/</link>
+      <link>http://liyingbo.com/stat/2020/08/22/book-notes-flexible-imputation-of-missing-data-ch1-introduction/</link>
       <pubDate>Sat, 22 Aug 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://liyingbo.com/stat/book-notes-flexible-imputation-of-missing-data-ch1-introduction/</guid>
+      <guid>http://liyingbo.com/stat/2020/08/22/book-notes-flexible-imputation-of-missing-data-ch1-introduction/</guid>
       <description>Concepts of MCAR, MAR, MNAR Ad-hoc Solutions Multiple Imputation in a Nutshell   For the pdf slides, click here
 Concepts of MCAR, MAR, MNAR Concepts of MCAR, MAR, MNAR  Missing completely at random (MCAR): the probability of being missing is the same for all cases  Cause of missing is unrelated to the data  Missing at random (MAR): the probability of being missing only depends on the observed data  Cause of missing is unrelated to the missing values  Missing not at random (MNAR): probability of being missing depends on the missing values themselves    Ad-hoc Solutions Listwise deletion and pairwise deletion  Listwise deletion (also called complete-case analysis): delete rows which contain one or more missing values  If data is MCAR, listwise deletion produces unbiased estimates of means, variances, and regression weights (if need to train a predictive model) If data is not MCAR, listwise deletion can severely bias the above estimates.</description>
     </item>

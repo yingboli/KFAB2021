@@ -9,10 +9,10 @@
     <lastBuildDate>Sat, 13 Jun 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://liyingbo.com/tags/survival-analysis/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Book Notes: Computer Age Statistical Inference -- Ch9 Survival Analysis</title>
-      <link>http://liyingbo.com/stat/book-notes-computer-age-statistical-inference-ch-9-survival-analysis/</link>
+      <link>http://liyingbo.com/stat/2020/06/13/book-notes-computer-age-statistical-inference-ch-9-survival-analysis/</link>
       <pubDate>Sat, 13 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://liyingbo.com/stat/book-notes-computer-age-statistical-inference-ch-9-survival-analysis/</guid>
+      <guid>http://liyingbo.com/stat/2020/06/13/book-notes-computer-age-statistical-inference-ch-9-survival-analysis/</guid>
       <description>Survival Analysis Life Table and Kaplan-Meier Estimate Cox’s Proportional Hazards Model    For the pdf slides, click here
 Survival Analysis Life Table and Kaplan-Meier Estimate Life table  An insurance company’s life table shows information of clients by their age. For each age \(i\), it contains
  \(n_i\): number of clients \(y_i\): number of death \(\hat{h}_i = y_i / n_i\): hazard rate \(\hat{S}_i\): survival probability estimate  An example life table</description>

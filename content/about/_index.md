@@ -9,6 +9,10 @@ title: About Me
 
     - The home cook who knows the most about statistics
     - The statistician who cooks the best
+    
+* My [Linkedin](https://www.linkedin.com/in/yingbo-li-08321723/)
+
+* My [Github](https://github.com/yingboli)
 
 * I hope that, one day, my kids can
 

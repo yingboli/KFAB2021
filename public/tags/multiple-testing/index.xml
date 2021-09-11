@@ -9,10 +9,10 @@
     <lastBuildDate>Mon, 28 Sep 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://liyingbo.com/tags/multiple-testing/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Book Notes: Computer Age Statistical Inference -- Ch15 Multiple Testing</title>
-      <link>http://liyingbo.com/stat/book-notes-computer-age-statistical-inference-ch-15-multiple-testing/</link>
+      <link>http://liyingbo.com/stat/2020/09/28/book-notes-computer-age-statistical-inference-ch-15-multiple-testing/</link>
       <pubDate>Mon, 28 Sep 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://liyingbo.com/stat/book-notes-computer-age-statistical-inference-ch-15-multiple-testing/</guid>
+      <guid>http://liyingbo.com/stat/2020/09/28/book-notes-computer-age-statistical-inference-ch-15-multiple-testing/</guid>
       <description>Classical (Before Computer Age) Multiple Testing Corrections Bonferroni Correction Family-wise Error Rate  False Discovery Rates Benjamini-Hochberg FDR control An empirical Bayes view  Local False Discovery Rates Empirical Null   For the pdf slides, click here
 Classical (Before Computer Age) Multiple Testing Corrections Background and notations  Before computer age, multiple testing may only involve 10 or 20 tests. With the emerge of biomedical (microarray) data, multiple testing may need to evaluate several thousands of tests</description>
     </item>

@@ -53,6 +53,7 @@ params:
     height: 50
     url: yingbo_headshot.jpg
     width: 50
+
 markup:
   defaultMarkdownHandler: goldmark
   goldmark:
