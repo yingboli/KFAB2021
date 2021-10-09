@@ -23,8 +23,8 @@ title: My Notes on Statistics and Machine Learning Books and Papers
     
 * Generalized Additive Models: An Introduction with R, by Wood (2017) 
 
-    - [Ch3 Generalized Linear Models]() [(pdf)]()
-    - [Ch4 Introducing GAMs]() [(pdf)]()
+    - [Ch3 Generalized Linear Models](https://liyingbo.com/stat/2021/03/21/book-notes-generalized-additive-models-ch3-generalized-linear-models-glm/) [(pdf)](https://liyingbo.com/pdf/102720_GAM_ch3.pdf)
+    - [Ch4 Introducing GAMs](https://liyingbo.com/stat/2021/03/27/book-notes-generalized-additive-models-ch4-introducing-gams/) [(pdf)](https://liyingbo.com/pdf/012620_GAM_ch4.pdf)
 
     
 * Pattern Recognition and Machine Learning, by Bishop (2006)
