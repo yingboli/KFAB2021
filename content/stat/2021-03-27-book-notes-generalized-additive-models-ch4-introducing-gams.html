@@ -1,0 +1,515 @@
+---
+title: 'Book Notes: Generalized Additive Models -- Ch4 Introducing GAMs'
+author: ''
+date: '2021-03-27'
+slug: book-notes-generalized-additive-models-ch4-introducing-gams
+categories:
+  - Book notes
+tags:
+  - General Additive Models
+  - Slides
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 2
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#univariate-smoothing">Univariate Smoothing</a><ul>
+<li><a href="#piecewise-linear-basis-tent-functions">Piecewise linear basis: tent functions</a></li>
+<li><a href="#penalty-to-control-wiggliness">Penalty to control wiggliness</a></li>
+</ul></li>
+<li><a href="#additive-models">Additive Models</a></li>
+<li><a href="#generalized-additive-models">Generalized Additive Models</a></li>
+<li><a href="#introducing-package-mgcv">Introducing Package <code>mgcv</code></a></li>
+</ul>
+</div>
+
+<p><strong><em><font color='red'>For the pdf slides, click <a href="/pdf/012620_GAM_ch4.pdf">here</a></font></em></strong></p>
+<div id="introduction-of-gam" class="section level3">
+<h3>Introduction of GAM</h3>
+<ul>
+<li><p>In general the GAM model has a following structure
+<span class="math display">\[
+g(\mu_i) = \mathbf{A}_i \boldsymbol\theta + f_1 (x_{1i}) + f_2 (x_{2i}) + f_3 (x_{3i}, x_{4i}) + \cdots
+\]</span></p>
+<ul>
+<li><span class="math inline">\(Y_i\)</span> follows some exponential family distribution: <span class="math inline">\(Y_i \sim EF(\mu_i, \phi)\)</span></li>
+<li><span class="math inline">\(\mu_i = E(Y_i)\)</span></li>
+<li><span class="math inline">\(\mathbf{A}_i\)</span> is a row of the model matrix, and <span class="math inline">\(\boldsymbol\theta\)</span> is the corresponding parameter vector</li>
+<li><span class="math inline">\(f_j\)</span> are smooth functions of the covariates <span class="math inline">\(x_k\)</span></li>
+</ul></li>
+<li>This chapter
+<ul>
+<li>Illustrates GAMs by basis expansions, each with a penalty controlling function smoothness</li>
+<li>Estimates GAMs by penalized regression methods</li>
+</ul></li>
+<li><p><strong>Takeaway: technically GAMs are simply GLM estimated subject to smoothing penalties</strong></p></li>
+</ul>
+</div>
+<div id="univariate-smoothing" class="section level1">
+<h1>Univariate Smoothing</h1>
+<div id="piecewise-linear-basis-tent-functions" class="section level2">
+<h2>Piecewise linear basis: tent functions</h2>
+<div id="representing-a-function-with-basis-expansions" class="section level3">
+<h3>Representing a function with basis expansions</h3>
+<ul>
+<li><p>Let’s consider a model containing one function of one covariate
+<span class="math display">\[
+y_i = f(x_i) + \epsilon_i, \quad \epsilon_i \stackrel{\text{iid}}{\sim} \text{N}(0, \sigma^2)
+\]</span></p></li>
+<li><p>If <span class="math inline">\(b_j(x)\)</span> is the <span class="math inline">\(j\)</span>th <font color='blue'>basis function</font>, then <span class="math inline">\(f\)</span> is assumed to have a representation
+<span class="math display">\[
+f(x) = \sum_{j=1}^k b_j(x)\beta_j
+\]</span>
+with some unknown parameters <span class="math inline">\(\beta_j\)</span></p>
+<ul>
+<li>This is clearly a linear model</li>
+</ul></li>
+</ul>
+</div>
+<div id="the-problem-with-polynomials" class="section level3">
+<h3>The problem with polynomials</h3>
+<ul>
+<li><p>A <span class="math inline">\(k\)</span>th order polynomial is
+<span class="math display">\[
+f(x) = \beta_0 + \sum_{j=1}^k \beta_k x^k
+\]</span></p></li>
+<li><p><font color='red'>The polynomial oscillates wildly in places, in order to both interpolate the data and to have all derivatives wrt <span class="math inline">\(x\)</span> continuous</font></p></li>
+</ul>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-1"></span>
+<img src="/figures/Wood_GAM_book_fig4_3.png" alt="Left: the target function $f(x)$. Middle: polynomial interpolation. Right: piecewise linear interpolant" width="100%" />
+<p class="caption">
+Figure 1: Left: the target function <span class="math inline">\(f(x)\)</span>. Middle: polynomial interpolation. Right: piecewise linear interpolant
+</p>
+</div>
+</div>
+<div id="piecewise-linear-basis" class="section level3">
+<h3><font color='blue'>Piecewise linear basis</font></h3>
+<ul>
+<li><p>Suppose there are <span class="math inline">\(k\)</span> knots <span class="math inline">\(x_1^* &lt; x_2^* &lt; \cdots &lt;x_k^*\)</span></p></li>
+<li><p>The <font color='blue'>tent function</font> representation of piecewise linear basis is</p>
+<ul>
+<li>For <span class="math inline">\(j = 2, \ldots, k-1\)</span>,
+<span class="math display">\[
+  b_j(x) = 
+  \begin{cases}
+  \frac{x - x_{j-1}^*}{x_j^* - x_{j-1}^*}, &amp; \text{if } x_{j-1}^* &lt; x \leq x_j^*\\
+  \frac{x_{j+1}^* - x}{x_{j+1}^* - x_j^*}, &amp; \text{if } x_j^* &lt; x \leq x_{j+1}^*\\
+  0, &amp; \text{otherwise}
+  \end{cases}
+  \]</span></li>
+<li>For the two basis functions on the edge
+<span class="math display">\[\begin{align*}
+  b_1(x) &amp; = 
+  \begin{cases}
+  \frac{x_2^* - x}{x_2^* - x_1^*}, &amp; \text{if } x \leq x_2^*\\
+  0, &amp; \text{otherwise}
+  \end{cases}\\
+  b_k(x) &amp; = 
+  \begin{cases}
+  \frac{x - x_{k-1}^*}{x_k^* - x_{k-1}^*}, &amp;  x &gt; x_{k-1}^*\\
+  0, &amp; \text{otherwise}
+  \end{cases}
+  \end{align*}\]</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="visualization-of-tent-function-basis" class="section level3">
+<h3>Visualization of tent function basis</h3>
+<ul>
+<li><p><span class="math inline">\(b_j(x)\)</span> is zero everywhere, except over the interval between the knots immediately to either side of <span class="math inline">\(x_j^*\)</span></p></li>
+<li><p><span class="math inline">\(b_j(x)\)</span> increases linear from <span class="math inline">\(0\)</span> at <span class="math inline">\(x_{j-1}^*\)</span> to 1 at <span class="math inline">\(x_j^*\)</span>,
+and then decreases linearly to <span class="math inline">\(0\)</span> at <span class="math inline">\(x_{j+1}^*\)</span></p></li>
+</ul>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-2"></span>
+<img src="/figures/Wood_GAM_book_fig4_4.png" alt="Left: tent function basis, for interpolating the data shown as black dots. Right: the basis functiosn are each multiplied by a coefficient, before being summed" width="100%" />
+<p class="caption">
+Figure 2: Left: tent function basis, for interpolating the data shown as black dots. Right: the basis functiosn are each multiplied by a coefficient, before being summed
+</p>
+</div>
+</div>
+</div>
+<div id="penalty-to-control-wiggliness" class="section level2">
+<h2>Penalty to control wiggliness</h2>
+<div id="control-smoothness-by-penalizing-wiggliness" class="section level3">
+<h3>Control smoothness by penalizing wiggliness</h3>
+<ul>
+<li><p>To choose the degree of smoothness, rather than selecting the number of knots <span class="math inline">\(k\)</span>,
+we can use a relatively large <span class="math inline">\(k\)</span>, but control the model’s smoothness by adding a “wiggliness” penalty</p>
+<ul>
+<li>Note that a model based on <span class="math inline">\(k-1\)</span> evenly spaced knots will not be nested within a model based on <span class="math inline">\(k\)</span> evenly spaced knots</li>
+</ul></li>
+<li><p>Penalized likelihood function for piecewise linear basis:
+<span class="math display">\[
+\|\mathbf{y} - \mathbf{X}\boldsymbol\beta\|^2 + \lambda \sum_{j=2}^{k-1} \left[ f(x_{j-1}^*) - 2f(x_j^*) + f(x_{j+1}^*) \right]^2
+\]</span></p>
+<ul>
+<li>Wiggliness is measured as a sum of squared second differences of the function at the knots</li>
+<li>This crudely approximates the integrated squared second derivative penalty used in cubic spline smoothing</li>
+<li><span class="math inline">\(\lambda\)</span> is called the <font color='blue'>smoothing parameter</font></li>
+</ul></li>
+</ul>
+</div>
+<div id="simplify-the-penalized-likelihood" class="section level3">
+<h3>Simplify the penalized likelihood</h3>
+<ul>
+<li><p>For the test function basis, <span class="math inline">\(\beta_j = f(x_j^*)\)</span></p></li>
+<li><p>Therefore, the penalty can be expressed as a quadratic form
+<span class="math display">\[
+\sum_{j=2}^{k-1} (\beta_{j-1} - 2 \beta_j + \beta_{j+1})^2
+= \boldsymbol\beta^T \mathbf{D}^T\mathbf{D}\boldsymbol\beta
+= \boldsymbol\beta^T \mathbf{S}\boldsymbol\beta
+\]</span></p>
+<ul>
+<li>The <span class="math inline">\((k-2)\times k\)</span> matrix <span class="math inline">\(\mathbf{D}\)</span> is
+<span class="math display">\[
+  \mathbf{D} = \left[
+  \begin{array}{ccccccc}
+  1  &amp;  -2  &amp;  1  &amp;  0  &amp;  .  &amp;  .  &amp;  .  \\
+  0  &amp;   1  &amp; -2  &amp;  1  &amp;  0  &amp;  .  &amp;  .  \\
+  0  &amp;   0  &amp;  1  &amp; -2  &amp;  1  &amp;  0  &amp;  .  \\
+  .  &amp;   .  &amp;  .  &amp;  .  &amp;  .  &amp;  .  &amp;  .  \\
+  .  &amp;   .  &amp;  .  &amp;  .  &amp;  .  &amp;  .  &amp;  .  \\
+  \end{array}
+  \right]
+  \]</span></li>
+<li><span class="math inline">\(\mathbf{S} = \mathbf{D}^T\mathbf{D}\)</span> is a square matrix</li>
+</ul></li>
+</ul>
+</div>
+<div id="solution-of-the-penalized-regression" class="section level3">
+<h3>Solution of the penalized regression</h3>
+<ul>
+<li><p>To minimize the penalized likelihood
+<span class="math display">\[\begin{align*}
+\hat{\boldsymbol\beta}
+&amp;= \arg\min_{\boldsymbol\beta}~ \|\mathbf{y} - \mathbf{X}\boldsymbol\beta \|^2
++ \lambda \boldsymbol\beta^T \mathbf{S} \boldsymbol\beta\\
+&amp;= (\mathbf{X}^T\mathbf{X} + \lambda \mathbf{S})^{-1} \mathbf{X}^T\mathbf{y}
+\end{align*}\]</span></p></li>
+<li><p>The <font color='blue'>hat matrix</font> (also called <font color='blue'>influence matrix</font>) <span class="math inline">\(\mathbf{A}\)</span> is thus
+<span class="math display">\[
+\mathbf{A} = \mathbf{X} (\mathbf{X}^T\mathbf{X} + \lambda \mathbf{S})^{-1} \mathbf{X}^T
+\]</span>
+and the fitted expectation is <span class="math inline">\(\hat{\boldsymbol\mu} = \mathbf{A} \mathbf{y}\)</span></p></li>
+<li><p>For practical computation, we can introduce imaginary data to re-formulate the
+penalized least square problem to be a regular least square problem
+<span class="math display">\[
+\|\mathbf{y} - \mathbf{X}\boldsymbol\beta \|^2
++ \lambda \boldsymbol\beta^T \mathbf{S} \boldsymbol\beta
+= \left\|\left[
+\begin{array}{c}
+\mathbf{y}\\
+\mathbf{0}
+\end{array}
+\right] -
+\left[
+\begin{array}{c}
+\mathbf{X}\\
+\sqrt{\lambda}\mathbf{D}
+\end{array}
+\right] \boldsymbol\beta
+\right\|^2
+\]</span></p></li>
+</ul>
+</div>
+<div id="hyper-parameter-tuning" class="section level3">
+<h3>Hyper-parameter tuning</h3>
+<ul>
+<li><p>Between the two hyper-parameters: number of knots <span class="math inline">\(k\)</span> and the smoothing parameter <span class="math inline">\(\lambda\)</span>, the choice of <span class="math inline">\(\lambda\)</span> plays the crucial role</p></li>
+<li><p>We can always use a <span class="math inline">\(k\)</span> large enough, more flexible then we expect to need to represent <span class="math inline">\(f(x)\)</span></p></li>
+<li><p>In <code>mgcv</code> package, the default choice is <span class="math inline">\(k = 20\)</span>, and knots are evenly spread out over the range of observed data</p></li>
+</ul>
+</div>
+<div id="choose-lambda-by-leave-one-out-cross-validation" class="section level3">
+<h3>Choose <span class="math inline">\(\lambda\)</span> by leave-one-out cross validation</h3>
+<ul>
+<li><p>Under linear regression, to compute leave-one-out cross validation error
+(called the <font color='blue'>ordinary cross validation score</font>), we only need to fit the full model once
+<span class="math display">\[
+\mathcal{V}_o 
+ = \frac{1}{n} \sum_{i=1}^n \left(y_i - \hat{f}^{[-i]}_i \right)^2
+ = \frac{1}{n} \sum_{i=1}^n \frac{\left(y_i - \hat{f}_i\right)^2}{(1 - A_{ii})^2}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\hat{f}^{[-i]}_i\)</span> is the model fitted to all data except <span class="math inline">\(y_i\)</span></li>
+<li><span class="math inline">\(\hat{f}_i\)</span> is the model fitted to all data,
+and <span class="math inline">\(A_{ii}\)</span> is the <span class="math inline">\(i\)</span>th diagonal entry of the corresponding hat matrix</li>
+</ul></li>
+<li><p>In practice, <span class="math inline">\(A_{ii}\)</span> are often replaced by their mean <span class="math inline">\(\text{tr}(\mathbf{A})/n\)</span>.
+This results in the <font color='blue'>generalized cross validation score (GCV)</font>
+<span class="math display">\[
+\mathcal{V}_g
+ = \frac{n \sum_{i=1}^n \left(y_i - \hat{f}_i\right)^2}{\left[n - \text{tr}(\mathbf{A}) \right]^2}
+\]</span></p></li>
+</ul>
+</div>
+<div id="from-the-bayesian-perspective" class="section level3">
+<h3>From the Bayesian perspective</h3>
+<ul>
+<li><p>The wiggliness penalty can be viewed as a normal prior distribution on <span class="math inline">\(\boldsymbol\beta\)</span>
+<span class="math display">\[
+\boldsymbol\beta \sim 
+\text{N}\left(\mathbf{0}, \sigma^2 \frac{\mathbf{S}^{-}}{\lambda}  \right)
+\]</span></p>
+<ul>
+<li>Because <span class="math inline">\(\mathbf{S}\)</span> is rank deficient, the prior covariance is proportional to the pseudo-inverse <span class="math inline">\(\mathbf{S}^{-}\)</span></li>
+</ul></li>
+<li><p>The posterior of <span class="math inline">\(\boldsymbol\beta\)</span> is still normal
+<span class="math display">\[
+\boldsymbol\beta \mid \mathbf{y} \sim 
+\text{N}\left(\hat{\boldsymbol\beta}, 
+(\mathbf{X}^T\mathbf{X} + \lambda \mathbf{S})^{-1} \sigma^2 \right)
+\]</span></p></li>
+<li><p>Given the model this extra structure opens up the possibility of estimating <span class="math inline">\(\sigma^2\)</span> and <span class="math inline">\(\lambda\)</span> using marginal likelihood maximization or REML (aka empirical Bayes)</p></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="additive-models" class="section level1">
+<h1>Additive Models</h1>
+<div id="a-simple-additive-model-with-two-univariate-functions" class="section level3">
+<h3>A simple additive model with two univariate functions</h3>
+<ul>
+<li><p>Let’s consider a simple additive model
+<span class="math display">\[
+y_i = \alpha + f_1(x_i) + f_2(v_i) + \epsilon_i, \quad \epsilon_i \stackrel{\text{iid}}{\sim} \text{N}(0, \sigma^2)
+\]</span></p></li>
+<li><p>The assumption of additive effects is a fairly strong one</p></li>
+<li><p>The model now has an identifiability problem: <span class="math inline">\(f_1\)</span> and <span class="math inline">\(f_2\)</span> are each only estimable to within an additive constant</p>
+<ul>
+<li>Due to the identifiability issue, we need to use penalized regression splines</li>
+</ul></li>
+</ul>
+</div>
+<div id="piecewise-linear-regression-representation" class="section level3">
+<h3>Piecewise linear regression representation</h3>
+<ul>
+<li><p>Basis representation of <span class="math inline">\(f_1()\)</span> and <span class="math inline">\(f_2()\)</span>
+<span class="math display">\[\begin{align*}
+f_1(x) = \sum_{j=1}^{k_1} b_j(x) \delta_j\\
+f_2(v) = \sum_{j=1}^{k_2} \mathcal{B}_j(v) \gamma_j 
+\end{align*}\]</span></p>
+<ul>
+<li>The basis functions <span class="math inline">\(b_j()\)</span> and <span class="math inline">\(\mathcal{B}_j()\)</span> are tent functions, with evenly spaced knots <span class="math inline">\(x_j^*\)</span> and <span class="math inline">\(v_j^*\)</span>, respectively</li>
+</ul></li>
+<li><p>Matrix representations
+<span class="math display">\[\begin{align*}
+\mathbf{f}_1 
+&amp; = [f_1(x_1), \ldots, f_1(x_n)]^T = \mathbf{X}_1 \boldsymbol\delta, \quad
+[\mathbf{X}_1]_{i,j} = b_j (x_i)\\
+\mathbf{f}_2 
+&amp; = [f_2(v_1), \ldots, f_2(v_n)]^T = \mathbf{X}_2 \boldsymbol\gamma, \quad
+[\mathbf{X}_2]_{i,j} = \mathcal{B}_j (x_i)
+\end{align*}\]</span></p></li>
+</ul>
+</div>
+<div id="sum-to-zero-constrains-to-resolve-identifiability-issues" class="section level3">
+<h3>Sum-to-zero constrains to resolve identifiability issues</h3>
+<ul>
+<li><p>We assume
+<span class="math display">\[
+\sum_{i=1}^n f_1(x_i) = 0 \Longleftrightarrow \mathbf{1}^T \mathbf{f}_1 = 0
+\]</span>
+This is equivalent to <span class="math inline">\(\mathbf{1}^T \mathbf{X}_1 \boldsymbol\delta = 0\)</span>
+for all <span class="math inline">\(\boldsymbol\delta\)</span>, which implies <span class="math inline">\(\mathbf{1}^T \mathbf{X}_1 = \mathbf{0}\)</span></p></li>
+<li><p>To achieve this condition, we can center the column of <span class="math inline">\(\mathbf{X}_1\)</span>
+<span class="math display">\[
+  \tilde{\mathbf{X}}_1 = \mathbf{X}_1 - \mathbf{1}~\frac{\mathbf{1}^T\mathbf{X}_1}{n}, \quad
+  \tilde{\mathbf{f}}_1 = \tilde{\mathbf{X}}_1 \boldsymbol\delta
+  \]</span></p></li>
+<li><p>Column centering reduces the rank of <span class="math inline">\(\tilde{\mathbf{X}}_1\)</span> to <span class="math inline">\(k_1 -1\)</span>, so that only <span class="math inline">\(k_1-1\)</span> elements of the <span class="math inline">\(k_1\)</span> vector <span class="math inline">\(\boldsymbol\delta\)</span> can be uniquely estimated</p></li>
+<li>A simple identifiability constraint:
+<ul>
+<li>Set a single element of <span class="math inline">\(\boldsymbol\delta\)</span> to zero</li>
+<li>And delete the corresponding column of <span class="math inline">\(\tilde{\mathbf{X}}_1\)</span> and <span class="math inline">\(\mathbf{D}\)</span></li>
+</ul></li>
+<li><p>For notation simplicity, in what follows the tildes will be dropped, and we assume that
+the <span class="math inline">\(\mathbf{X}_j\)</span>, <span class="math inline">\(\mathbf{D}_j\)</span> are the constrained versions</p></li>
+</ul>
+</div>
+<div id="penalized-piecewise-regression-additive-model" class="section level3">
+<h3>Penalized piecewise regression additive model</h3>
+<ul>
+<li><p>We rewrite the penalized regression as
+<span class="math display">\[
+\mathbf{y} = \mathbf{X}\boldsymbol\beta + \boldsymbol\epsilon
+\]</span>
+where <span class="math inline">\(X = (\mathbf{1}, \mathbf{X}_1, \mathbf{X}_2)\)</span>
+and <span class="math inline">\(\boldsymbol\beta^T = (\alpha, \boldsymbol\delta^T, \boldsymbol\gamma^T)\)</span></p></li>
+<li><p>Wiggliness penalties
+<span class="math display">\[\begin{align*}
+\boldsymbol\delta^T \mathbf{D}_1^T \mathbf{D}_1 \boldsymbol\delta
+&amp; = \boldsymbol\delta^T \bar{\mathbf{S}}_1 \boldsymbol\delta
+= \boldsymbol\beta^T \mathbf{S}_1 \boldsymbol\beta, \quad
+\mathbf{S}_1 = \left[
+\begin{array}{ccc}
+0            &amp;  \mathbf{0}  &amp; \mathbf{0}\\
+\mathbf{0}   &amp;  \bar{\mathbf{S}}_1  &amp; \mathbf{0}\\
+\mathbf{0}   &amp;  \mathbf{0}  &amp; \mathbf{0}
+\end{array} \right]\\
+\boldsymbol\gamma^T \mathbf{D}_2^T \mathbf{D}_2 \boldsymbol\gamma
+&amp; = \boldsymbol\gamma^T \bar{\mathbf{S}}_2 \boldsymbol\gamma
+= \boldsymbol\beta^T \mathbf{S}_2 \boldsymbol\beta,
+\end{align*}\]</span></p></li>
+</ul>
+</div>
+<div id="fitting-additive-models-by-penalized-least-squares" class="section level3">
+<h3>Fitting additive models by penalized least squares</h3>
+<ul>
+<li><p>Penalized least squares objective function
+<span class="math display">\[
+\|\mathbf{y} - \mathbf{X} \boldsymbol\beta \|^2+ \lambda_1 \boldsymbol\beta^T \mathbf{S}_1 \boldsymbol\beta+ \lambda_2 \boldsymbol\beta^T \mathbf{S}_2 \boldsymbol\beta
+\]</span></p></li>
+<li><p>Coefficient estimator
+<span class="math display">\[
+\hat{\boldsymbol\beta} = \left(\mathbf{X}^T\mathbf{X} +  \lambda_1\mathbf{S}_1 + \lambda_2\mathbf{S}_2 \right)^{-1}\mathbf{X}^T\mathbf{y}
+\]</span></p></li>
+<li><p>Hat matrix
+<span class="math display">\[
+\mathbf{A} = \mathbf{X}\left(\mathbf{X}^T\mathbf{X} +  \lambda_1\mathbf{S}_1 + \lambda_2\mathbf{S}_2 \right)^{-1}\mathbf{X}^T
+\]</span></p></li>
+<li><p>Conditional posterior distribution
+<span class="math display">\[
+\boldsymbol\beta \mid \mathbf{y} \sim \text{N}\left(\hat{\boldsymbol\beta}, 
+\hat{\mathbf{V}}_{\boldsymbol\beta}\right), \quad
+\hat{\mathbf{V}}_{\boldsymbol\beta} = \left(\mathbf{X}^T\mathbf{X} +  \lambda_1\mathbf{S}_1 + \lambda_2\mathbf{S}_2 \right)^{-1} \hat{\sigma}^2
+\]</span></p></li>
+</ul>
+</div>
+<div id="choosing-two-smoothing-parameters" class="section level3">
+<h3>Choosing two smoothing parameters</h3>
+<ul>
+<li><p>Since we now have two smoothing parameters <span class="math inline">\(\lambda_1, \lambda_2\)</span>,
+grid searching for the GCV optimal values starts to become inefficient</p></li>
+<li><p>Instead, R function <code>optim</code> can be used to minimize the GCV score</p></li>
+<li><p>We can use log smoothing parameters for optimization to ensure that estimated smoothing parameters are non-negative</p></li>
+</ul>
+</div>
+</div>
+<div id="generalized-additive-models" class="section level1">
+<h1>Generalized Additive Models</h1>
+<div id="generalized-additive-models-1" class="section level3">
+<h3>Generalized additive models</h3>
+<ul>
+<li><p>Generalized additive models (GAMs): additive models <span class="math inline">\(+\)</span> GLM
+<span class="math display">\[
+g(\mu_i) = \alpha + f_1(x_i) + f_2(v_i) + \epsilon_i
+\]</span></p></li>
+<li><p><font color='blue'>Penalized iterative least squares (PIRLS)</font> algorithm:
+iterate the following steps to convergence</p></li>
+</ul>
+<ol style="list-style-type: decimal">
+<li><p>Given the current <span class="math inline">\(\hat{\boldsymbol\eta}\)</span> and <span class="math inline">\(\hat{\boldsymbol\mu}\)</span>, compute
+<span class="math display">\[
+w_i = \frac{1}{V(\hat{\mu}_i) g^{\prime}(\hat{\mu}_i)^2}, \quad
+z_i = g^{\prime}(\hat{\mu}_i)(y_i - \hat{\mu}_i) + \hat{\eta}_i
+\]</span></p></li>
+<li><p>Let <span class="math inline">\(\mathbf{W} = \text{diag}(w_i)\)</span>, we obtain the new <span class="math inline">\(\hat{\boldsymbol\beta}\)</span> by minimizing
+<span class="math display">\[
+\|\sqrt{\mathbf{W}} \mathbf{z} - \sqrt{\mathbf{W}} \mathbf{X}\boldsymbol\beta\|^2 + \lambda_1 \boldsymbol\beta^T \mathbf{S}_1 \boldsymbol\beta + \lambda_2 \boldsymbol\beta^T \mathbf{S}_2 \boldsymbol\beta
+\]</span></p></li>
+</ol>
+</div>
+</div>
+<div id="introducing-package-mgcv" class="section level1">
+<h1>Introducing Package <code>mgcv</code></h1>
+<div id="introducing-package-mgcv-1" class="section level3">
+<h3>Introducing package <code>mgcv</code></h3>
+<ul>
+<li><p>Main function: <code>gam()</code>, very much like the <code>glm()</code> function</p></li>
+<li><p>Smooth terms: <code>s()</code> for univariate functions and <code>te()</code> for tensors</p></li>
+<li><p>A gamma regression example
+<span class="math display">\[
+\log\left(E\left[\text{\tt Volume}_i \right]\right)
+= f_1(\text{\tt Height}_i) + f_2(\text{\tt Girth}_i), \quad
+\text{\tt Volume}_i \sim \text{Gamma}
+\]</span></p></li>
+</ul>
+<pre class="r"><code>library(mgcv) ## load the package data(trees)
+ct1 &lt;- gam(Volume ~ s(Height) + s(Girth),
+           family=Gamma(link=log),data=trees)</code></pre>
+<ul>
+<li>By default, the degree of smoothness of the <span class="math inline">\(f_j\)</span> is estimated by GCV</li>
+</ul>
+</div>
+<div id="section" class="section level3">
+<h3></h3>
+
+<pre class="r"><code>summary(ct1)</code></pre>
+<pre><code>## 
+## Family: Gamma 
+## Link function: log 
+## 
+## Formula:
+## Volume ~ s(Height) + s(Girth)
+## 
+## Parametric coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  3.27570    0.01492   219.6   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Approximate significance of smooth terms:
+##             edf Ref.df      F  p-value    
+## s(Height) 1.000  1.000  31.32 3.92e-06 ***
+## s(Girth)  2.422  3.044 219.28  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## R-sq.(adj) =  0.973   Deviance explained = 97.8%
+## GCV = 0.0080824  Scale est. = 0.006899  n = 31</code></pre>
+</div>
+<div id="parital-residuals-plots" class="section level3">
+<h3><font color='blue'>Parital residuals plots</font></h3>
+<ul>
+<li>Pearson residuals added to the estimated smooth terms
+<span class="math display">\[
+\hat{\epsilon}_{1i}^{\text{partial}} = f_1(\text{\tt Height}_i) + \hat{\epsilon}_{i}^{p}
+\]</span></li>
+</ul>
+<pre class="r"><code>par(mfrow = c(1, 2))
+plot(ct1,residuals=TRUE)</code></pre>
+<p><img src="/stat/2021-03-27-book-notes-generalized-additive-models-ch4-introducing-gams_files/figure-html/unnamed-chunk-5-1.png" width="672" />
+* The number in the <span class="math inline">\(y\)</span>-axis label: effective degrees of freedom</p>
+</div>
+<div id="finer-control-of-gam-choice-of-basis-functions" class="section level3">
+<h3>Finer control of <code>gam()</code>: choice of basis functions</h3>
+<ul>
+<li><p>Default: thin plat regression splines</p>
+<ul>
+<li>It has some appealing properties, but can be somewhat computationally costly for large dataset</li>
+</ul></li>
+<li><p>We can select penalized cubic regression spline by using</p></li>
+</ul>
+<pre class="r"><code>s(..., bs = &quot;cr&quot;)</code></pre>
+<ul>
+<li><p>We can change the dimension <span class="math inline">\(k\)</span> of the basis</p>
+<ul>
+<li>The actual effective degrees of freedom for each term is usually estimated from the data by GCV or another smoothness selection criterion</li>
+<li>The upper bound on this estimate is <span class="math inline">\(k-1\)</span>, minus one due to identifiability constraint on each smooth term</li>
+</ul></li>
+</ul>
+<pre class="r"><code>s(..., bs = &quot;cr&quot;, k = 20)</code></pre>
+</div>
+<div id="finer-control-of-gam-the-gamma-parameter" class="section level3">
+<h3>Finer control of <code>gam()</code>: the <code>gamma</code> parameter</h3>
+<ul>
+<li><p>GCV is known to have some tendency to overfitting</p></li>
+<li><p>Inside the <code>gam()</code> function, the argument <code>gamma</code> can increase the amount of smoothing</p>
+<ul>
+<li>The default value for <code>gamma</code> is 1</li>
+<li>We can use a higher value to avoid overfitting, <code>gamma = 1.5</code>, without compromising model fit</li>
+</ul></li>
+</ul>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li>Wood, Simon N. (2017), <em>Generalized Additive Models: An Introduction with R</em>. Chapman and Hall/CRC</li>
+</ul>
+</div>
+</div>

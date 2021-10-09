@@ -6,7 +6,29 @@
     <description>Recent content in Book notes on King Fox And Butterfly</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 28 Sep 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://liyingbo.com/categories/book-notes/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 27 Mar 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://liyingbo.com/categories/book-notes/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Book Notes: Generalized Additive Models -- Ch4 Introducing GAMs</title>
+      <link>http://liyingbo.com/stat/2021/03/27/book-notes-generalized-additive-models-ch4-introducing-gams/</link>
+      <pubDate>Sat, 27 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2021/03/27/book-notes-generalized-additive-models-ch4-introducing-gams/</guid>
+      <description>Univariate Smoothing Piecewise linear basis: tent functions Penalty to control wiggliness  Additive Models Generalized Additive Models Introducing Package mgcv   For the pdf slides, click here
+Introduction of GAM  In general the GAM model has a following structure \[ g(\mu_i) = \mathbf{A}_i \boldsymbol\theta + f_1 (x_{1i}) + f_2 (x_{2i}) + f_3 (x_{3i}, x_{4i}) + \cdots \]
+ \(Y_i\) follows some exponential family distribution: \(Y_i \sim EF(\mu_i, \phi)\) \(\mu_i = E(Y_i)\) \(\mathbf{A}_i\) is a row of the model matrix, and \(\boldsymbol\theta\) is the corresponding parameter vector \(f_j\) are smooth functions of the covariates \(x_k\)  This chapter  Illustrates GAMs by basis expansions, each with a penalty controlling function smoothness Estimates GAMs by penalized regression methods  Takeaway: technically GAMs are simply GLM estimated subject to smoothing penalties</description>
+    </item>
+    
+    <item>
+      <title>Book Notes: Generalized Additive Models - Ch3 Generalized Linear Models (GLM)</title>
+      <link>http://liyingbo.com/stat/2021/03/21/book-notes-generalized-additive-models-ch3-generalized-linear-models-glm/</link>
+      <pubDate>Sun, 21 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2021/03/21/book-notes-generalized-additive-models-ch3-generalized-linear-models-glm/</guid>
+      <description>Theory of GLMs Exponential family Iteratively re-weighted least square (IRLS) Asymptotic consistency of MLE, deviance, tests, residuals Quasi-likelihood (GEE)  Generalized Linear Mixed Models (GLMM)   For the pdf slides, click here
+GLM overview  In a GLM, a smooth monotonic link function \(g(\cdot)\) connects the expectation \(\mu_i = E(Y_i)\) with the linear combination of \(\mathbf{X}_i\), \[\begin{equation}\label{eq:glm_link} g(\mu_i) = \eta_i = \mathbf{X}_i \boldsymbol\beta \end{equation}\]
+ In a generalized linear mixed model (GLMM), we have \[ g(\mu_i) = \eta_i = \mathbf{X}_i \boldsymbol\beta + \mathbf{Z}_i \mathbf{b}, \quad \mathbf{b} \sim \text{N}(\mathbf{0}, \boldsymbol\psi) \]</description>
+    </item>
+    
     <item>
       <title>Book Notes: Computer Age Statistical Inference -- Ch15 Multiple Testing</title>
       <link>http://liyingbo.com/stat/2020/09/28/book-notes-computer-age-statistical-inference-ch-15-multiple-testing/</link>

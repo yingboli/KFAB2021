@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.88.1" />
+
+
+<title>Book Notes: Generalized Additive Models - Ch3 Generalized Linear Models (GLM) - King Fox And Butterfly</title>
+<meta property="og:title" content="Book Notes: Generalized Additive Models - Ch3 Generalized Linear Models (GLM) - King Fox And Butterfly">
+
+
+  <link href='http://liyingbo.com/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/yingbo_headshot.jpg"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/cooking/">Cooking</a></li>
+    
+    <li><a href="/stat/">Statistics</a></li>
+    
+    <li><a href="/life/">Life</a></li>
+    
+    <li><a href="/about/">About Me</a></li>
+    
+    <li><a href="/categories/">Categories</a></li>
+    
+    <li><a href="/tags/">Tags</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+
+    <h1 class="article-title">Book Notes: Generalized Additive Models - Ch3 Generalized Linear Models (GLM)</h1>
+
+    
+
+    <div class="article-content">
+      
+
+<div id="TOC">
+<ul>
+<li><a href="#theory-of-glms">Theory of GLMs</a><ul>
+<li><a href="#exponential-family">Exponential family</a></li>
+<li><a href="#iteratively-re-weighted-least-square-irls">Iteratively re-weighted least square (IRLS)</a></li>
+<li><a href="#asymptotic-consistency-of-mle-deviance-tests-residuals">Asymptotic consistency of MLE, deviance, tests, residuals</a></li>
+<li><a href="#quasi-likelihood-gee">Quasi-likelihood (GEE)</a></li>
+</ul></li>
+<li><a href="#generalized-linear-mixed-models-glmm">Generalized Linear Mixed Models (GLMM)</a></li>
+</ul>
+</div>
+
+<p><strong><em><font color='red'>For the pdf slides, click <a href="/pdf/102720_GAM_ch3.pdf">here</a></font></em></strong></p>
+<div id="glm-overview" class="section level3">
+<h3>GLM overview</h3>
+<ul>
+<li><p>In a GLM, a smooth monotonic <font color='blue'>link function</font> <span class="math inline">\(g(\cdot)\)</span> connects the expectation <span class="math inline">\(\mu_i = E(Y_i)\)</span> with the linear combination of <span class="math inline">\(\mathbf{X}_i\)</span>,
+<span class="math display">\[\begin{equation}\label{eq:glm_link}
+g(\mu_i) = \eta_i = \mathbf{X}_i \boldsymbol\beta
+\end{equation}\]</span></p></li>
+<li><p>In a generalized linear mixed model (GLMM), we have
+<span class="math display">\[
+g(\mu_i) = \eta_i = \mathbf{X}_i \boldsymbol\beta + \mathbf{Z}_i \mathbf{b}, \quad
+\mathbf{b} \sim \text{N}(\mathbf{0}, \boldsymbol\psi)
+\]</span></p></li>
+</ul>
+</div>
+<div id="theory-of-glms" class="section level1">
+<h1>Theory of GLMs</h1>
+<div id="exponential-family" class="section level2">
+<h2>Exponential family</h2>
+<div id="exponential-family-of-distributions" class="section level3">
+<h3><font color='blue'>Exponential family of distributions</font></h3>
+<ul>
+<li>The density function for an exponential family distribution
+<span class="math display">\[\begin{equation}\label{eq:exponential_family_density}
+f(y) = \exp\left\{  \frac{y\theta - b(\theta)}{a(\phi)} + c(y, \phi)  \right\}
+\end{equation}\]</span>
+<ul>
+<li><span class="math inline">\(a, b, c\)</span>: arbitrary functions</li>
+<li><span class="math inline">\(\phi\)</span>: an arbitrary scale parameter</li>
+<li><span class="math inline">\(\theta\)</span>: the <font color='blue'>canonical parameter</font>; completely depend on the model parameter <span class="math inline">\(\boldsymbol\beta\)</span></li>
+</ul></li>
+<li><p>Properties about exponential family mean and variance
+<span class="math display">\[\begin{align*}
+E(Y) &amp; = b^{\prime}(\theta)\\
+var(Y) &amp; = b^{\prime\prime}(\theta) a(\phi)
+\end{align*}\]</span></p>
+<ul>
+<li>In most practical cases, <span class="math inline">\(a(\phi) = \phi/\omega\)</span> where <span class="math inline">\(\omega\)</span> is a known constant</li>
+<li>We define a function
+<span class="math display">\[
+  V(\mu) = b^{\prime\prime}(\theta) / w, \quad
+  \text{so that } var(Y) = V(\mu) \phi
+  \]</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="exponential-family-examples" class="section level3">
+<h3>Exponential family examples</h3>
+<p><img src="/figures/Wood_GAM_book_fig3_1.png" width="102%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="iteratively-re-weighted-least-square-irls" class="section level2">
+<h2>Iteratively re-weighted least square (IRLS)</h2>
+<div id="fitting-glms" class="section level3">
+<h3>Fitting GLMs</h3>
+<ul>
+<li><p>For the GLM model  and ,
+assuming <span class="math inline">\(a_i(\phi) = \phi/\omega_i\)</span>, the log likelihood is
+<span class="math display">\[
+l(\boldsymbol\beta) = \sum_{i=1}^n \omega_i \left[ y_i \theta_i - b_i(\theta_i) \right]/\phi + c_i(\phi, y_i)
+\]</span></p></li>
+<li>To optimize, we use the Newton’s method, which is an iterative optimization approach
+<span class="math display">\[
+\theta^{(t+1)} = \theta^{(t)} - \left(\nabla^2 l\right)^{-1}\nabla l
+\]</span>
+<ul>
+<li>Where both <span class="math inline">\(\nabla^2 l\)</span> and <span class="math inline">\(\nabla l\)</span> are evaluated at the current iteration <span class="math inline">\(\theta^{(t)}\)</span></li>
+<li>Alternatively, we can use the <font color='blue'>Fisher scoring</font> variant of the Newton’s method, by replacing the Hessian matrix with its expectation</li>
+</ul></li>
+<li><p>Next, we will need to compute the gradient vector and expected Hessian matrix of <span class="math inline">\(l\)</span></p></li>
+</ul>
+</div>
+<div id="compute-the-gradient-vector-and-expected-hessian-of-l" class="section level3">
+<h3>Compute the gradient vector and expected Hessian of <span class="math inline">\(l\)</span></h3>
+<ul>
+<li><p>By the chain rule,
+<span class="math display">\[\begin{align*}
+\frac{\partial \theta_i}{\partial \beta_j}
+&amp; = \frac{\partial \theta_i}{\partial \mu_i} \cdot 
+\frac{\partial \mu_i}{\partial \eta_i} \cdot 
+\frac{\partial \eta_i}{\partial \beta_j} \\
+&amp; = \frac{1}{b^{\prime\prime}(\theta_i)}\cdot \frac{1}{g^{\prime}(\mu_i)}\cdot X_{ij}
+\end{align*}\]</span></p></li>
+<li><p>Therefore, the gradient vector of <span class="math inline">\(l\)</span> is
+<span class="math display">\[\begin{align*}
+\frac{\partial l}{\partial \beta_j} 
+ = \frac{1}{\phi} \sum_{i=1}^n \omega_i 
+\left[y_i  - b^{\prime}_i(\theta_i)  \right]\frac{\partial \theta_i}{\partial \beta_j}
+ = \frac{1}{\phi}\sum_{i=1}^n 
+\frac{y_i  - \mu_i}{g^{\prime}(\mu_i) V(\mu_i)} X_{ij}
+\end{align*}\]</span></p></li>
+<li><p>The expected Hessian (expectation taken wrt <span class="math inline">\(Y\)</span>) is
+<span class="math display">\[
+E\left( \frac{\partial^2 l}{\partial \beta_j \partial \beta_k} \right)
+= - \frac{1}{\phi}\sum_{i=1}^n 
+\frac{X_{ij} X_{ik}}{g^{\prime}(\mu_i)^2 V(\mu_i)} 
+\]</span></p></li>
+</ul>
+</div>
+<div id="the-fisher-scoring-update" class="section level3">
+<h3>The Fisher scoring update</h3>
+<ul>
+<li><p>Define the matrices
+<span class="math display">\[\begin{align}\label{eq:W}
+\mathbf{W} &amp; = \text{diag}\{w_i\}, \quad w_i = \frac{1}{g^{\prime}(\mu_i)^2 V(\mu_i)} \\ \label{eq:G}
+\mathbf{G} &amp; = \text{diag}\left\{g^{\prime}(\mu_i)\right\}
+\end{align}\]</span></p></li>
+<li><p>The Fisher scoring update for <span class="math inline">\(\boldsymbol\beta\)</span> is
+<span class="math display">\[\begin{align*}
+\boldsymbol\beta^{(t+1)}
+&amp; = \boldsymbol\beta^{(t)} 
++ \left(\mathbf{X}^T \mathbf{W} \mathbf{X} \right)^{-1} \mathbf{X}^T \mathbf{W} \mathbf{G}
+(\mathbf{y} - \boldsymbol\mu)\\
+&amp; = \left(\mathbf{X}^T \mathbf{W} \mathbf{X} \right)^{-1} \mathbf{X}^T \mathbf{W}
+\underbrace{\left[ \mathbf{G}(\mathbf{y} - \boldsymbol\mu) + \mathbf{X}\boldsymbol\beta^{(t)}  \right]}_{\mathbf{z}}
+\end{align*}\]</span></p></li>
+</ul>
+</div>
+<div id="iteratively-re-weighted-least-square-irls-algorithm" class="section level3">
+<h3><font color='blue'>Iteratively re-weighted least square (IRLS) algorithm</font></h3>
+<ol style="list-style-type: decimal">
+<li><p>Initialization:
+<span class="math display">\[
+\hat{\mu}_i = y_i + \delta_i, \quad \hat{\eta}_i = g\left(\hat{\mu}_i\right)
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\delta_i\)</span> is usually zero, but may be a small constant ensuring <span class="math inline">\(\hat{\eta}_i\)</span> is finite</li>
+</ul></li>
+<li><p>Compute pseudo data <span class="math inline">\(z_i\)</span> and iterative weights <span class="math inline">\(w_i\)</span>:
+<span class="math display">\[\begin{align*}
+z_i &amp;= g^{\prime}\left(\hat{\mu}_i\right)\left(y_i - \hat{\mu}_i\right) + \hat{\eta}_i\\
+w_i &amp;= \frac{1}{g^{\prime}\left(\hat{\mu}_i\right)^2 V\left(\hat{\mu}_i\right)}
+\end{align*}\]</span></p></li>
+<li><p>Find <span class="math inline">\(\hat{\boldsymbol\beta}\)</span> by minimizing the weighted least squares objective
+<span class="math display">\[
+\sum_{i=1}^n w_i \left(z_i -\mathbf{X}_i \boldsymbol\beta \right)^2
+\]</span>
+then update
+<span class="math display">\[
+\hat{\boldsymbol\eta} = \mathbf{X} \hat{\boldsymbol\beta}, \quad 
+\hat{\mu}_i = g^{-1}\left(\hat{\eta}_i\right)
+\]</span></p></li>
+</ol>
+<ul>
+<li>Repeat Step 2-3 until the change in deviance is near zero</li>
+</ul>
+</div>
+<div id="irls-example-1-logistic-regression" class="section level3">
+<h3>IRLS example 1: logistic regression</h3>
+<ul>
+<li><p>For logistic regression,
+<span class="math display">\[\begin{align*}
+g(\mu) &amp; = \log\left(\frac{\mu}{1 - \mu}\right), \quad
+g^{\prime}(\mu) = \frac{1}{\mu (1-\mu)}\\
+V(\mu) &amp;= \mu (1-\mu), \quad\quad\quad \phi =1
+\end{align*}\]</span></p></li>
+<li><p>Therefore, in Step 2 of IRLS,
+<span class="math display">\[\begin{align*}
+z_i &amp; = \frac{y_i - \hat{\mu}_i}{\hat{\mu}_i\left(1-\hat{\mu}_i\right)} + \hat{\eta}_i \\
+w_i &amp; = \hat{\mu}_i\left(1-\hat{\mu}_i\right)
+\end{align*}\]</span></p></li>
+</ul>
+</div>
+<div id="irls-example-2-glm-with-independent-normal-priors" class="section level3">
+<h3>IRLS example 2: GLM with independent normal priors</h3>
+<ul>
+<li><p>Assume that the vector <span class="math inline">\(\boldsymbol\beta\)</span> has independent normal priors
+<span class="math display">\[
+\boldsymbol\beta \sim \text{N}\left(\mathbf{0}, \frac{\phi}{\lambda}\mathbf{I}_p  \right)
+\]</span></p></li>
+<li><p>Log posterior density (we still call it <span class="math inline">\(l\)</span>, with some abuse of notation)
+<span class="math display">\[
+l(\boldsymbol\beta) = \frac{1}{\phi}\sum_{i=1}^n \omega_i \left[ y_i \theta_i - b_i(\theta_i) \right]- \frac{\lambda}{2\phi}\boldsymbol\beta^T \boldsymbol\beta + \text{const}
+\]</span></p></li>
+<li><p>Gradient vector and expected Hessian matrix (wrt <span class="math inline">\(\boldsymbol\beta\)</span>)
+<span class="math display">\[\begin{align*}
+\nabla l 
+&amp;= \frac{1}{\phi} \left[\mathbf{X}^T \mathbf{W}\mathbf{G}(\mathbf{y} - \boldsymbol\mu) 
+- \lambda \boldsymbol\beta\right]\\
+E\left(\nabla^2 l \right)
+&amp;= -\frac{1}{\phi}\left(\mathbf{X}^T \mathbf{W}\mathbf{X} + \lambda \mathbf{I}_p  \right)
+\end{align*}\]</span></p>
+<ul>
+<li>Here, <span class="math inline">\(\mathbf{W}\)</span> and <span class="math inline">\(\mathbf{G}\)</span> are the same as in Equation  and </li>
+</ul></li>
+</ul>
+</div>
+<div id="section" class="section level3">
+<h3></h3>
+<ul>
+<li>IRLS for GLM with independent normal priors
+<span class="math display">\[\begin{align}\notag
+\boldsymbol\beta^{(t+1)}
+&amp; = \boldsymbol\beta^{(t)} 
++ \left(\mathbf{X}^T \mathbf{W} \mathbf{X} + \lambda \mathbf{I}_p \right)^{-1} 
+\left[\mathbf{X}^T \mathbf{W} \mathbf{G}(\mathbf{y} - \boldsymbol\mu) 
+- \lambda \boldsymbol\beta^{(t)}\right]
+\\ \label{eq:IRLS_penalty}
+&amp; = \left(\mathbf{X}^T \mathbf{W} \mathbf{X}  + \lambda \mathbf{I}_p\right)^{-1} \mathbf{X}^T \mathbf{W}
+\underbrace{\left[ \mathbf{G}(\mathbf{y} - \boldsymbol\mu) + \mathbf{X}\boldsymbol\beta^{(t)}  \right]}_{\mathbf{z}}
+\end{align}\]</span></li>
+</ul>
+</div>
+</div>
+<div id="asymptotic-consistency-of-mle-deviance-tests-residuals" class="section level2">
+<h2>Asymptotic consistency of MLE, deviance, tests, residuals</h2>
+<div id="large-sample-distribution-of-hatboldsymbolbeta" class="section level3">
+<h3>Large sample distribution of <span class="math inline">\(\hat{\boldsymbol\beta}\)</span></h3>
+<ul>
+<li><p>Hessian of the negative log likelihood (also called <font color='blue'>observed information</font>)
+<span class="math display">\[
+\hat{\mathcal{I}} = \frac{\mathbf{X}^T \mathbf{W} \mathbf{X}}{\phi}
+\]</span></p></li>
+<li><p><font color='blue'>Fisher information</font>, also called <font color='blue'>expected information</font>
+<span class="math display">\[
+\mathcal{I} = E\left(\hat{\mathcal{I}}\right) 
+\]</span></p></li>
+<li><p>Asymptotic normality the MLE <span class="math inline">\(\hat{\boldsymbol\beta}\)</span>
+<span class="math display">\[
+\hat{\boldsymbol\beta} \sim \text{N}\left(\boldsymbol\beta, \mathcal{I}^{-1} \right)
+\quad \text{or} \quad
+\hat{\boldsymbol\beta} \sim \text{N}\left(\boldsymbol\beta, \hat{\mathcal{I}}^{-1} \right)
+\]</span></p></li>
+</ul>
+</div>
+<div id="deviance" class="section level3">
+<h3>Deviance</h3>
+<ul>
+<li><p><font color='blue'>Deviance</font> is the GLM counterpart of the residual sum of squares in normal linear regression
+<span class="math display">\[\begin{align}\notag
+D &amp; = 2\phi \left[ l\left(\hat{\boldsymbol\beta}_{\max} \right) - l\left(\hat{\boldsymbol\beta} \right) \right]\\ \label{eq:deviance}
+&amp;= \sum_{i=1}^n 2 \omega_i \left[y_i \left(\tilde{\theta}_i - \hat{\theta}_i \right) - b\left(\tilde{\theta}_i \right) + b\left(\hat{\theta}_i \right) \right]
+\end{align}\]</span></p>
+<ul>
+<li>Here, <span class="math inline">\(l\left(\hat{\boldsymbol\beta}_{\max} \right)\)</span> is the maximized likelihood of the saturated model: the model with one parameter per data point. For exponential family distribution, it is computed by simply setting <span class="math inline">\(\hat{\boldsymbol\mu} = \mathbf{y}\)</span>.</li>
+<li><span class="math inline">\(\tilde{\boldsymbol\theta}\)</span> and <span class="math inline">\(\hat{\boldsymbol\theta}\)</span> are the maximum likelihood estimates of the canonical parameters for the saturated model and the model of interest, respectively</li>
+</ul></li>
+<li><p>From the second equality, we can see that deviance is independent of <span class="math inline">\(\phi\)</span></p></li>
+<li><p>For normal linear regression, deviance equals the residual sum of squares</p></li>
+</ul>
+</div>
+<div id="scaled-deviance" class="section level3">
+<h3>Scaled deviance</h3>
+<ul>
+<li><p><font color='blue'>Scaled deviance</font> does depend on <span class="math inline">\(\phi\)</span>
+<span class="math display">\[
+D^* = \frac{D}{\phi}
+\]</span></p></li>
+<li><p>If the model is specified correctly, then approximately
+<span class="math display">\[
+  D^* \sim \chi^2_{n-p}
+  \]</span></p></li>
+<li>To compare two nested models,
+<ul>
+<li>If <span class="math inline">\(\phi\)</span> is known, then under <span class="math inline">\(H_0\)</span>, we can use
+<span class="math display">\[
+  D^*_0 - D^*_1 \sim \chi^2_{p_1 - p_0}
+  \]</span></li>
+<li>If <span class="math inline">\(\phi\)</span> is unknown, then under <span class="math inline">\(H_0\)</span>, we can use
+<span class="math display">\[
+  F = \frac{(D_0 - D_1)/(p_1 - p_0)}{D_1/(n - p_1)}
+  \sim F_{p_1 - p_0, n - p_1}
+  \]</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="canonical-link-functions" class="section level3">
+<h3>Canonical link functions</h3>
+<ul>
+<li><p>The <font color='blue'>canonical link</font> <span class="math inline">\(g_c\)</span> is the link function such that
+<span class="math display">\[
+g_c(\mu_i) = \theta_i = \eta_i
+\]</span>
+where <span class="math inline">\(\theta_i\)</span> is the canonical parameter of the distribution</p></li>
+<li><p>Under canonical links, the observed information <span class="math inline">\(\hat{\mathcal{I}}\)</span> and the expected information <span class="math inline">\(\mathcal{I}\)</span> matrices are the same</p></li>
+<li><p>Under canonical links, since
+<span class="math inline">\(\frac{\partial \theta_i}{\partial \beta_j} = X_{ij}\)</span>,
+the system of equations that the MLE satisfies becomes
+<span class="math display">\[
+\frac{\partial l}{\partial \beta_j}
+= \sum_{i=1}^n \omega_i (y_i - \mu_i) X_{ij} = 0
+\]</span>
+Thus, if <span class="math inline">\(\omega_i =1\)</span>, we have
+<span class="math display">\[
+\mathbf{X}^T \mathbf{y} = \mathbf{X}^T \hat{\boldsymbol\mu}
+\]</span></p>
+<ul>
+<li>For any GLM with an intercept term and canonical link,
+the residuals sum to zero, i.e.,
+<span class="math inline">\(\sum_i y_i = \sum_i \hat{\mu}_i\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="glm-residuals" class="section level3">
+<h3>GLM residuals</h3>
+<ul>
+<li><p>Model checking is perhaps the most important part of applied statistical modeling</p></li>
+<li><p>It is usual to standardize GLM residuals so that if the model assumptions are correct,</p>
+<ul>
+<li>the standardized residuals should have approximately equal variance, and</li>
+<li>behave like residuals from an ordinary linear model</li>
+</ul></li>
+<li><p><font color='blue'>Pearson residuals</font>
+<span class="math display">\[
+\hat{\epsilon}_i^p = \frac{y_i - \hat{\mu}_i}
+{\sqrt{V\left(\mu_i\right)}}
+\]</span></p>
+<ul>
+<li>In practice, the distribution of the Pearson residuals can be quite asymmetric around zero. So the deviance residuals (introduced next) are often preferred.</li>
+</ul></li>
+</ul>
+</div>
+<div id="deviance-residuals" class="section level3">
+<h3>Deviance residuals</h3>
+<ul>
+<li><p>Denote <span class="math inline">\(d_i\)</span> as the <span class="math inline">\(i\)</span>th component in the deviance definition , so that the deviance is <span class="math inline">\(D = \sum_{i=1}^n d_i\)</span></p></li>
+<li><p>By analogy with the ordinary linear model,we define the
+<font color='blue'>deviance residual</font>
+<span class="math display">\[
+\hat{\epsilon}_i^d = \text{sign}(y_i - \hat{\mu_i}) \sqrt{d_i}
+\]</span></p>
+<ul>
+<li>The sum of squares of the deviance residuals gives the deviance itself</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="quasi-likelihood-gee" class="section level2">
+<h2>Quasi-likelihood (GEE)</h2>
+<div id="quasi-likelihood" class="section level3">
+<h3>Quasi-likelihood</h3>
+<ul>
+<li><p>Consider an observation <span class="math inline">\(y_i\)</span>, of a random variable with mean <span class="math inline">\(\mu_i\)</span> and <em>known</em> variance function <span class="math inline">\(V(\mu_i)\)</span></p>
+<ul>
+<li>Getting the distribution of <span class="math inline">\(Y_i\)</span> exactly right is rather unimportant, as long as the <strong>mean-variance relationship</strong> <span class="math inline">\(V(\cdot)\)</span> is correct</li>
+</ul></li>
+<li><p>Then the <font color='blue'>log quasi-likelihood</font> for <span class="math inline">\(\mu_i\)</span>, given <span class="math inline">\(y_i\)</span>, is
+<span class="math display">\[
+q_i(\mu_i) = \int_{y_i}^{\mu_i} \frac{y_i - z}{\phi V(z)}~dz
+\]</span></p>
+<ul>
+<li>The log quasi-likelihood for the mean vector <span class="math inline">\(\boldsymbol\mu\)</span> of all the response data is
+<span class="math inline">\(q(\boldsymbol\mu) = \sum_{i=1}^n q_i (\mu_i)\)</span></li>
+</ul></li>
+<li><p>To obtain the maximum quasi-likelihood estimation of <span class="math inline">\(\boldsymbol\beta\)</span>, we can differentiate <span class="math inline">\(q\)</span> wrt <span class="math inline">\(\beta_j\)</span>,
+for <span class="math inline">\(\forall j\)</span>
+<span class="math display">\[
+0 = \frac{\partial q}{\partial \beta_j}
+= \sum_{i=1}^n  \frac{y_i - \mu_i}{\phi V(\mu_i)} 
+\frac{\partial \mu_i}{\partial \beta_j}
+\Longrightarrow
+\sum_{i=1}^n  \frac{y_i - \mu_i}{V(\mu_i) g^{\prime}(\mu_i)} 
+X_{ij} = 0 
+\]</span>
+this is exactly the GLM maximum likelihood solution, which can be obtained through IRLS</p></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="generalized-linear-mixed-models-glmm" class="section level1">
+<h1>Generalized Linear Mixed Models (GLMM)</h1>
+<div id="generalized-linear-mixed-models-glmm-1" class="section level3">
+<h3>Generalized linear mixed models (GLMM)</h3>
+<ul>
+<li><p>A GLMM model for an exponential family random variable <span class="math inline">\(Y_i\)</span>
+<span class="math display">\[
+g(\mu_i) = \mathbf{X}_i \boldsymbol\beta + \mathbf{Z}_i \mathbf{b}, \quad \mathbf{b} \sim \text{N}\left(\mathbf{0}, \boldsymbol\psi_{\boldsymbol\theta}  \right)
+\]</span></p></li>
+<li><p><font color='red'>Difficulty in moving from linear mixed models to GLMM: it is no longer possible to evaluate the marginal likelihood analytically</font></p></li>
+<li><p>One effective solution is <strong>Taylor expansion</strong> around <span class="math inline">\(\hat{\mathbf{b}}\)</span>, the posterior mode of <span class="math inline">\(f(\mathbf{b}\mid \mathbf{y}, \boldsymbol\beta)\)</span></p></li>
+</ul>
+<p><span class="math display">\[\begin{align*}
+f(\mathbf{y} \mid \boldsymbol\beta)\approx &amp;\int \exp\left\{ \log f(\mathbf{y}, \hat{\mathbf{b}} \mid \boldsymbol\beta)\right.\\
+&amp;~~~~~~~~~~~~ + \left. \frac{1}{2}\left(\mathbf{b} -  \hat{\mathbf{b}}\right)^T\frac{\partial^2 \log f(\mathbf{y}, \mathbf{b}\mid \boldsymbol\beta)}{\partial\mathbf{b}\partial \mathbf{b}^T}\left(\mathbf{b} -  \hat{\mathbf{b}}\right)\right\} d\mathbf{b}
+\end{align*}\]</span></p>
+</div>
+<div id="laplace-approximation-of-glmm-marginal-likelihood" class="section level3">
+<h3>Laplace approximation of GLMM marginal likelihood</h3>
+<ul>
+<li><p>For GLM, note that the expected Hessian is
+<span class="math display">\[
+-\frac{\mathbf{Z}^T \mathbf{W}\mathbf{Z}}{\phi} - \boldsymbol\psi^{-1}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\mathbf{W}\)</span> is the IRLS weight vector  based on the <span class="math inline">\(\boldsymbol\mu\)</span> implied by <span class="math inline">\(\hat{\mathbf{b}}\)</span> and <span class="math inline">\(\boldsymbol\beta\)</span></li>
+</ul></li>
+<li><p>Therefore, the approximate marginal likelihood is
+<span class="math display">\[
+f(\mathbf{y} \mid \boldsymbol\beta)\approx f(\mathbf{y}, \hat{\mathbf{b}} \mid \boldsymbol\beta)\frac{(2\pi)^{p/2}}{\left| \frac{\mathbf{Z}^T \mathbf{W}\mathbf{Z}}{\phi} + \boldsymbol\psi^{-1}_{\boldsymbol\theta} \right|^{1/2}}
+\]</span></p></li>
+</ul>
+</div>
+<div id="penalized-likelihood-and-penalized-irls" class="section level3">
+<h3>Penalized likelihood and penalized IRLS</h3>
+<ul>
+<li>The point estimators <span class="math inline">\(\hat{\boldsymbol\beta}\)</span> and <span class="math inline">\(\hat{\mathbf{b}}\)</span> are obtained by optimizing the
+penalized likelihood</li>
+</ul>
+<p><span class="math display">\[\begin{align*}
+\hat{\boldsymbol\beta}, \hat{\mathbf{b}}
+&amp;= \arg\max_{\boldsymbol\beta, \mathbf{b}} 
+\log f(\mathbf{y}, \mathbf{b} \mid \boldsymbol\beta)\\
+&amp;= \arg\max_{\boldsymbol\beta, \mathbf{b}} 
+\left\{\log f(\mathbf{y} \mid \mathbf{b}, \boldsymbol\beta)
+- \mathbf{b}^T \boldsymbol\psi^{-1}_{\mathbf{\theta}}\mathbf{b}/2\right\}
+\end{align*}\]</span></p>
+<ul>
+<li><p>To simplify notation, we denote
+<span class="math display">\[\begin{align*}
+\mathcal{B}^T &amp; = (\mathbf{b}, \boldsymbol\beta)^T\\
+\mathcal{X} &amp; = (\mathbf{Z}, \mathbf{X}), \quad
+\mathbf{S} = \left[
+\begin{array}{cc}
+\boldsymbol\psi^{-1}_{\mathbf{\theta}} &amp; \mathbf{0}\\
+\mathbf{0} &amp; \mathbf{0}
+\end{array}
+\right]
+\end{align*}\]</span></p></li>
+<li><p>A penalized version of the IRLS algorithm (PIRLS) : by , a single Newton update step is
+<span class="math display">\[\begin{align*}
+\mathcal{B}^{(t+1)}
+= \left( \mathcal{X}^T \mathbf{W} \mathcal{X} + \phi \mathbf{S}\right)^{-1} \mathcal{X}^T \mathbf{W} 
+\left[\mathbf{G}\left(\mathbf{y} - \hat{\boldsymbol\mu}\right)+ \mathcal{X}\mathcal{B}^{(t)} \right]
+\end{align*}\]</span></p></li>
+</ul>
+</div>
+<div id="penalized-quasi-likelihood-method" class="section level3">
+<h3><font color='blue'>Penalized quasi-likelihood</font> method</h3>
+<ul>
+<li>Since optimizing the Laplace approximate marginal likelihood can be computationally costly, it is therefore tempting to instead perform a PIRLS iteration,
+estimating <span class="math inline">\(\boldsymbol\theta, \phi\)</span> at each step based on the working mixed model
+<span class="math display">\[
+\mathbf{z} \mid \mathbf{b}, \boldsymbol\beta
+\sim \text{N}\left(\mathbf{X}\boldsymbol\beta + \mathbf{Z}\mathbf{b}, \mathbf{W}^{-1}\phi \right), \quad
+\mathbf{b} \sim \text{N}\left(\mathbf{0}, \boldsymbol\psi_{\boldsymbol\theta}\right)
+\]</span></li>
+</ul>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li>Wood, Simon N. (2017), <em>Generalized Additive Models: An Introduction with R</em>. Chapman and Hall/CRC</li>
+</ul>
+</div>
+</div>
+
+    </div>
+  </article>
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//kfab.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-116913878-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+  </body>
+</html>
+

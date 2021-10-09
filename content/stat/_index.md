@@ -21,6 +21,12 @@ title: My Notes on Statistics and Machine Learning Books and Papers
     - [Ch3 Complete Case Analysis
   and Weighting Methods](https://liyingbo.com/stat/2020/09/08/book-notes-statistical-analysis-with-missing-data-ch3-complete-case-analysis-and-weighting-methods/) [(pdf)](https://liyingbo.com/pdf/090720_missing_data_book_ch3.pdf)
     
+* Generalized Additive Models: An Introduction with R, by Wood (2017) 
+
+    - [Ch3 Generalized Linear Models]() [(pdf)]()
+    - [Ch4 Introducing GAMs]() [(pdf)]()
+
+    
 * Pattern Recognition and Machine Learning, by Bishop (2006)
 
     - [Ch9 Mixture Models and EM Algorithm](https://liyingbo.com/stat/2020/06/13/book-notes-pattern-recognition-and-machine-learning-ch9-mixture-models-and-em-algorithm/) [(pdf)](https://liyingbo.com/pdf/050120_EM_algorithm_ch9.pdf)
