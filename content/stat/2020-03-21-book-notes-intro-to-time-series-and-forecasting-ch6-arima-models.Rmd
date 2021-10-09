@@ -14,8 +14,6 @@ output:
     toc_depth: 2
 ---
 
-***For the pdf slides, click [here](/pdf/012119_time_series_ch6.pdf)***
-
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE);
@@ -42,6 +40,8 @@ blue = function(x){col_text('blue', x);}
 red = function(x){col_text('red', x);}
 green = function(x){col_text('green', x);}
 ```
+
+***`r red('For the pdf slides, click [here](/pdf/012119_time_series_ch6.pdf)')`***
 
 ### When data is not stationary
 

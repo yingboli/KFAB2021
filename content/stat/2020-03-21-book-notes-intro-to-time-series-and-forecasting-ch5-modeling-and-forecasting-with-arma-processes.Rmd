@@ -14,7 +14,6 @@ output:
     toc_depth: 2
 ---
 
-***For the pdf slides, click [here](/pdf/010119_time_series_ch5.pdf)***
 
 
 ```{r setup, include=FALSE}
@@ -42,6 +41,8 @@ blue = function(x){col_text('blue', x);}
 red = function(x){col_text('red', x);}
 green = function(x){col_text('green', x);}
 ```
+
+***`r red('For the pdf slides, click [here](/pdf/010119_time_series_ch5.pdf)')`***
 
 ### Parameter estimation for ARMA$(p, q)$
 
