@@ -34,11 +34,11 @@ title: My Notes on Statistics and Machine Learning Books and Papers
     
 * Neural Network Methods for Natural Language Processing, by Goldberg [2017]
 
-    - [Part1 Supervised Classification and Feed-forward Neural Networks]() [(pdf)]()
-    - [Part2 Working with Natural Language Data, Ch6-8]() [(pdf)]()
-    - [Part2 Working with Natural Language Data, Ch9-11]() [(pdf)]()
-    - [Part3 Specialized Architectures, Ch13 CNN]() [(pdf)]()
-    - [Part3 Specialized Architectures, Ch14-16 RNNs]() [(pdf)]()
+    - [Part1 Supervised Classification and Feed-forward Neural Networks](https://liyingbo.com/stat/2021/01/20/book-notes-neural-network-methods-for-natural-language-processing-part-1-supervised-classification-and-feed-forward-neural-networks/) [(pdf)](https://liyingbo.com/pdf/010121_NN_for_NLP_book_part1.pdf)
+    - [Part2 Working with Natural Language Data, Ch6-8](https://liyingbo.com/stat/2021/01/21/book-notes-neural-network-methods-for-natural-language-processing-part-2-working-with-natural-language-data-ch6-8/) [(pdf)](https://liyingbo.com/pdf/010121_NN_for_NLP_book_part2_ch6-8.pdf)
+    - [Part2 Working with Natural Language Data, Ch9-11](https://liyingbo.com/stat/2021/01/22/book-notes-neural-network-methods-for-natural-language-processing-part-2-working-with-natural-language-data-ch9-11/) [(pdf)](https://liyingbo.com/pdf/010121_NN_for_NLP_book_part2_ch9-11.pdf)
+    - [Part3 Specialized Architectures, Ch13 CNN](https://liyingbo.com/stat/2021/05/17/book-notes-neural-network-methods-for-natural-language-processing-part-3-specialized-architectures-ch13-cnn/) [(pdf)](https://liyingbo.com/pdf/010121_NN_for_NLP_book_part3_ch13.pdf)
+    - [Part3 Specialized Architectures, Ch14-16 RNNs](https://liyingbo.com/stat/2021/05/18/book-notes-neural-network-methods-for-natural-language-processing-part-3-specialized-architectures-ch14-16-rnns/) [(pdf)](https://liyingbo.com/pdf/010121_NN_for_NLP_book_part3_ch14-16.pdf)
 
 * Gaussian Processes for Machine learning, by Rasmussen and Williams [2006]
 
