@@ -148,6 +148,17 @@ GLM overview  In a GLM, a smooth monotonic link function \(g(\cdot)\) connects t
     </item>
     
     <item>
+      <title>Book Notes: Gaussian Processes for Machine learning -- Ch2 Gaussian Process Regression</title>
+      <link>http://liyingbo.com/stat/2021/03/17/book-notes-gaussian-processes-for-machine-learning-ch2-gaussian-process-regression/</link>
+      <pubDate>Wed, 17 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2021/03/17/book-notes-gaussian-processes-for-machine-learning-ch2-gaussian-process-regression/</guid>
+      <description>Weight-space View Function-space View Prediction with noise-free observations Prediction with noisy observations Cholesky decomposition and GP regression algorithm Hyperparameters  Smoothing, Weight Functions, and Equivalent Kernels   For the pdf slides, click here
+Overview of Gaussian processes (GP)  The problem is learning in GP is exactly the problem of finding suitable properties for the covariance function
+ In this book, design matrix is defined slightly differently from common statistical textbooks.</description>
+    </item>
+    
+    <item>
       <title>慢炖猪肉塔可饼 Carnitas Taco</title>
       <link>http://liyingbo.com/cooking/2021/02/26/carnitas-taco/</link>
       <pubDate>Fri, 26 Feb 2021 00:00:00 +0000</pubDate>
@@ -201,6 +212,16 @@ GLM overview  In a GLM, a smooth monotonic link function \(g(\cdot)\) connects t
       <description>暂时无图无真想，但应该会快就回再做，因为阿多喜欢。所以图下次再补。 （隔年一月份终于补上了）
 方子来自ATK的菜谱书&amp;quot;Side Dish Bible&amp;quot;，书很厚，里面有很多蔬菜方子。 方子很简单，用的是冷冻青豆，整道菜很快，5～10分钟就能完成。
    快煮青豆 Quick Buttered Peas     冷冻青豆 1磅 Frozen peas 1 lb   黄油 2大匙 Butter 2 tbsp   糖 2小匙 Sugar, 2 tsb   干百里香 1/4小匙 Thyme, dry, 1/4 tsb   红葱头末 1个 Shallot, minced, 1   蒜末 1瓣 Garlic, minced, 1 clove   盐 Salt      用一个大平底锅，开中高火，融化黄油后，加入红葱头末，蒜末，干百里香，煮约2分钟，到红葱头变透明。</description>
+    </item>
+    
+    <item>
+      <title>Book Notes: Pattern Recognition and Machine Learning -- Ch10 Variational Inference</title>
+      <link>http://liyingbo.com/stat/2020/10/27/book-notes-pattern-recognition-and-machine-learning-ch10-variational-inference/</link>
+      <pubDate>Tue, 27 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2020/10/27/book-notes-pattern-recognition-and-machine-learning-ch10-variational-inference/</guid>
+      <description>Variational Inference Introduction of the variational inference method Example: univariate Gaussian Model selection  Variational Mixture of Gaussians Variational Linear Regression Exponential Family Distributions Local Variational Methods Variational Logistic Regression Expectation Propagation   For the pdf slides, click here
+Variational Inference Introduction of the variational inference method Definitions  Variational inference is also called variational Bayes, thus  all parameters are viewed as random variables, and they will have prior distributions.</description>
     </item>
     
     <item>

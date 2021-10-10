@@ -30,6 +30,27 @@ GLM overview  In a GLM, a smooth monotonic link function \(g(\cdot)\) connects t
     </item>
     
     <item>
+      <title>Book Notes: Gaussian Processes for Machine learning -- Ch2 Gaussian Process Regression</title>
+      <link>http://liyingbo.com/stat/2021/03/17/book-notes-gaussian-processes-for-machine-learning-ch2-gaussian-process-regression/</link>
+      <pubDate>Wed, 17 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2021/03/17/book-notes-gaussian-processes-for-machine-learning-ch2-gaussian-process-regression/</guid>
+      <description>Weight-space View Function-space View Prediction with noise-free observations Prediction with noisy observations Cholesky decomposition and GP regression algorithm Hyperparameters  Smoothing, Weight Functions, and Equivalent Kernels   For the pdf slides, click here
+Overview of Gaussian processes (GP)  The problem is learning in GP is exactly the problem of finding suitable properties for the covariance function
+ In this book, design matrix is defined slightly differently from common statistical textbooks.</description>
+    </item>
+    
+    <item>
+      <title>Book Notes: Pattern Recognition and Machine Learning -- Ch10 Variational Inference</title>
+      <link>http://liyingbo.com/stat/2020/10/27/book-notes-pattern-recognition-and-machine-learning-ch10-variational-inference/</link>
+      <pubDate>Tue, 27 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2020/10/27/book-notes-pattern-recognition-and-machine-learning-ch10-variational-inference/</guid>
+      <description>Variational Inference Introduction of the variational inference method Example: univariate Gaussian Model selection  Variational Mixture of Gaussians Variational Linear Regression Exponential Family Distributions Local Variational Methods Variational Logistic Regression Expectation Propagation   For the pdf slides, click here
+Variational Inference Introduction of the variational inference method Definitions  Variational inference is also called variational Bayes, thus  all parameters are viewed as random variables, and they will have prior distributions.</description>
+    </item>
+    
+    <item>
       <title>Paper Notes: Proper Scoring Rules and Cost Weighted Loss Functions for Binary Classification</title>
       <link>http://liyingbo.com/stat/2020/10/12/paper-notes-proper-scoring-rules-and-cost-weighted-loss-functions-for-binary-classification/</link>
       <pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate>

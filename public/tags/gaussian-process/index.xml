@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Gaussian Process on King Fox And Butterfly</title>
+    <link>http://liyingbo.com/tags/gaussian-process/</link>
+    <description>Recent content in Gaussian Process on King Fox And Butterfly</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 17 Mar 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://liyingbo.com/tags/gaussian-process/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Book Notes: Gaussian Processes for Machine learning -- Ch2 Gaussian Process Regression</title>
+      <link>http://liyingbo.com/stat/2021/03/17/book-notes-gaussian-processes-for-machine-learning-ch2-gaussian-process-regression/</link>
+      <pubDate>Wed, 17 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2021/03/17/book-notes-gaussian-processes-for-machine-learning-ch2-gaussian-process-regression/</guid>
+      <description>Weight-space View Function-space View Prediction with noise-free observations Prediction with noisy observations Cholesky decomposition and GP regression algorithm Hyperparameters  Smoothing, Weight Functions, and Equivalent Kernels   For the pdf slides, click here
+Overview of Gaussian processes (GP)  The problem is learning in GP is exactly the problem of finding suitable properties for the covariance function
+ In this book, design matrix is defined slightly differently from common statistical textbooks.</description>
+    </item>
+    
+  </channel>
+</rss>

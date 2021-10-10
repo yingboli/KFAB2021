@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.88.1" />
+
+
+<title>Book Notes: Pattern Recognition and Machine Learning -- Ch10 Variational Inference - King Fox And Butterfly</title>
+<meta property="og:title" content="Book Notes: Pattern Recognition and Machine Learning -- Ch10 Variational Inference - King Fox And Butterfly">
+
+
+  <link href='http://liyingbo.com/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/yingbo_headshot.jpg"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/cooking/">Cooking</a></li>
+    
+    <li><a href="/stat/">Statistics</a></li>
+    
+    <li><a href="/life/">Life</a></li>
+    
+    <li><a href="/about/">About Me</a></li>
+    
+    <li><a href="/categories/">Categories</a></li>
+    
+    <li><a href="/tags/">Tags</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+
+    <h1 class="article-title">Book Notes: Pattern Recognition and Machine Learning -- Ch10 Variational Inference</h1>
+
+    
+
+    <div class="article-content">
+      
+
+<div id="TOC">
+<ul>
+<li><a href="#variational-inference">Variational Inference</a><ul>
+<li><a href="#introduction-of-the-variational-inference-method">Introduction of the variational inference method</a></li>
+<li><a href="#example-univariate-gaussian">Example: univariate Gaussian</a></li>
+<li><a href="#model-selection">Model selection</a></li>
+</ul></li>
+<li><a href="#variational-mixture-of-gaussians">Variational Mixture of Gaussians</a></li>
+<li><a href="#variational-linear-regression">Variational Linear Regression</a></li>
+<li><a href="#exponential-family-distributions">Exponential Family Distributions</a></li>
+<li><a href="#local-variational-methods">Local Variational Methods</a></li>
+<li><a href="#variational-logistic-regression">Variational Logistic Regression</a></li>
+<li><a href="#expectation-propagation">Expectation Propagation</a></li>
+</ul>
+</div>
+
+<p><strong><em><font color='red'>For the pdf slides, click <a href="/pdf/061320_variational_inference_ch10.pdf">here</a></font></em></strong></p>
+<div id="variational-inference" class="section level1">
+<h1>Variational Inference</h1>
+<div id="introduction-of-the-variational-inference-method" class="section level2">
+<h2>Introduction of the variational inference method</h2>
+<div id="definitions" class="section level3">
+<h3>Definitions</h3>
+<ul>
+<li><font color='blue'>Variational inference</font> is also called <font color='blue'>variational Bayes</font>,
+thus
+<ul>
+<li>all parameters are viewed as random variables, and</li>
+<li>they will have prior distributions.</li>
+</ul></li>
+<li>We denote the set of all latent variables and parameters by <span class="math inline">\(\mathbf{Z}\)</span>
+<ul>
+<li>Note: the parameter vector <span class="math inline">\(\boldsymbol\theta\)</span> no long appears, because it’s now a part of <span class="math inline">\(\mathbf{Z}\)</span></li>
+</ul></li>
+<li>Goal: find approximation for
+<ul>
+<li>posterior distribution <span class="math inline">\(p(\mathbf{Z} \mid \mathbf{X})\)</span>, and</li>
+<li>marginal likelihood <span class="math inline">\(p(\mathbf{X})\)</span>, also called the <font color='blue'>model evidence</font></li>
+</ul></li>
+</ul>
+</div>
+<div id="model-evidence-equals-lower-bound-plus-kl-divergence" class="section level3">
+<h3><font color='red'>Model evidence equals lower bound plus KL divergence</font></h3>
+<ul>
+<li><p><strong>Goal</strong>: We want to find a distribution <span class="math inline">\(q(\mathbf{Z})\)</span> that approximates
+the posterior distribution <span class="math inline">\(p(\mathbf{Z}\mid \mathbf{X})\)</span>.
+In other word, we want to minimize the KL divergence <span class="math inline">\(\text{KL}(q \| p)\)</span>.</p></li>
+<li><p>Note the <font color='red'>decomposition of the marginal likelihood</font>
+<span class="math display">\[
+\log p(\mathbf{X}) = \mathcal{L}(q) + \text{KL}(q \| p),
+\]</span></p></li>
+<li><p>Thus, maximizing the <font color='blue'>lower bound (also called ELBO)</font> <span class="math inline">\(\mathcal{L}(q)\)</span> is equivalent to
+minimizing the KL divergence <span class="math inline">\(\text{KL}(q \| p)\)</span>.
+<span class="math display">\[\begin{align*}
+\mathcal{L}(q) &amp; = \int q(\mathbf{Z}) \log\left\{ 
+\frac{p(\mathbf{X}, \mathbf{Z})}{q(\mathbf{Z})} 
+\right\} d\mathbf{Z}\\
+\text{KL}(q \| p) &amp; = -\int q(\mathbf{Z}) \log\left\{ 
+\frac{p(\mathbf{Z}\mid \mathbf{X})}{q(\mathbf{Z})} 
+\right\} d\mathbf{Z}
+\end{align*}\]</span></p></li>
+</ul>
+</div>
+<div id="mean-field-family" class="section level3">
+<h3>Mean field family</h3>
+<ul>
+<li><p><strong>Goal</strong>: restrict the family of distribution <span class="math inline">\(q(\mathbf{Z})\)</span> so that they comprise only tractable distributions, while allow the family to be sufficiently flexible so that it can approximate the posterior distribution well</p></li>
+<li><font color='blue'>Mean field family</font> : partition the elements of <span class="math inline">\(\mathbf{Z}\)</span> into disjoint groups
+denoted by <span class="math inline">\(\mathbf{Z}_j\)</span>, for <span class="math inline">\(j = 1, \ldots, M\)</span>, and assume <span class="math inline">\(q\)</span> factorizes wrt these groups:
+<span class="math display">\[
+q(\mathbf{Z}) = \prod_{j=1}^M q_j(\mathbf{Z}_j) 
+\]</span>
+<ul>
+<li><font color='red'>Note: we place no resitriction on the functional forms of the individual factors</font> <span class="math inline">\(q_j(\mathbf{Z}_j)\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="solution-for-mean-field-families-derivation" class="section level3">
+<h3>Solution for mean field families: derivation</h3>
+<ul>
+<li><p>We will optimize wrt each <span class="math inline">\(q_j(\mathbf{Z}_j)\)</span> in turn.</p></li>
+<li><p>For <span class="math inline">\(q_j\)</span>, the lower bound (to be maximized) can be decomposed as
+<span class="math display">\[\begin{align*}
+\mathcal{L}(q)
+&amp; = \int \prod_k q_k \left\{\log p(\mathbf{X}, \mathbf{Z}) - 
+\sum_k \log q_k \right\}d\mathbf{Z}\\
+&amp; = \int q_j \underbrace{\left\{\int \log p(\mathbf{X}, \mathbf{Z}) 
+\prod_{k\neq j} q_k d\mathbf{Z}_k\right\}}_{\mathbb{E}_{k\neq j}\left[ \log p(\mathbf{X}, \mathbf{Z})  \right]} d\mathbf{Z}_j - 
+\int q_j  \log q_j d\mathbf{Z}_j + \text{const}\\
+&amp; = -\text{KL}\left(q_j \| \tilde{p}(\mathbf{X}, \mathbf{Z}_j) \right) + \text{const}
+\end{align*}\]</span></p>
+<ul>
+<li>Here the new distribution <span class="math inline">\(\tilde{p}(\mathbf{X}, \mathbf{Z}_j)\)</span> is defined as
+<span class="math display">\[
+  \log \tilde{p}(\mathbf{X}, \mathbf{Z}_j) = 
+  \mathbb{E}_{k\neq j}\left[ \log p(\mathbf{X}, \mathbf{Z})  \right] + \text{const}
+  \]</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="solution-for-mean-field-families" class="section level3">
+<h3>Solution for mean field families</h3>
+<ul>
+<li><p><font color='red'>A general expression for the optimal solution</font> <span class="math inline">\(q_j^*(\mathbf{Z}_j)\)</span> is
+<span class="math display">\[
+\log q_j^*(\mathbf{Z}_j) = \mathbb{E}_{k\neq j}\left[ \log p(\mathbf{X}, \mathbf{Z})\right] + \text{const}
+\]</span></p>
+<ul>
+<li>We can only use this solution in an iterative manner, because the expectations
+should be computed wrt other factors <span class="math inline">\(q_k(\mathbf{Z}_k)\)</span> for <span class="math inline">\(k \neq j\)</span>.</li>
+<li>Convergence is guaranteed because bound is convex wrt each factor <span class="math inline">\(q_j\)</span></li>
+<li><font color='red'>On the right hand side we only need to retain those terms that have some functional dependence on</font> <span class="math inline">\(\mathbf{Z}_j\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="example-approximate-a-bivariate-gaussian-using-two-independent-distributions" class="section level3">
+<h3><font color='green'>Example: approximate a bivariate Gaussian using two independent distributions</font></h3>
+<ul>
+<li><p>Target distribution: a bivariate Gaussian
+<span class="math display">\[
+p(\mathbf{z}) = \text{N}\left(\mathbf{z} \mid \boldsymbol\mu, \boldsymbol\Lambda^{-1}\right), \quad
+\boldsymbol\mu = \left(
+\begin{array}{c}
+\mu_1 \\
+\mu_2
+\end{array} 
+\right), \quad
+\boldsymbol\Lambda = \left(
+\begin{array}{cc}
+\lambda_{11}&amp;  \lambda_{12}\\
+\lambda_{12}&amp;  \lambda_{22}
+\end{array} 
+\right)  
+\]</span></p></li>
+<li><p>We use a factorized form to approximate <span class="math inline">\(p(\mathbf{z})\)</span>:
+<span class="math display">\[
+q(\mathbf{z}) = q_1(z_1) q_2(z_2)
+\]</span></p></li>
+<li><p><font color='red'>Note: we do not assume any functional forms for <span class="math inline">\(q_1\)</span> and <span class="math inline">\(q_2\)</span></font></p></li>
+</ul>
+</div>
+<div id="vi-solution-to-the-bivariate-gaussian-problem" class="section level3">
+<h3>VI solution to the bivariate Gaussian problem</h3>
+<p><span class="math display">\[\begin{align*}
+\log q_1^*(z_1) 
+&amp;= \mathbb{E}_{z_2}\left[\log p(\mathbf{z})\right] + \text{const}\\
+&amp;= \mathbb{E}_{z_2}\left[
+  -\frac{1}{2}(z_1 - \mu_1)^2 \Lambda_{11}
+  - (z_1 - \mu_1) \Lambda_{12} (z_2 - \mu_2)
+  \right] + \text{const}\\
+&amp;= -\frac{1}{2}z_1^2 \Lambda_{11} + z_1 \mu_1 \Lambda_{11}
+  - (z_1 - \mu_1) \Lambda_{12} \left(\mathbb{E}[z_2] - \mu_2\right) + \text{const}
+\end{align*}\]</span></p>
+<ul>
+<li><p>Thus we identify a normal, with mean depending on <span class="math inline">\(\mathbb{E}[z_2]\)</span>:
+<span class="math display">\[
+q^*(z_1) = \text{N}\left(z_1 \mid m_1, \Lambda_{11}^{-1} \right), \quad
+m_1 = \mu_1 - \Lambda_{11}^{-1}\Lambda_{12}\left(\mathbb{E}[z_2] - \mu_2\right)
+\]</span></p></li>
+<li><p>By symmetry, <span class="math inline">\(q^*(z_2)\)</span> is also normal; its mean depends on <span class="math inline">\(\mathbb{E}[z_1]\)</span>
+<span class="math display">\[
+q^*(z_2) = \text{N}\left(z_2 \mid m_2, \Lambda_{22}^{-1} \right), \quad
+m_2 = \mu_2 - \Lambda_{22}^{-1}\Lambda_{12}\left(\mathbb{E}[z_1] - \mu_1\right)
+\]</span></p></li>
+<li><p>We treat the above variational solutions as re-estimation equations,
+and cycle through the variables in turn updating them until some convergence criterion is satisfied</p></li>
+</ul>
+</div>
+<div id="visualize-vi-solution-to-bivariate-gaussian" class="section level3">
+<h3>Visualize VI solution to bivariate Gaussian</h3>
+<ul>
+<li><p><font color='red'>Variational inference</font> minimizes KL<span class="math inline">\((q \| p)\)</span>: mean of the approximation is correct,
+<font color='red'>but variance (along the orthogonal direction) is significantly under-estimated</font></p></li>
+<li><p>Expectation propagation minimizes KL<span class="math inline">\((p \| q)\)</span>: solution equals marginal distributions</p></li>
+</ul>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-1"></span>
+<img src="/figures/Bishop_fig_10_2.png" alt="Left: variational inference. Right: expectation propagation" width="70%" />
+<p class="caption">
+Figure 1: Left: variational inference. Right: expectation propagation
+</p>
+</div>
+</div>
+<div id="another-example-to-compare-klq-p-and-klp-q" class="section level3">
+<h3>Another example to compare KL<span class="math inline">\((q \| p)\)</span> and KL<span class="math inline">\((p \| q)\)</span></h3>
+<ul>
+<li>To approximate a mixture of two Gaussians <span class="math inline">\(p\)</span> (blue contour)</li>
+<li>Use a single Gaussian <span class="math inline">\(q\)</span> (red contour) to approximate <span class="math inline">\(p\)</span>
+<ul>
+<li>By minimizing KL<span class="math inline">\((p\| q)\)</span>: figure (a)</li>
+<li>By minimizing KL<span class="math inline">\((q\| p)\)</span>: figure (b) and (c) show two local minimum</li>
+</ul></li>
+</ul>
+<p><img src="/figures/Bishop_fig_10_3.png" width="80%" style="display: block; margin: auto;" /></p>
+<ul>
+<li>For multimodal distribution
+<ul>
+<li>a variational solution will tend to find one of the modes,</li>
+<li>but an expectation propagation solution would lead to poor predictive distribution
+(because the average of the two good parameter values is typically itself not a good parameter value)</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="example-univariate-gaussian" class="section level2">
+<h2>Example: univariate Gaussian</h2>
+<div id="example-univariate-gaussian-1" class="section level3">
+<h3><font color='green'>Example: univariate Gaussian</font></h3>
+<ul>
+<li><p>Suppose the data <span class="math inline">\(D = \{x_1, \ldots, x_N\}\)</span> follows iid normal distribution
+<span class="math display">\[
+x_i \sim \text{N}\left(\mu, \tau^{-1}\right)
+\]</span></p></li>
+<li><p>The prior distributions are
+<span class="math display">\[\begin{align*}
+\mu \mid \tau &amp; \sim \text{N}\left(\mu_0, (\lambda_0 \tau)^{-1}\right)\\
+\tau &amp; \sim \text{Gam}(a_0, b_0)
+\end{align*}\]</span></p></li>
+<li><p>Factorized variational approximation
+<span class="math display">\[
+q(\mu, \tau) = q(\mu) q(\tau)
+\]</span></p></li>
+</ul>
+</div>
+<div id="variational-solution-for-mu" class="section level3">
+<h3>Variational solution for <span class="math inline">\(\mu\)</span></h3>
+<p><span class="math display">\[\begin{align*}
+\log q^*(\mu) 
+&amp;= \mathbb{E}_\tau\left[\log p(D \mid \mu, \tau) + \log p(\mu \mid \tau) \right] + \text{const}\\
+&amp;= -\frac{\mathbb{E}[\tau]}{2}\left\{ \lambda_0 (\mu - \mu_0)^2 + \sum_{i=1}^N (x_i - \mu)^2\right\}+ \text{const}
+\end{align*}\]</span></p>
+<p>Thus, the variational solution for <span class="math inline">\(\mu\)</span> is
+<span class="math display">\[\begin{align*}
+q(\mu) &amp;= \text{N}\left(\mu \mid \mu_N, \lambda_N^{-1}\right)\\
+\mu_N &amp;= \frac{\lambda_0 \mu_0 + N \bar{x}}{\lambda_0 + N}\\
+\lambda_N &amp;= \left(\lambda_0 + N\right)\mathbb{E}[\tau]
+\end{align*}\]</span></p>
+</div>
+<div id="variational-solution-for-tau" class="section level3">
+<h3>Variational solution for <span class="math inline">\(\tau\)</span></h3>
+<p><span class="math display">\[\begin{align*}
+\log q^*(\tau) 
+&amp;= \mathbb{E}_\mu\left[\log p(D \mid \mu, \tau) + \log p(\mu \mid \tau) + \log p(\tau)\right] + \text{const}\\
+&amp;= (a_0 -1)\log \tau - b_0 \tau + \frac{N}{2}\log \tau\\
+&amp;~~~~  - \frac{\tau}{2} \mathbb{E}_\mu\left[\lambda_0 (\mu - \mu_0)^2 + \sum_{i=1}^N (x_i - \mu)^2\right]+ \text{const}
+\end{align*}\]</span></p>
+<p>Thus, the variational solution for <span class="math inline">\(\tau\)</span> is
+<span class="math display">\[\begin{align*}
+q(\tau) &amp;= \text{Gam}\left(\tau \mid a_N, b_N\right)\\
+a_N &amp;= a_0 + + \frac{N}{2}\\
+b_N &amp;= b_0 + \frac{1}{2} \mathbb{E}_\mu\left[\lambda_0 (\mu - \mu_0)^2 + \sum_{i=1}^N (x_i - \mu)^2\right]
+\end{align*}\]</span></p>
+</div>
+<div id="visualization-of-vi-solution-to-univariate-normal" class="section level3">
+<h3>Visualization of VI solution to univariate normal</h3>
+<p><img src="/figures/Bishop_fig_10_4.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="model-selection" class="section level2">
+<h2>Model selection</h2>
+<div id="model-selection-comparison-under-variational-inference" class="section level3">
+<h3>Model selection (comparison) under variational inference</h3>
+<ul>
+<li><p>In addition to making inference on the parameter <span class="math inline">\(\mathbf{Z}\)</span>,
+we may also want to compare a set of candidate models, denoted by index <span class="math inline">\(m\)</span></p></li>
+<li><p>We should consider the factorization
+<span class="math display">\[
+q(\mathbf{Z}, m) = q(\mathbf{Z} \mid m) q(m)
+\]</span>
+to approximate the posterior <span class="math inline">\(p(\mathbf{Z}, m \mid \mathbf{X})\)</span></p></li>
+<li><p>We can maximize the information lower bound
+<span class="math display">\[
+\mathcal{L}_m = \sum_m \sum_{\mathbf{Z}} q(\mathbf{Z} \mid m) q(m) 
+\log\left\{\frac{p(\mathbf{Z}, \mathbf{X}, m)}{q(\mathbf{Z} \mid m) q(m) }\right\}
+\]</span>
+which is a lower bound of <span class="math inline">\(\log p(\mathbf{X})\)</span></p></li>
+<li><p>The maximized <span class="math inline">\(q(m)\)</span> can be used for model selection</p></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="variational-mixture-of-gaussians" class="section level1">
+<h1>Variational Mixture of Gaussians</h1>
+<div id="mixture-of-gaussians" class="section level3">
+<h3>Mixture of Gaussians</h3>
+<ul>
+<li><p>For each observation <span class="math inline">\(\mathbf{x}_n \in \mathbb{R}^D\)</span>,
+we have a corresponding latent variable <span class="math inline">\(\mathbf{z}_n\)</span>, a 1-of-<span class="math inline">\(K\)</span> binary group indicator vector</p></li>
+<li><p>Mixture of Gasussians joint likelihood, based on <span class="math inline">\(N\)</span> observations
+<span class="math display">\[\begin{align*}
+p(\mathbf{Z} \mid \boldsymbol\pi) 
+&amp; = \prod_{n=1}^N \prod_{k=1}^K \pi_k^{z_{nk}}\\
+p(\mathbf{X} \mid \mathbf{Z}, \boldsymbol\mu, \boldsymbol\Lambda)
+&amp;=  \prod_{n=1}^N \prod_{k=1}^K \text{N}\left(\mathbf{x}_n \mid \boldsymbol\mu_k, \boldsymbol\Lambda_k^{-1}  \right)^{z_{nk}}
+\end{align*}\]</span></p></li>
+</ul>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-4"></span>
+<img src="/figures/Bishop_fig_10_5.png" alt="Graph representation of mixture of Gaussians" width="35%" />
+<p class="caption">
+Figure 2: Graph representation of mixture of Gaussians
+</p>
+</div>
+</div>
+<div id="conjugate-priors" class="section level3">
+<h3>Conjugate priors</h3>
+<ul>
+<li><p>Dirichlet for <span class="math inline">\(\boldsymbol\pi\)</span>
+<span class="math display">\[
+p(\boldsymbol\pi) = \text{Dir}(\boldsymbol\pi \mid \boldsymbol\alpha_0) \propto 
+\prod_{k=1}^K \pi_k^{\alpha_{0k} - 1}
+\]</span></p></li>
+<li><p>Independent Gaussian-Wishart for <span class="math inline">\(\boldsymbol\mu, \boldsymbol\Lambda\)</span>
+<span class="math display">\[\begin{align*}
+p(\boldsymbol\mu, \boldsymbol\Lambda)
+&amp;=  \prod_{k=1}^K p(\boldsymbol\mu_k \mid \boldsymbol\Lambda_k) p(\boldsymbol\Lambda_k)\\
+&amp;= \prod_{k=1}^K \text{N}\left(\boldsymbol\mu_k \mid \mathbf{m}_0, (\beta_0 \boldsymbol\Lambda_k)^{-1}\right)
+\text{W}\left( \boldsymbol\Lambda_k \mid \mathbf{W}_0, \nu_0 \right)
+\end{align*}\]</span></p>
+<ul>
+<li>Usually, the prior mean <span class="math inline">\(\mathbf{m}_0 = \mathbf{0}\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="variational-distribution" class="section level3">
+<h3>Variational distribution</h3>
+<ul>
+<li><p>Joint posterior
+<span class="math display">\[
+p(\mathbf{X}, \mathbf{Z}, \boldsymbol\pi, \boldsymbol\mu, \boldsymbol\Lambda)
+= p(\mathbf{X} \mid \mathbf{Z}, \boldsymbol\mu, \boldsymbol\Lambda) p(\mathbf{Z} \mid \boldsymbol\pi)
+p(\boldsymbol\pi) p(\boldsymbol\mu \mid \boldsymbol\Lambda)p(\boldsymbol\Lambda)
+\]</span></p></li>
+<li><p>Variational distribution factorizes between the latent variables and the parameters
+<span class="math display">\[\begin{align*}
+q(\mathbf{Z}, \boldsymbol\pi, \boldsymbol\mu, \boldsymbol\Lambda) 
+&amp; = q(\mathbf{Z}) q(\boldsymbol\pi, \boldsymbol\mu, \boldsymbol\Lambda)\\
+&amp; = q(\mathbf{Z}) q(\boldsymbol\pi) \prod_{k=1}^K q(\boldsymbol\mu_k, \boldsymbol\Lambda_k)
+\end{align*}\]</span></p></li>
+</ul>
+</div>
+<div id="variational-solution-for-mathbfz" class="section level3">
+<h3>Variational solution for <span class="math inline">\(\mathbf{Z}\)</span></h3>
+<ul>
+<li><p>Optimized factor
+<span class="math display">\[\begin{align*}
+\log q^*(\mathbf{Z})
+&amp;= \mathbb{E}_{\boldsymbol\pi, \boldsymbol\mu, \boldsymbol\Lambda}
+\left[\log p(\mathbf{X}, \mathbf{Z}, \boldsymbol\pi, \boldsymbol\mu, \boldsymbol\Lambda) \right]\\
+&amp;= \mathbb{E}_{\boldsymbol\pi}\left[\log p(\mathbf{Z} \mid \boldsymbol\pi) \right]
++ \mathbb{E}_{\boldsymbol\mu, \boldsymbol\Lambda}
+\left[\log p(\mathbf{X} \mid \mathbf{Z}, \boldsymbol\mu, \boldsymbol\Lambda) \right]\\
+&amp;= \sum_{n=1}^N \sum_{k=1}^K z_{nk} \log \rho_{nk} + \text{const}\\
+\log \rho_{nk} 
+= ~&amp; \mathbb{E}\left[\log \pi_{k}\right] + 
+\frac{1}{2} \mathbb{E}\left[\log \left|\boldsymbol\Lambda_k \right| \right] -
+\frac{D}{2} \log(2\pi)\\
+&amp; - 
+\frac{1}{2} \mathbb{E}_{\boldsymbol\mu, \boldsymbol\Lambda}
+\left[\left(\mathbf{x}_n - \boldsymbol\mu_k\right)&#39; \Lambda_k \left(\mathbf{x}_n - \boldsymbol\mu_k\right) \right]
+\end{align*}\]</span></p></li>
+<li><p>Thus, the factor <span class="math inline">\(q^*(\mathbf{Z})\)</span> takes the same functional form as the prior <span class="math inline">\(p(\mathbf{Z} \mid \boldsymbol\pi)\)</span>
+<span class="math display">\[
+q^*(\mathbf{Z}) = \prod_{n=1}^N \prod_{k=1}^K r_{nk}^{z_{nk}}, \quad
+r_nk = \frac{\rho_{nk}}{\sum_{j=1}^K \rho_{nj}}
+\]</span></p>
+<ul>
+<li>By <span class="math inline">\(q^*(\mathbf{Z})\)</span>, the posterior mean (i.e., <font color='blue'>responsibility</font>) <span class="math inline">\(\mathbb{E}[z_{nk}] = r_{nk}\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="define-three-statistics-wrt-the-responsibilities" class="section level3">
+<h3>Define three statistics wrt the responsibilities</h3>
+<ul>
+<li>For each of group <span class="math inline">\(k = 1, \ldots, K\)</span>, denote
+<span class="math display">\[\begin{align*}
+N_k &amp; = \sum_{n=1}^N r_{nk}\\
+\bar{\mathbf{x}}_k &amp;= \frac{1}{N_k} \sum_{n=1}^N r_{nk} \mathbf{x}_n\\
+\mathbf{S}_k &amp;= \frac{1}{N_k} \sum_{n=1}^N r_{nk} 
+\left(\mathbf{x}_n - \bar{\mathbf{x}}_k\right)
+\left(\mathbf{x}_n - \bar{\mathbf{x}}_k\right)&#39;
+\end{align*}\]</span></li>
+</ul>
+</div>
+<div id="variational-solution-for-boldsymbolpi" class="section level3">
+<h3>Variational solution for <span class="math inline">\(\boldsymbol\pi\)</span></h3>
+<ul>
+<li><p>Optimized factor
+<span class="math display">\[\begin{align*}
+\log q^*(\boldsymbol\pi) 
+&amp;= \log p(\boldsymbol\pi) 
++ \mathbb{E}_{\mathbf{Z}}\left[ p(\mathbf{Z} \mid \boldsymbol\pi) \right]\\
+&amp;= (\alpha_0 -1) \sum_{k=1}^K \log \pi_k + \sum_{k=1}^K \sum_{n=1}^N r_{nk} \log \pi_{nk} + \text{const}
+\end{align*}\]</span></p></li>
+<li><p>Thus, <span class="math inline">\(q^*(\boldsymbol\pi)\)</span> is a Dirichlet distribution
+<span class="math display">\[
+q^*(\boldsymbol\pi) = \text{Dir}(\boldsymbol\alpha), \quad
+\alpha_k = \alpha_0 + N_k
+\]</span></p></li>
+</ul>
+</div>
+<div id="variational-solution-for-boldsymbolmu_k-boldsymbollambda_k" class="section level3">
+<h3>Variational solution for <span class="math inline">\(\boldsymbol\mu_k, \boldsymbol\Lambda_k\)</span></h3>
+<ul>
+<li><p>Optimized factor for <span class="math inline">\((\boldsymbol\mu_k, \boldsymbol\Lambda_k)\)</span>
+<span class="math display">\[\begin{align*}
+\log q^*(\boldsymbol\mu_k, \boldsymbol\Lambda_k)
+=~&amp; \mathbb{E}_{\mathbf{Z}}\left[ \sum_{n=1}^N z_{nk} \log \text{N}\left(\mathbf{x}_n \mid \boldsymbol\mu_k, \boldsymbol\Lambda_k^{-1}  \right) \right]\\
+&amp;  + \log p(\boldsymbol\mu_k \mid \boldsymbol\Lambda_k) + \log p(\boldsymbol\Lambda_k)
+\end{align*}\]</span></p></li>
+<li><p>Thus, <span class="math inline">\(q^*(\boldsymbol\mu_k, \boldsymbol\Lambda_k)\)</span> is Gaussian-Wishart
+<span class="math display">\[\begin{align*}
+q^*(\boldsymbol\mu_k \mid \boldsymbol\Lambda_k) 
+&amp;= \text{N}\left(\mathbf{m}_k, \left(\beta_k \boldsymbol\Lambda_k  \right)^{-1}  \right)
+q^*(\boldsymbol\Lambda_k)
+&amp;= \text{W}(\boldsymbol\Lambda_k \mid \mathbf{W}_k, \nu_k)
+\end{align*}\]</span></p></li>
+<li><p>Parameters are updated by the data
+<span class="math display">\[\begin{align*}
+\beta_k &amp; = \beta_0 + N_k, \quad
+\mathbf{m}_k = \frac{1}{\beta_k} \left(\beta_0 \mathbf{m}_0  + N_k \bar{\mathbf{x}}_k \right), \quad
+\nu_k = \nu_0 + N_k\\
+\mathbf{W}_k^{-1} &amp;= \mathbf{W}_0^{-1} + N_k \mathbf{S}_k 
++ \frac{\beta_0 N_k}{\beta_0 + N_k}\left(\bar{\mathbf{x}}_k - \mathbf{m}_0\right)
+\left(\bar{\mathbf{x}}_k - \mathbf{m}_0\right)&#39;
+\end{align*}\]</span></p></li>
+</ul>
+</div>
+<div id="similarity-between-vi-and-em-solutions" class="section level3">
+<h3>Similarity between VI and EM solutions</h3>
+<ul>
+<li><p>Optimization of the variational posterior distribution involves cycling between two stages analogous to the E and M steps of the maximum likelihood EM algorithm</p>
+<ul>
+<li>Finding <span class="math inline">\(q^*(\mathbf{Z})\)</span>: analogous to the E step, both need to compute the responsibilities</li>
+<li>Finding <span class="math inline">\(q^*(\boldsymbol\pi, \boldsymbol\mu, \boldsymbol\Lambda)\)</span>: analogous to the M step</li>
+</ul></li>
+<li><p>The VI solution (Bayesian approach) has little computational overhead, comparing with the EM solution (maximum likelihood approach). The dominant computational cost for VI are</p>
+<ul>
+<li>Evaluation of the responsibilities</li>
+<li>Evaluation and inversion of the weighted data covariance matrices</li>
+</ul></li>
+</ul>
+</div>
+<div id="advantage-of-the-vi-solution-over-the-em-solution" class="section level3">
+<h3>Advantage of the VI solution over the EM solution:</h3>
+<ul>
+<li>Since our priors are conjugate, the variational posterior distributions have the same functional form as the priors</li>
+</ul>
+<ol style="list-style-type: decimal">
+<li><p>No singularity arises in maximum likelihood when a Gassuain component “collapses” onto a specific data point</p>
+<ul>
+<li>This is actually the advantage of Bayesian solutions (with priors) over frequentist ones</li>
+</ul></li>
+<li><p>No overfitting if we choose a large number <span class="math inline">\(K\)</span>. This is helpful in determining the optimal number of components without performing cross validation</p>
+<ul>
+<li>For <span class="math inline">\(\alpha_0 &lt; 1\)</span>, the prior favors soutions where some of the mixing coefficients <span class="math inline">\(\boldsymbol\pi\)</span> are zero, thus can result in some less than <span class="math inline">\(K\)</span> number components having nonzero mixing coefficients</li>
+</ul></li>
+</ol>
+</div>
+<div id="computing-variational-lower-bound" class="section level3">
+<h3>Computing variational lower bound</h3>
+<ul>
+<li>To test for convergence, it is useful to monitor the bound during the re-estimation.</li>
+<li><font color='red'>At each step of the iterative re-estimation, the value of the lower bound should not decrease</font>
+<span class="math display">\[\begin{align*}
+\mathcal{L} 
+=~&amp; \sum_{\mathbf{Z}}\iiint q^* (\mathbf{Z}, \boldsymbol\pi, \boldsymbol\mu, \boldsymbol\Lambda)
+\log \left\{ \frac{p(\mathbf{X}, \mathbf{Z}, \boldsymbol\pi, \boldsymbol\mu, \boldsymbol\Lambda)}
+{q^*(\mathbf{Z}, \boldsymbol\pi, \boldsymbol\mu, \boldsymbol\Lambda)} \right\}  
+d \boldsymbol\pi  d\boldsymbol\mu d\boldsymbol\Lambda\\
+=~&amp; \mathbb{E}\left[\log p(\mathbf{X}, \mathbf{Z}, \boldsymbol\pi, \boldsymbol\mu, \boldsymbol\Lambda)\right]
+- \mathbb{E}\left[\log q^*(\mathbf{Z}, \boldsymbol\pi, \boldsymbol\mu, \boldsymbol\Lambda)\right]\\
+=~&amp; \mathbb{E}\left[\log p(\mathbf{X} \mid \mathbf{Z}, \boldsymbol\mu, \boldsymbol\Lambda)\right] 
++ \mathbb{E}\left[\log p(\mathbf{Z} \mid \boldsymbol\pi)\right] \\
+&amp;  + \mathbb{E}\left[\log p(\boldsymbol\pi)\right] 
++ \mathbb{E}\left[\log p(\boldsymbol\mu, \boldsymbol\Lambda)\right]\\
+&amp;  -   \mathbb{E}\left[\log q^*(\mathbf{Z})\right] - \mathbb{E}\left[\log q^*(\boldsymbol\pi)\right] 
+- \mathbb{E}\left[\log q^*(\boldsymbol\mu, \boldsymbol\Lambda)\right] 
+\end{align*}\]</span></li>
+</ul>
+</div>
+<div id="label-switching-problem" class="section level3">
+<h3>Label switching problem</h3>
+<ul>
+<li><p>EM solution of maximum likelihood does not have label switching problem, because the initialization will lead to just one of the solutions</p></li>
+<li><p>In a Bayesian setting, label switching problem can be an issue, because the marginal posterior is multi-modal.</p></li>
+<li><p>Recall that for multi-modal posteriors, variational inference usually approximate the distribution in the neighborhood of one of the modes and ignore the others</p></li>
+</ul>
+</div>
+<div id="induced-factorizations" class="section level3">
+<h3>Induced factorizations</h3>
+<ul>
+<li><p><font color='blue'>Induced factorizations</font>: the additional factorizations that are a consequence of the interaction between</p>
+<ul>
+<li>the assumed factorization, and</li>
+<li>the conditional independence properties of the true distribution</li>
+</ul></li>
+<li><p>For example, suppose we have three variation groups <span class="math inline">\(\mathbf{A}, \mathbf{B}, \mathbf{C}\)</span></p>
+<ul>
+<li>We assume the following factorization
+<span class="math display">\[
+  q(\mathbf{A}, \mathbf{B}, \mathbf{C}) = q(\mathbf{A}, \mathbf{B})q(\mathbf{C})
+  \]</span></li>
+<li>If <span class="math inline">\(\mathbf{A}\)</span> and <span class="math inline">\(\mathbf{B}\)</span> are conditional independent
+<span class="math display">\[
+  \mathbf{A} \perp \mathbf{B} \mid \mathbf{X}, \mathbf{C} \Longleftrightarrow
+  p(\mathbf{A}, \mathbf{B} \mid \mathbf{X}, \mathbf{C}) = 
+  p(\mathbf{A}\mid \mathbf{X}, \mathbf{C}) p(\mathbf{B} \mid \mathbf{X}, \mathbf{C})
+  \]</span>
+then we have induced factorization <span class="math inline">\(q^*(\mathbf{A}, \mathbf{B}) = q^*(\mathbf{A}) q^*(\mathbf{B})\)</span>
+<span class="math display">\[\begin{align*}
+  \log q^*(\mathbf{A}, \mathbf{B}) 
+  &amp;= \mathbb{E}_{\mathbf{C}}\left[ \log p(\mathbf{A}, \mathbf{B} \mid \mathbf{X}, \mathbf{C}) \right] + \text{const}\\
+  &amp;= \mathbb{E}_{\mathbf{C}}\left[ \log p(\mathbf{A} \mid \mathbf{X}, \mathbf{C}) \right] 
++ \mathbb{E}_{\mathbf{C}}\left[ \log p(\mathbf{B} \mid \mathbf{X}, \mathbf{C}) \right] + \text{const}\\
+  \end{align*}\]</span></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="variational-linear-regression" class="section level1">
+<h1>Variational Linear Regression</h1>
+<div id="bayesian-linear-regression" class="section level3">
+<h3>Bayesian linear regression</h3>
+<ul>
+<li><p>Here, I use a denotion system commonly used in statistics textbooks. So its different from the one used in
+this book.</p></li>
+<li><p>Likelihood function
+<span class="math display">\[
+p(\mathbf{y} \mid \boldsymbol\beta) = 
+\prod_{n=1}^N \text{N}\left(y_n \mid \mathbf{x}_n \boldsymbol\beta, \phi^{-1}\right)
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\phi = 1/ \sigma^2\)</span> is the precision parameter. We assume that it is known.</li>
+<li><span class="math inline">\(\boldsymbol\beta \in \mathbb{R}^p\)</span> includes the intercept</li>
+</ul></li>
+<li><p>Prior distributions: Normal Gamma
+<span class="math display">\[\begin{align*}
+p(\boldsymbol\beta \mid \kappa) 
+&amp;= \text{N}\left(\boldsymbol\beta \mid \mathbf{0}, \kappa^{-1} \mathbf{I}\right)\\
+p(\kappa)
+&amp;= \text{Gam}(\kappa \mid a_0, b_0)
+\end{align*}\]</span></p></li>
+</ul>
+</div>
+<div id="variational-solution-for-kappa" class="section level3">
+<h3>Variational solution for <span class="math inline">\(\kappa\)</span></h3>
+<ul>
+<li><p>Variational posterior factorization
+<span class="math display">\[
+q(\boldsymbol\beta, \kappa) = q(\boldsymbol\beta) q(\kappa)
+\]</span></p></li>
+<li><p>Varitional solution for <span class="math inline">\(\kappa\)</span>
+<span class="math display">\[\begin{align*}
+\log q^*(\kappa) 
+&amp;= \log p(\kappa) + \mathbb{E}_{\boldsymbol\beta}\left[\log p(\boldsymbol\beta \mid \kappa) \right]\\
+&amp;= (a_0 - 1)\log \kappa - b_0 \kappa + \frac{p}{2}\log \kappa - \frac{\kappa}{2}\mathbb{E}\left[\boldsymbol\beta&#39;\boldsymbol\beta\right]
+\end{align*}\]</span></p></li>
+<li><p>Varitional posterior is a Gamma
+<span class="math display">\[\begin{align*}
+\kappa &amp; \sim \text{Gam}\left(a_N,  b_N\right)\\
+a_N &amp; = a_0 + \frac{p}{2}\\
+b_N &amp; = b_0 + \frac{\mathbb{E}\left[\boldsymbol\beta&#39;\boldsymbol\beta\right]}{2}
+\end{align*}\]</span></p></li>
+</ul>
+</div>
+<div id="variational-solution-for-boldsymbolbeta" class="section level3">
+<h3>Variational solution for <span class="math inline">\(\boldsymbol\beta\)</span></h3>
+<ul>
+<li><p>Variational solution for <span class="math inline">\(\boldsymbol\beta\)</span>
+<span class="math display">\[\begin{align*}
+\log q^*(\boldsymbol\beta) 
+&amp;= \log p(\mathbf{y} \mid \boldsymbol\beta) + \mathbb{E}_{\kappa}\left[\log p(\boldsymbol\beta \mid \kappa) \right]\\
+&amp;= -\frac{\phi}{2}\left(\mathbf{y} - \mathbf{X}\boldsymbol\beta \right)^2
+- \frac{\mathbb{E}\left[\kappa\right]}{2}\boldsymbol\beta&#39; \boldsymbol\beta\\
+&amp;= -\frac{1}{2}\boldsymbol\beta&#39;\left(\mathbb{E}\left[\kappa\right] \mathbf{I} + \phi\mathbf{X}&#39;\mathbf{X}  \right)\boldsymbol\beta + \phi\boldsymbol\beta&#39; \mathbf{X}&#39;\mathbf{y}
+\end{align*}\]</span></p></li>
+<li><p>Variational posterior is a Normal
+<span class="math display">\[\begin{align*}
+\boldsymbol\beta &amp;\sim \text{N}\left(\mathbf{m}_N, \mathbf{S}_N \right)\\
+\mathbf{S}_N &amp;= \left(\mathbb{E}\left[\kappa\right] \mathbf{I} + \phi\mathbf{X}&#39;\mathbf{X}  \right)^{-1}\\
+\mathbf{m}_N &amp;= \phi \mathbf{S}_N \mathbf{X}&#39;\mathbf{y}
+\end{align*}\]</span></p></li>
+</ul>
+</div>
+<div id="iteratively-re-estimate-the-variational-solutions" class="section level3">
+<h3>Iteratively re-estimate the variational solutions</h3>
+<ul>
+<li><p>Means of the variational posteriors
+<span class="math display">\[\begin{align*}
+\mathbb{E}[\kappa] &amp; = \frac{a_N}{b_N}\\
+\mathbb{E}[\boldsymbol\beta&#39;\boldsymbol\beta] &amp; = \mathbf{m}_N \mathbf{m}_N&#39; + \mathbf{S}_N\\
+\end{align*}\]</span></p></li>
+<li><p>Lower bound of <span class="math inline">\(\log p(\mathbf{y})\)</span> can be used in convergence monitoring, and also model selection
+<span class="math display">\[\begin{align*}
+\mathcal{L}
+=~&amp; \mathbb{E}\left[\log p(\boldsymbol\beta, \kappa, \mathbf{y}) \right] 
+- \mathbb{E}\left[\log q^*(\boldsymbol\beta, \kappa) \right]\\
+=~&amp; \mathbb{E}_{\boldsymbol\beta}\left[\log p(\mathbf{y} \mid \boldsymbol\beta) \right]
++ \mathbb{E}_{\boldsymbol\beta, \kappa}\left[\log p(\boldsymbol\beta \mid \kappa) \right]
++ \mathbb{E}_{\kappa}\left[\log p(\kappa) \right]\\
+&amp; - \mathbb{E}_{\boldsymbol\beta}\left[\log q^*(\boldsymbol\beta) \right]
+- \mathbb{E}_{\kappa}\left[\log q^*(\kappa) \right]\\
+\end{align*}\]</span></p></li>
+</ul>
+<p><strong><em><font color='red'>TO BE CONTINUED</font></em></strong></p>
+</div>
+</div>
+<div id="exponential-family-distributions" class="section level1">
+<h1>Exponential Family Distributions</h1>
+</div>
+<div id="local-variational-methods" class="section level1">
+<h1>Local Variational Methods</h1>
+</div>
+<div id="variational-logistic-regression" class="section level1">
+<h1>Variational Logistic Regression</h1>
+</div>
+<div id="expectation-propagation" class="section level1">
+<h1>Expectation Propagation</h1>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li>Bishop, C. M. (2006). Pattern Recognition and Machine Learning. Springer.</li>
+</ul>
+</div>
+</div>
+
+    </div>
+  </article>
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//kfab.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-116913878-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+  </body>
+</html>
+

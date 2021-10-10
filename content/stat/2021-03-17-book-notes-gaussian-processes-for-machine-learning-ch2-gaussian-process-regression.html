@@ -1,0 +1,385 @@
+---
+title: 'Book Notes: Gaussian Processes for Machine learning -- Ch2 Gaussian Process
+  Regression'
+author: ''
+date: '2021-03-17'
+slug: book-notes-gaussian-processes-for-machine-learning-ch2-gaussian-process-regression
+categories:
+  - Book notes
+tags:
+  - Gaussian Process
+  - Slides
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 2
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#weight-space-view">Weight-space View</a></li>
+<li><a href="#function-space-view">Function-space View</a><ul>
+<li><a href="#prediction-with-noise-free-observations">Prediction with noise-free observations</a></li>
+<li><a href="#prediction-with-noisy-observations">Prediction with noisy observations</a></li>
+<li><a href="#cholesky-decomposition-and-gp-regression-algorithm">Cholesky decomposition and GP regression algorithm</a></li>
+<li><a href="#hyperparameters">Hyperparameters</a></li>
+</ul></li>
+<li><a href="#smoothing-weight-functions-and-equivalent-kernels">Smoothing, Weight Functions, and Equivalent Kernels</a></li>
+</ul>
+</div>
+
+<p><strong><em><font color='red'>For the pdf slides, click <a href="/pdf/022821_Gaussian_process_book_ch2.pdf">here</a></font></em></strong></p>
+<div id="overview-of-gaussian-processes-gp" class="section level3">
+<h3>Overview of Gaussian processes (GP)</h3>
+<ul>
+<li><p>The problem is learning in GP is exactly the problem of finding suitable properties for the covariance function</p></li>
+<li><p>In this book, design matrix is defined slightly differently from common statistical textbooks. Rather,
+each column in a design matrix is a case, and each row is a covariate</p></li>
+</ul>
+</div>
+<div id="weight-space-view" class="section level1">
+<h1>Weight-space View</h1>
+<div id="a-regression-model-with-basis-functions" class="section level3">
+<h3>A regression model with basis functions</h3>
+<ul>
+<li><p>Basis function <span class="math inline">\(\boldsymbol\phi(\mathbf{x})\)</span>: maps a <span class="math inline">\(D\)</span>-dimensional input vector <span class="math inline">\(\mathbf{x}\)</span> into an <span class="math inline">\(N\)</span>-dimensional feature space</p></li>
+<li><p><span class="math inline">\(\boldsymbol\Phi(\mathbf{X}) \in \mathbb{R}^{N \times n}\)</span>: the aggregation of columns <span class="math inline">\(\boldsymbol\phi(\mathbf{x})\)</span> for all <span class="math inline">\(n\)</span> cases in the training data</p></li>
+<li><p>A regression model
+<span class="math display">\[
+f(\mathbf{x}) = \boldsymbol\phi(\mathbf{x})^\top \mathbf{w}, \quad y = f(\mathbf{x}) + \epsilon, \quad
+\epsilon \sim \mathcal{N}(0, \sigma^2_n)
+\]</span></p></li>
+<li><p>We use a zero mean Gaussian prior on the <span class="math inline">\(N\)</span>-dimensional unknown weights <span class="math inline">\(\mathbf{w}\)</span> (aka regression coefficients)
+<span class="math display">\[
+\mathbf{w} \sim \mathcal{N}(\mathbf{0}, \boldsymbol\Sigma_p)
+\]</span></p></li>
+</ul>
+</div>
+<div id="predictive-distribution" class="section level3">
+<h3>Predictive distribution</h3>
+<ul>
+<li><p>For a new test point <span class="math inline">\(\mathbf{x}_*\)</span>, the predictive distribution is
+<span class="math display">\[\begin{align*}
+f_* \mid \mathbf{x}_*, \mathbf{X}, \mathbf{y} 
+&amp; \sim 
+\mathcal{N}\left(\frac{1}{\sigma^2_n} 
+\boldsymbol\phi_*^\top \mathbf{A}^{-1}\boldsymbol\Phi \mathbf{y},\quad
+\boldsymbol\phi_*^\top \mathbf{A}^{-1} 
+\boldsymbol\phi_*
+\right),\\
+\boldsymbol\phi_* &amp;= \boldsymbol\phi(\mathbf{x}_*), \quad
+\boldsymbol\Phi = \boldsymbol\Phi(\mathbf{X}), \quad
+\mathbf{A} = \frac{1}{\sigma^2_n} \boldsymbol\Phi \boldsymbol\Phi^\top + \boldsymbol\Sigma_p^{-1}
+\end{align*}\]</span></p></li>
+<li><p>When make predictions, we need to invert the <span class="math inline">\(N\times N\)</span> matrix <span class="math inline">\(\mathbf{A}\)</span>, <font color='red'>which may not be convenient if <span class="math inline">\(N\)</span>, the dimension of the feature space, is large</font></p></li>
+</ul>
+</div>
+<div id="rewriting-the-predictive-distribution-using-the-matrix-inversion-lemma" class="section level3">
+<h3>Rewriting the predictive distribution using the matrix inversion lemma</h3>
+<ul>
+<li><p><font color='blue'>Marix inversion lemma</font>: <span class="math inline">\(\mathbf{Z} \in \mathbb{R}^{n \times n}\)</span>,
+<span class="math inline">\(\mathbf{W} \in \mathbb{R}^{m \times m}\)</span>,
+<span class="math inline">\(\mathbf{U}, \mathbf{V}\in \mathbb{R}^{n \times m}\)</span>
+<span class="math display">\[
+\left( \mathbf{Z} + \mathbf{U} \mathbf{W} \mathbf{V}^\top \right)^{-1}
+= \mathbf{Z}^{-1} - \mathbf{Z}^{-1} \mathbf{U}
+\left( \mathbf{W}^{-1} + \mathbf{V}^\top \mathbf{Z}^{-1} \mathbf{U}\right)^{-1}
+\mathbf{V}^\top\mathbf{Z}^{-1}
+\]</span></p></li>
+<li><p>We can rewrite the predictive distribution on the previous page as
+<span class="math display">\[\begin{align}\label{eq:weight_space_prediction}
+f_* \mid \mathbf{x}_*, \mathbf{X}, \mathbf{y} 
+&amp; \sim 
+\mathcal{N}\left(
+\boldsymbol\phi_*^\top \boldsymbol\Sigma_p \boldsymbol\Phi 
+\left(\mathbf{K} + \sigma^2_n \mathbf{I} \right)^{-1}\mathbf{y}, \right.\\ \nonumber
+&amp; ~~~~~~~~~\left. 
+\boldsymbol\phi_*^\top \boldsymbol\Sigma_p \boldsymbol\phi_* - 
+\boldsymbol\phi_*^\top \boldsymbol\Sigma_p \boldsymbol\Phi 
+\left(\mathbf{K} + \sigma^2_n \mathbf{I} \right)^{-1}
+\boldsymbol\Phi^\top \boldsymbol\Sigma_p \boldsymbol\phi_*
+\right),\\ \nonumber
+\mathbf{K} &amp;= \boldsymbol\Phi^\top \boldsymbol\Sigma_p \boldsymbol\Phi
+\end{align}\]</span></p></li>
+</ul>
+</div>
+<div id="kernel-and-the-kernel-trick" class="section level3">
+<h3>Kernel and the kernel trick</h3>
+<ul>
+<li><p>In the predictive distribution on the previous page,
+the feature space always enters in the form of the <font color='blue'>kernel</font> <span class="math inline">\(k(\cdot, \cdot)\)</span>:
+<span class="math display">\[
+k(\mathbf{x}, \mathbf{x}^\prime) = \boldsymbol\phi(\mathbf{x})^\top\boldsymbol\Sigma_p \boldsymbol\phi(\mathbf{x}^\prime),
+\]</span>
+where <span class="math inline">\(\mathbf{x}, \mathbf{x}^\prime\)</span> are in either the training or the test sets</p></li>
+<li><p>Moreover, we can define
+<span class="math display">\[
+\boldsymbol\psi(\mathbf{x}) = \boldsymbol\Sigma_p^{1/2} \boldsymbol\phi(\mathbf{x}),
+\]</span>
+so that the kernel has a simple dot product representation
+<span class="math display">\[
+k(\mathbf{x}, \mathbf{x}^\prime) = \boldsymbol\psi(\mathbf{x}) \cdot \boldsymbol\psi(\mathbf{x}^\prime)
+\]</span></p></li>
+<li><p><font color='blue'>Kernel trick</font>: if an algorithm is defined solely in terms of inner products in input space, the it can be lifted into feature space by replacing occurrences of those inner products by <span class="math inline">\(k(\mathbf{x}, \mathbf{x}^\prime)\)</span></p></li>
+</ul>
+</div>
+</div>
+<div id="function-space-view" class="section level1">
+<h1>Function-space View</h1>
+<div id="gaussian-process-definition" class="section level3">
+<h3>Gaussian process: definition</h3>
+<ul>
+<li><p>A <font color='blue'>Gaussian process</font>(GP) is a collection of random variables, any finite number of which have a joint Gaussian distribution</p></li>
+<li><p>A GP is completely specified by its mean function <span class="math inline">\(m(\mathbf{x})\)</span> and covariance function <span class="math inline">\(k(\mathbf{x}, \mathbf{x}^\prime)\)</span>
+<span class="math display">\[
+f(\mathbf{x}) \sim \mathcal{GP}\left(m(\mathbf{x}), k(\mathbf{x}, \mathbf{x}^\prime)  \right)
+\]</span></p></li>
+<li><p>Usually the prior mean function is set to zero</p></li>
+<li><p>Bayesian linear regression as a Gaussian process
+<span class="math display">\[
+f(\mathbf{x}) = \boldsymbol\phi(\mathbf{x})^\top \mathbf{w}, \quad
+\mathbf{w} \sim \mathcal{N}(\mathbf{0}, \boldsymbol\Sigma_p)
+\]</span>
+Here, the GP mean function and the covariance function are
+<span class="math display">\[
+m(\mathbf{x}) = \mathbf{0}, \quad 
+k(\mathbf{x}, \mathbf{x}^\prime) = \boldsymbol\phi(\mathbf{x})^\top \boldsymbol\Sigma_p \boldsymbol\phi(\mathbf{x}^\prime)
+\]</span></p></li>
+</ul>
+</div>
+<div id="the-squared-exponential-covariance-function" class="section level3">
+<h3>The squared exponential covariance function</h3>
+<ul>
+<li><p>In this chapter, <font color='blue'>squared exponential</font> (SE) covariance function will be used
+<span class="math display">\[
+\text{cov}\left(f(\mathbf{x}), f(\mathbf{x}^\prime)  \right)
+= k(\mathbf{x}, \mathbf{x}^\prime) 
+= \exp\left(-\frac{1}{2}\left|\mathbf{x}- \mathbf{x}^\prime \right|^2  \right)
+\]</span></p>
+<ul>
+<li><p>By replacing <span class="math inline">\(\left|\mathbf{x}- \mathbf{x}^\prime \right|\)</span> by
+<span class="math inline">\(\left|\mathbf{x}- \mathbf{x}^\prime \right|/\ell\)</span> for some positive constant <span class="math inline">\(\ell\)</span>,
+we can change the characteristic length-scale of the process</p></li>
+<li><p>Note that the covariance between the outputs is written as a function of the inputs</p></li>
+<li><p>The squared exponential covariance function corresponds to a Bayesian linear regression model
+with a infinite number of basis functions</p></li>
+<li><p>Actually for every positive definite covariance function <span class="math inline">\(k(\cdot, \cdot)\)</span>,
+there exists a (possibly infinite) expansion in terms of basis functions</p></li>
+</ul></li>
+</ul>
+</div>
+<div id="three-functions-drawn-at-random-from-a-gp-prior-left-and-their-posteriors-right" class="section level3">
+<h3>Three functions drawn at random from a GP prior (left) and their posteriors (right)</h3>
+<p><img src="/figures/Gaussian_process_book_fig2_2.png" width="100%" style="display: block; margin: auto;" /></p>
+<ul>
+<li>In both plots, shaded area are the pointwise mean plus and minus two times the standard deviation from each input value</li>
+</ul>
+</div>
+<div id="prediction-with-noise-free-observations" class="section level2">
+<h2>Prediction with noise-free observations</h2>
+<div id="prediction-with-noise-free-observations-1" class="section level3">
+<h3>Prediction with noise-free observations</h3>
+<ul>
+<li><p>Suppose we have noise-free observations <span class="math inline">\(\{\left(\mathbf{x}_i, f_i\right): i = 1, \ldots, n\}\)</span></p></li>
+<li><p>According to the GP prior, the joint distribution of the training outputs <span class="math inline">\(\mathbf{f}\)</span> and the test outputs <span class="math inline">\(\mathbf{f}_*\)</span> is
+<span class="math display">\[
+\left[
+\begin{array}{l}
+\mathbf{f}\\
+\mathbf{f}_*
+\end{array}
+\right]
+\sim \mathcal{N}\left(\mathbf{0},
+\left[
+\begin{array}{ll}
+K(\mathbf{X}, \mathbf{X})   &amp; K(\mathbf{X}, \mathbf{X}_*)\\
+K(\mathbf{X}_*, \mathbf{X}) &amp; K(\mathbf{X}_*, \mathbf{X}_*)
+\end{array}
+\right]
+\right)
+\]</span></p></li>
+<li><p>By conditioning the joint Gaussian prior on the observations,
+we get the posterior distribution
+<span class="math display">\[\begin{align*}
+\mathbf{f}_* \mid \mathbf{X}_*, \mathbf{X}, \mathbf{f}
+&amp;\sim \mathcal{N}\left(
+ K(\mathbf{X}_*, \mathbf{X}) K(\mathbf{X}, \mathbf{X})^{-1} \mathbf{f}, \right.\\
+&amp;~~~~~~~~~~\left. K(\mathbf{X}_*, \mathbf{X}_*) - 
+K(\mathbf{X}_*, \mathbf{X}) K(\mathbf{X}, \mathbf{X})^{-1}K(\mathbf{X}, \mathbf{X}_*) \right)
+\end{align*}\]</span></p></li>
+</ul>
+</div>
+</div>
+<div id="prediction-with-noisy-observations" class="section level2">
+<h2>Prediction with noisy observations</h2>
+<div id="prediction-with-noisy-observations-1" class="section level3">
+<h3>Prediction with noisy observations</h3>
+<ul>
+<li><p>With noisy observations <span class="math inline">\(y = f(\mathbf{x}) + \epsilon\)</span>, the covariance becomes
+<span class="math display">\[
+\text{cov}(\mathbf{y}) = K(\mathbf{X}, \mathbf{X}) + \sigma^2_n \mathbf{I}
+\]</span></p></li>
+<li><p>Thus, the joint prior distribution becomes
+<span class="math display">\[
+\left[
+\begin{array}{l}
+\mathbf{y}\\
+\mathbf{f}_*
+\end{array}
+\right]
+\sim \mathcal{N}\left(\mathbf{0},
+\left[
+\begin{array}{cc}
+K(\mathbf{X}, \mathbf{X}) + \sigma^2_n \mathbf{I}  &amp; K(\mathbf{X}, \mathbf{X}_*)\\
+K(\mathbf{X}_*, \mathbf{X}) &amp; K(\mathbf{X}_*, \mathbf{X}_*)
+\end{array}
+\right]
+\right)
+\]</span></p></li>
+<li><p><strong>Key predictive equation for GP regression</strong>
+<span class="math display">\[\begin{align}\label{eq:function_space_prediction}
+\mathbf{f}_* \mid \mathbf{X}_*, \mathbf{X}, \mathbf{f}
+&amp;\sim \mathcal{N}\left(
+\bar{\mathbf{f}}_*, \text{cov}(\mathbf{f}_*)\right), \quad \text{where}\\ \nonumber
+\bar{\mathbf{f}}_*
+&amp; = K(\mathbf{X}_*, \mathbf{X}) \left[K(\mathbf{X}, \mathbf{X})+ \sigma^2_n\right]^{-1} \mathbf{y}\\ \nonumber
+\text{cov}(\mathbf{f}_*)
+&amp; = K(\mathbf{X}_*, \mathbf{X}_*) - 
+K(\mathbf{X}_*, \mathbf{X}) \left[K(\mathbf{X}, \mathbf{X})+ \sigma^2_n\right]^{-1}K(\mathbf{X}, \mathbf{X}_*)
+\end{align}\]</span></p></li>
+</ul>
+</div>
+<div id="correspondence-with-weight-space-view" class="section level3">
+<h3>Correspondence with weight-space view</h3>
+<ul>
+<li><p>Connection between the function-space view, Eq ,
+and the weight-space view, Eq 
+<span class="math display">\[
+K(C, D) = \boldsymbol\Phi(C)^\top \boldsymbol\Sigma_p \boldsymbol\Phi(D)
+\]</span>
+where <span class="math inline">\(C, D\)</span> stand for either <span class="math inline">\(\mathbf{X}\)</span> or <span class="math inline">\(\mathbf{X}_*\)</span></p></li>
+<li><p>Thus, for any set of basic functions, we can compute the corresponding covariance function as
+<span class="math display">\[
+k(\mathbf{x}, \mathbf{x}^\prime) = \boldsymbol\phi(\mathbf{x})^\top \boldsymbol\Sigma_p \boldsymbol\phi(\mathbf{x}^\prime)
+\]</span></p></li>
+<li><p>On the other hand, for every positive definite covariance function <span class="math inline">\(k\)</span>, there exists a possibly infinite expansion in terms of basis functions</p></li>
+</ul>
+</div>
+<div id="predictive-distribution-for-a-single-test-point-mathbfx_" class="section level3">
+<h3>Predictive distribution for a single test point <span class="math inline">\(\mathbf{x}_*\)</span></h3>
+<ul>
+<li>Denote <span class="math inline">\(K = K(\mathbf{X}, \mathbf{X})\)</span> and <span class="math inline">\(\mathbf{k}_* = K(\mathbf{X}, \mathbf{x}_*)\)</span>,
+then the mean and variance of the posterior predictive distribution are
+<span class="math display">\[\begin{align}\label{eq:predictive_mean}
+\bar{\mathbf{f}}_* &amp; = \mathbf{k}_*^\top\left(K + \sigma^2_n \mathbf{I} \right)^{-1}\mathbf{y},\\ \label{eq:predictive_covariance}
+\mathbb{V}(\mathbf{f}_*) &amp; = k(\mathbf{x}_*, \mathbf{x}_*) - \mathbf{k}_*^\top\left(K + \sigma^2_n \mathbf{I} \right)^{-1}\mathbf{k}_*
+\end{align}\]</span></li>
+</ul>
+</div>
+<div id="predictive-distribution-mean-as-a-linear-predictor" class="section level3">
+<h3>Predictive distribution mean as a linear predictor</h3>
+<ul>
+<li><p>The mean prediction Eq  is a <font color='blue'>linear predictor</font>,
+i.e., it’s a linear combination of observations <span class="math inline">\(\mathbf{y}\)</span></p></li>
+<li><p>Another way to look at this equation is to see it as a linear combination of <span class="math inline">\(n\)</span> kernel functions
+<span class="math display">\[
+\bar{f}(\mathbf{x}_*) = \sum_{i=1}^n \alpha_i k(\mathbf{x}_i, \mathbf{x}_*), \quad
+\boldsymbol\alpha = \left(K + \sigma^2_n \mathbf{I} \right)^{-1}\mathbf{y}
+\]</span></p></li>
+</ul>
+</div>
+<div id="about-the-predictive-distribution-variance" class="section level3">
+<h3>About the predictive distribution variance</h3>
+<ul>
+<li><p>The predictive variance Eq  does not depend on the observed targets <span class="math inline">\(\mathbf{y}\)</span>, but only the inputs. This is a property of the Gaussian distribution</p></li>
+<li><p>The noisy prediction of <span class="math inline">\(\mathbf{y}_*\)</span>: simply add <span class="math inline">\(\sigma^2_n \mathbf{I}\)</span> to the variance
+<span class="math display">\[
+\mathbf{y}_* \mid \mathbf{x}_*, \mathbf{X}, \mathbf{y} \sim \mathcal{N}
+\left(\bar{\mathbf{f}}_*,  \mathbb{V}(\mathbf{f}_*) + \sigma^2_n \mathbf{I} \right)
+\]</span></p></li>
+</ul>
+</div>
+</div>
+<div id="cholesky-decomposition-and-gp-regression-algorithm" class="section level2">
+<h2>Cholesky decomposition and GP regression algorithm</h2>
+<div id="cholesky-decomposition" class="section level3">
+<h3>Cholesky decomposition</h3>
+<ul>
+<li><p><font color='blue'>Cholesky decomposition</font> of a symmetric, positive definite matrix <span class="math inline">\(\mathbf{A}\)</span>
+<span class="math display">\[
+\mathbf{A} = \mathbf{L}\mathbf{L}^\top,
+\]</span>
+where <span class="math inline">\(\mathbf{L}\)</span> is a lower triangular matrix, called the Cholesky factor</p></li>
+<li><font color='green'>Cholesky decomposition is useful for solving linear systems with symmetric, positive definite coefficient matrix</font>: to solve <span class="math inline">\(\mathbf{A}\mathbf{x} = \mathbf{b}\)</span>
+<ul>
+<li>First solve the triangular system <span class="math inline">\(\mathbf{L}\mathbf{y} = \mathbf{b}\)</span> by forward substitution</li>
+<li>Then the triangular system <span class="math inline">\(\mathbf{L}^\top\mathbf{x} = \mathbf{y}\)</span> by back substitution</li>
+</ul></li>
+<li><p><font color='blue'>Backslash operator</font>: <span class="math inline">\(\mathbf{A}\backslash\mathbf{b}\)</span> is the vector <span class="math inline">\(\mathbf{x}\)</span> which solves
+<span class="math inline">\(\mathbf{A}\mathbf{x} = \mathbf{b}\)</span></p>
+<ul>
+<li>Under Cholesky decomposition,
+<span class="math display">\[
+  \mathbf{x} = \mathbf{A}\backslash\mathbf{b} = \mathbf{L}^\top \backslash 
+  \left( \mathbf{L} \backslash \mathbf{b}\right)
+  \]</span></li>
+</ul></li>
+<li><p>The computation of the Cholesky factor <span class="math inline">\(\mathbf{L}\)</span> is considered numerically extremely stable, and takes time’ <span class="math inline">\(n^3/6\)</span></p></li>
+</ul>
+</div>
+<div id="algorithm-predictions-and-log-marginal-likelihood-for-gp-regression" class="section level3">
+<h3>Algorithm: predictions and log marginal likelihood for GP regression</h3>
+<ul>
+<li><strong>Input</strong>: <span class="math inline">\(\mathbf{X}, \mathbf{y}, k, \sigma^2_n, \mathbf{x}_*\)</span></li>
+</ul>
+<ol style="list-style-type: decimal">
+<li><p><span class="math inline">\(\mathbf{L} = \text{cholesky} \left(K + \sigma^2_n \mathbf{I} \right)\)</span></p></li>
+<li><p><span class="math inline">\(\boldsymbol\alpha = \mathbf{L}^\top \backslash  \left( \mathbf{L} \backslash \mathbf{y}\right)\)</span></p></li>
+<li><p><span class="math inline">\(\bar{f}_* = \mathbf{k}_*^\top \boldsymbol\alpha\)</span></p></li>
+<li><p><span class="math inline">\(\mathbf{v} = \mathbf{L} \backslash \mathbf{k}_*\)</span></p></li>
+<li><p><span class="math inline">\(\mathbb{V}(\mathbf{f}_*) = k(\mathbf{x}_*, \mathbf{x}_*) - \mathbf{v}^\top \mathbf{v}\)</span></p></li>
+<li><p><span class="math inline">\(\log p(\mathbf{y}\mid \mathbf{X}) = -\frac{1}{2}\mathbf{y}^\top \boldsymbol\alpha - \sum_i \log L_{ii} - \frac{n}{2}\log 2\pi\)</span></p></li>
+</ol>
+<ul>
+<li><p><strong>Return</strong>: <span class="math inline">\(\bar{f}_*, \mathbb{V}(\mathbf{f}_*), \log p(\mathbf{y}\mid \mathbf{X})\)</span></p></li>
+<li><p>Computational complexity: <span class="math inline">\(n^3/6\)</span> for the Cholesky decomposition in Line 1, and <span class="math inline">\(n^2/2\)</span> for solving triangular systems in Line 2, 4</p></li>
+</ul>
+</div>
+</div>
+<div id="hyperparameters" class="section level2">
+<h2>Hyperparameters</h2>
+<div id="hyperparameters-1" class="section level3">
+<h3>Hyperparameters</h3>
+<ul>
+<li><p>One-dimensional squared-exponential covariance function
+<span class="math display">\[
+k_y(x_p, x_q) = \sigma^2_f \exp\left[ -\frac{1}{2\ell^2}(x_p - x_q)^2 \right] + \sigma^2_n \delta_{pq}
+\]</span></p></li>
+<li>It has three hyperparameters
+<ul>
+<li>Length-scale <span class="math inline">\(\ell\)</span></li>
+<li>Signal variance <span class="math inline">\(\sigma^2_f\)</span></li>
+<li>Noise variance <span class="math inline">\(\sigma^2_n\)</span></li>
+</ul></li>
+<li><p>After selected <span class="math inline">\(\ell\)</span>, the rest two hyperparameters are set by optimizing the marginal likelihood
+<span class="math display">\[
+\log p(\mathbf{y}\mid \mathbf{X}) = -\frac{1}{2}\mathbf{y}^\top \left(K + \sigma^2_n \mathbf{I} \right)^{-1}\mathbf{y} - \frac{1}{2}\log \left| K + \sigma^2_n \mathbf{I} \right| - \frac{n}{2}\log 2\pi
+\]</span></p></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="smoothing-weight-functions-and-equivalent-kernels" class="section level1">
+<h1>Smoothing, Weight Functions, and Equivalent Kernels</h1>
+<p><strong><em><font color='red'>TO BE CONTINUED</font></em></strong></p>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li><p>Rasmussen, C. E. and Williams, C. K. I. (2006). Gaussian Processes for Machine learning, MIT press.</p>
+<ul>
+<li><a href="http://www.gaussianprocess.org/gpml/chapters/RW.pdf" class="uri">http://www.gaussianprocess.org/gpml/chapters/RW.pdf</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
