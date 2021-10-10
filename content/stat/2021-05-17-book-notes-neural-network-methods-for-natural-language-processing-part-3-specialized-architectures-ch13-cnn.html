@@ -1,0 +1,221 @@
+---
+title: 'Book Notes: Neural Network Methods for Natural Language Processing -- Part
+  3 Specialized Architectures, Ch13 CNN'
+author: ''
+date: '2021-05-17'
+slug: book-notes-neural-network-methods-for-natural-language-processing-part-3-specialized-architectures-ch13-cnn
+categories:
+  - Book notes
+tags:
+  - Natural Language Processing
+  - Slides
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 2
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#ch13-ngram-detectors-convolutional-neural-networks">Ch13 Ngram Detectors: Convolutional Neural Networks</a><ul>
+<li><a href="#cnn-overivew">CNN Overivew</a></li>
+<li><a href="#basic-convolution-pooling">Basic Convolution <span class="math inline">\(+\)</span> Pooling</a></li>
+<li><a href="#hierarchical-convolutions">Hierarchical Convolutions</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p><strong><em><font color='red'>For the pdf slides, click <a href="/pdf/010121_NN_for_NLP_book_part3_ch13.pdf">here</a></font></em></strong></p>
+<div id="overview-on-cnn-and-rnn-for-nlp" class="section level3">
+<h3>Overview on CNN and RNN for NLP</h3>
+<ul>
+<li><p>CNN and RNN architectures explored in this part of the book are primarily used as <strong>feature extractors</strong></p></li>
+<li><p>CNNs and RNNs as Lego bricks: one just needs to make sure that input and output dimensions of the different components match</p></li>
+</ul>
+</div>
+<div id="ch13-ngram-detectors-convolutional-neural-networks" class="section level1">
+<h1>Ch13 Ngram Detectors: Convolutional Neural Networks</h1>
+<div id="cnn-overivew" class="section level2">
+<h2>CNN Overivew</h2>
+<div id="cnn-overview-for-nlp" class="section level3">
+<h3>CNN overview for NLP</h3>
+<ul>
+<li><p>CBOW assigns the following two sentences the same representations</p>
+<ul>
+<li>“it was not good, it was actually quite bad”</li>
+<li>“it was not bad, it was actually quite good”</li>
+</ul></li>
+<li><p>Looking at ngrams is much more informative than looking at a bag-of-words</p></li>
+<li><p>This chapter introduces the <font color='blue'>convolution-and-pooling</font> (also called <font color='blue'>convolutional neural networks, or CNNs</font>), which is tailored to this modeling problem</p></li>
+</ul>
+</div>
+<div id="benefits-of-cnn-for-nlp" class="section level3">
+<h3>Benefits of CNN for NLP</h3>
+<ul>
+<li><p><font color='green'>CNNs will identify ngrams that are predictive for the task at hand, without the need to pre-specify an embedding vector for each possible ngram</font></p></li>
+<li><p><font color='green'>CNNs also allows to share predictive behavior between ngrams that share similar components, even if the exact ngrams was never seen at test time</font></p></li>
+<li><p>Example paper: <a href="https://www.aclweb.org/anthology/P14-1062.pdf">link</a></p></li>
+</ul>
+</div>
+</div>
+<div id="basic-convolution-pooling" class="section level2">
+<h2>Basic Convolution <span class="math inline">\(+\)</span> Pooling</h2>
+<div id="convolution" class="section level3">
+<h3>Convolution</h3>
+<ul>
+<li><p>The main idea behind a convolution and pooling architecture of language tasks is to apply a non-linear (learned) function over each instantiation of a <span class="math inline">\(k\)</span>-word sliding window over the sentence</p></li>
+<li><p>This function (also called <font color='blue'>“filter”</font>) transforms a window of <span class="math inline">\(k\)</span> words into a scalar value</p>
+<ul>
+<li>Intuitively, when the sliding window of size <span class="math inline">\(k\)</span> is run over a sequence, the filter function learns to identify informative <span class="math inline">\(k\)</span>grams</li>
+</ul></li>
+<li><p>Several such filters can be applied, resulting in <span class="math inline">\(\ell\)</span> dimensional vector (each dimension corresponding to one filter) that captures important properties of the words in the window</p></li>
+</ul>
+</div>
+<div id="pooling" class="section level3">
+<h3>Pooling</h3>
+<ul>
+<li><p>Then a <font color='blue'>“pooling”</font> operation is used to combine the vectors resulting from the different windows into a single <span class="math inline">\(\ell\)</span>-dimensional vector, by taking the max or the average value observed in each of the <span class="math inline">\(\ell\)</span> dimensions over the different windows</p>
+<ul>
+<li>The intention is to focus on the most important “features” in the sentence, regardless of their location</li>
+</ul></li>
+<li><p>The resulting <span class="math inline">\(\ell\)</span>-dimensional vector is then fed further into a network that is used for prediction</p></li>
+</ul>
+</div>
+<div id="d-convolutions-over-text" class="section level3">
+<h3>1D convolutions over text</h3>
+<ul>
+<li><p>A filter is a dot-product with a weight vector parameter <span class="math inline">\(\mathbf{u}\)</span>, which is often followed by nonlinear activation function</p></li>
+<li><p>Define the operation <span class="math inline">\(\oplus(\mathbf{w}_{i:i+k-1})\)</span> to be the concatenation of the vectors <span class="math inline">\(\mathbf{w}_i, \ldots, \mathbf{w}_{i+k-1}\)</span>. The concatenated vector of the <span class="math inline">\(i\)</span>th window is then
+<span class="math display">\[
+\mathbf{x}_i = \oplus(\mathbf{w}_{i:i+k-1})
+= [\mathbf{w}_i; \mathbf{w}_{i+1}; \ldots; \mathbf{w}_{i+k-1}]
+\in \mathbb{R}^{k \cdot d_{\text{emb}}}
+\]</span></p></li>
+<li><p>Apply the filter to each window-vector, resulting scalar value <span class="math inline">\(p_i\)</span>:
+<span class="math display">\[\begin{align*}
+&amp;p_i = g(\mathbf{x}_i \cdot \mathbf{u})\\
+&amp;p_i \in \mathbb{R},\quad 
+\mathbf{x}_i \in \mathbb{R}^{k \cdot d_{\text{emb}}}, \quad \mathbf{u} \in \mathbb{R}^{k \cdot d_{\text{emb}}}
+\end{align*}\]</span></p></li>
+</ul>
+</div>
+<div id="joint-formulation-of-1d-convolutions" class="section level3">
+<h3>Joint formulation of 1D convolutions</h3>
+<ul>
+<li>It is customary to use <span class="math inline">\(\ell\)</span> different filters <span class="math inline">\(\mathbf{u}_1, \ldots, \mathbf{u}_{\ell}\)</span>, which can be arranged into a matrix <span class="math inline">\(\mathbf{U}\)</span>, and a bias vector <span class="math inline">\(\mathbf{b}\)</span> is often added</li>
+</ul>
+<p><span class="math display">\[\begin{align*}
+&amp;\mathbf{p}_i = g(\mathbf{x}_i \cdot \mathbf{U} + \mathbf{b})\\
+&amp;\mathbf{p}_i \in \mathbb{R}^{\ell},\quad 
+\mathbf{x}_i \in \mathbb{R}^{k \cdot d_{\text{emb}}}, \quad \mathbf{U} \in \mathbb{R}^{k \cdot d_{\text{emb}} \times \ell}, \quad
+\mathbf{b} \in \mathbb{R}^{\ell}
+\end{align*}\]</span></p>
+<ul>
+<li><p>Ideally, each dimension captures a different kind of indicative information</p></li>
+<li><p><strong>The main idea behind the convolution layer: to apply the same parameterized function over all <span class="math inline">\(k\)</span>grams in the sequence. This creates a sequence of <span class="math inline">\(m\)</span> vectors, each representing a particular <span class="math inline">\(k\)</span>gram in the sequence</strong></p></li>
+</ul>
+</div>
+<div id="narrow-vs-wide-convolutions" class="section level3">
+<h3>Narrow vs wide convolutions</h3>
+<ul>
+<li><p>For a sentence of length <span class="math inline">\(n\)</span> with a window of size <span class="math inline">\(k\)</span></p></li>
+<li><p><font color='blue'>Narrow convolutions</font>: there are <span class="math inline">\(n-k+1\)</span> positions to start the sequence, and we get <span class="math inline">\(n-k+1\)</span> vectors <span class="math inline">\(\mathbf{p}_{1:n-k+1}\)</span></p></li>
+<li><p><font color='blue'>Wide convolutions</font>: an alternative is to pad the sentence with <span class="math inline">\(k-1\)</span> padding-words to each side, resulting in <span class="math inline">\(n+k+1\)</span> vectors <span class="math inline">\(\mathbf{p}_{1:n+k+1}\)</span></p></li>
+<li><p>We use <span class="math inline">\(m\)</span> to denote the number of resulting vectors</p></li>
+</ul>
+</div>
+<div id="vector-pooling" class="section level3">
+<h3>Vector pooling</h3>
+<ul>
+<li><p>Applying the convolution over the text results in <span class="math inline">\(m\)</span> vectors <span class="math inline">\(\mathbf{p}_{1:m}\)</span>, each <span class="math inline">\(\mathbf{p}_i \in \mathbb{R}^{\ell}\)</span></p></li>
+<li><p>These vectors are then combined (<font color='blue'>pooled</font>) into a single vector <span class="math inline">\(\mathbf{c}\in \mathbb{R}^{\ell}\)</span> representing the entire sequence</p></li>
+<li><p>During training, the vector <span class="math inline">\(\mathbf{c}\)</span> is fed into downstream network layers (e.g., an MLP), culminating in an output layer which is used for prediction</p></li>
+</ul>
+</div>
+<div id="different-pooling-methods" class="section level3">
+<h3>Different pooling methods</h3>
+<ul>
+<li><p><font color='blue'>Max pooling</font>: the most common, taking the maximum value across each dimension <span class="math inline">\(j = 1, \ldots, \ell\)</span>
+<span class="math display">\[
+\mathbf{c}_{[j]} = \max_{1\leq i \leq m} \mathbf{p}_{i,[j]}
+\]</span></p>
+<ul>
+<li>The effect of the max-pooling operation is to get the most salient information across window positions</li>
+</ul></li>
+<li><p><font color='blue'>Average pooling</font>
+<span class="math display">\[
+\mathbf{c} = \frac{1}{m}\sum_{i=1}^m \mathbf{p}_i
+\]</span></p></li>
+<li><p><font color='blue'><span class="math inline">\(K\)</span>-max pooling</font>: the top <span class="math inline">\(k\)</span> values in each dimension are retained instead of only the best one, while preserving the order in which they appeared in the text</p></li>
+</ul>
+</div>
+<div id="an-illustration-of-convolution-and-pooling" class="section level3">
+<h3>An illustration of convolution and pooling</h3>
+<p><img src="/figures/NN_for_NLP_fig13_2.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="variations" class="section level3">
+<h3>Variations</h3>
+<ul>
+<li><p>Rather than a single convolutional layer, several convolutional layers may be applied in parallel</p></li>
+<li><p>For example, we may have four different convolutional layers, each with a different window size in the range 2-5, capturing <span class="math inline">\(k\)</span>gram sequences of varying lengths</p></li>
+</ul>
+</div>
+</div>
+<div id="hierarchical-convolutions" class="section level2">
+<h2>Hierarchical Convolutions</h2>
+<div id="hierarchical-convolutions-1" class="section level3">
+<h3>Hierarchical convolutions</h3>
+<ul>
+<li>The 1D convolution approach described so far can the thought of as a ngram detector: a convolution layer with a window of size <span class="math inline">\(k\)</span> is learning to identify indicative <span class="math inline">\(k\)</span>-gram in the input</li>
+</ul>
+<p><span class="math display">\[
+\mathbf{p}_{1:m} = \text{CONV}^k_{\mathbf{U}, \mathbf{b}}(\mathbf{w}_{1:n})
+\]</span></p>
+<ul>
+<li>We can extend this into a <font color='blue'>hierarchy of convolutional layers</font> with <span class="math inline">\(r\)</span> layers that feed into each other
+<span class="math display">\[\begin{align*}
+\mathbf{p}_{1:m_1}^1 
+&amp; =\text{CONV}^{k_1}_{\mathbf{U}^1,\mathbf{b}^1}(\mathbf{w}_{1:n})\\
+\mathbf{p}_{1:m_2}^2
+&amp; =\text{CONV}^{k_2}_{\mathbf{U}^2,\mathbf{b}^2}(\mathbf{p}_{1:m_1}^1)\\
+&amp;\cdots\\
+\mathbf{p}_{1:m_r}^r
+&amp; =\text{CONV}^{k_r}_{\mathbf{U}^r,\mathbf{b}^r}(\mathbf{p}_{1:m_{r-1}}^{r-1})
+\end{align*}\]</span></li>
+</ul>
+</div>
+<div id="hierarchical-convolutions-continued" class="section level3">
+<h3>Hierarchical convolutions, continued</h3>
+<ul>
+<li><p>For <span class="math inline">\(r\)</span> layers with a window of size <span class="math inline">\(k\)</span>, each vector <span class="math inline">\(\mathbf{p}_i^r\)</span> will be sensitive to a window of <span class="math inline">\(r(k-1)+1\)</span> words</p></li>
+<li><p>Moreover, the vector <span class="math inline">\(\mathbf{p}_i^r\)</span> can be sensitive to gappy-ngrams of <span class="math inline">\(k+r-1\)</span> works, potentially capturing patterns such as “not ___ good” or “obvious ___ predictable ___ plot”, where ___ stands for a short sequence of words</p></li>
+</ul>
+<p><img src="/figures/NN_for_NLP_fig13_3.png" width="90%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="strides" class="section level3">
+<h3>Strides</h3>
+<ul>
+<li><p>So far, the convolution operation is applied to each <span class="math inline">\(k\)</span>-word window in the sequence, i.e., windows starting at indices <span class="math inline">\(1, 2, 3, \ldots\)</span>. This is said to have a <font color='blue'>stride</font> of size <span class="math inline">\(1\)</span></p></li>
+<li><p>Larger strides are also possible. For example, with a stride of size <span class="math inline">\(2\)</span>, the convolution operation will be applied to windows starting at indices <span class="math inline">\(1, 3, 5, \ldots\)</span></p></li>
+<li><p>Convolution with window size <span class="math inline">\(k\)</span> and stride size <span class="math inline">\(s\)</span>:
+<span class="math display">\[\begin{align*}
+\mathbf{p}_{1:m} 
+&amp;= \text{CONV}^{k,s}_{\mathbf{U}, \mathbf{b}}(\mathbf{w}_{1:n})\\
+\mathbf{p}_i
+&amp;= g\left(\oplus \left( \mathbf{w}_{1+(i-1)s : (s+k)i} \right) \cdot \mathbf{U} + \mathbf{b}  \right)
+\end{align*}\]</span></p></li>
+</ul>
+</div>
+<div id="an-illustration-of-stride-size" class="section level3">
+<h3>An illustration of stride size</h3>
+<p><img src="/figures/NN_for_NLP_fig13_4.png" width="90%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li>Goldberg, Yoav. (2017). Neural Network Methods for Natural Language Processing, Morgan &amp; Claypool</li>
+</ul>
+</div>
+</div>
+</div>

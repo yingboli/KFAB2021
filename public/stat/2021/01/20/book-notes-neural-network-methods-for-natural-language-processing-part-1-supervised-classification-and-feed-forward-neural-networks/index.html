@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.88.1" />
+
+
+<title>Book Notes: Neural Network Methods for Natural Language Processing -- Part 1 Supervised Classification and Feed-forward Neural Networks - King Fox And Butterfly</title>
+<meta property="og:title" content="Book Notes: Neural Network Methods for Natural Language Processing -- Part 1 Supervised Classification and Feed-forward Neural Networks - King Fox And Butterfly">
+
+
+  <link href='http://liyingbo.com/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/yingbo_headshot.jpg"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/cooking/">Cooking</a></li>
+    
+    <li><a href="/stat/">Statistics</a></li>
+    
+    <li><a href="/life/">Life</a></li>
+    
+    <li><a href="/about/">About Me</a></li>
+    
+    <li><a href="/categories/">Categories</a></li>
+    
+    <li><a href="/tags/">Tags</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+
+    <h1 class="article-title">Book Notes: Neural Network Methods for Natural Language Processing -- Part 1 Supervised Classification and Feed-forward Neural Networks</h1>
+
+    
+
+    <div class="article-content">
+      
+
+<div id="TOC">
+<ul>
+<li><a href="#ch1-introduction">Ch1 Introduction</a></li>
+<li><a href="#ch2-linear-models">Ch2 Linear Models</a></li>
+<li><a href="#ch4-feed-forward-neural-networks">Ch4 Feed-Forward Neural Networks</a></li>
+<li><a href="#ch5-neural-network-training">Ch5 Neural Network Training</a></li>
+</ul>
+</div>
+
+<p><strong><em><font color='red'>For the pdf slides, click <a href="/pdf/010121_NN_for_NLP_book_part1.pdf">here</a></font></em></strong></p>
+<div id="ch1-introduction" class="section level1">
+<h1>Ch1 Introduction</h1>
+<div id="three-most-common-types-of-nns-in-nlp" class="section level3">
+<h3>Three most common types of NNs in NLP</h3>
+<ul>
+<li><p>Feed-forward networks, i.e., multi-layer perceptrons (MLPs), or fully connected layers</p>
+<ul>
+<li>Allow to work with fixed sized inputs</li>
+<li>Or with variable length inputs in which we can disregard the order of the elements (continuous bags of words)</li>
+</ul></li>
+<li><p>Recurrent neural networks (RNNs)</p>
+<ul>
+<li>Specialized models for sequential data</li>
+<li>Produce a fixed size vector that summarizes the sequence</li>
+<li>Doesn’t require fixed sized input (e.g., lengths of input sequence can vary)</li>
+</ul></li>
+<li><p>Convolutional feed-forward networks (CNNs)</p>
+<ul>
+<li>Good at extracting local patterns in the data</li>
+</ul></li>
+</ul>
+</div>
+<div id="about-neural-networks" class="section level3">
+<h3>About neural networks</h3>
+<ul>
+<li><p>Some of the neural network techniques (e.g., MLP) are simple generalizations of the linear models and can be used as almost drop-in replacements for the linear classifiers</p></li>
+<li><p>RNNs and CNNs are rarely used as standalone components. They are used to extract features and being fed into other network components, and trained to work in tandem with them.</p></li>
+</ul>
+</div>
+<div id="success-stories" class="section level3">
+<h3>Success stories</h3>
+<ul>
+<li><p>Multi-layer feed-forward networks can provide competitive results on sentiment classification and factoid question answering</p></li>
+<li><p>Networks with convolutional and pooling layers are useful for classification tasks in which we expect to find strong local clues regarding class membership, but these clues can appear in different places in the input</p>
+<ul>
+<li>Convolutional and pooling layers allow the model to learn to find such local indicators, regardless of their position</li>
+</ul></li>
+</ul>
+</div>
+<div id="note" class="section level3">
+<h3>Note</h3>
+<ul>
+<li><strong>In this book, vectors are assumed to be row vectors</strong></li>
+</ul>
+</div>
+</div>
+<div id="ch2-linear-models" class="section level1">
+<h1>Ch2 Linear Models</h1>
+<div id="one-hot-and-dense-vector-representations-p23" class="section level3">
+<h3>One-hot and dense vector representations (p23)</h3>
+<ul>
+<li><p>The input <span class="math inline">\(\mathbf{x}\)</span> in language classification example contains the normalized bigram counts in the document <span class="math inline">\(D\)</span></p></li>
+<li><span class="math inline">\(D_{[i]}\)</span> is the bigram at document position <span class="math inline">\(i\)</span></li>
+<li><p>Each vector <span class="math inline">\(\mathbf{x}^{D_{[i]}} \in \mathbb{R}^{d}\)</span> is a one-hot vector</p></li>
+<li><p>The following <span class="math inline">\(\mathbf{x}\)</span> is an <font color='blue'>averaged bag of words</font>, or just <font color='blue'>bag of words</font>:
+<span class="math display">\[
+\mathbf{x} = \frac{1}{|D|} \sum_{i=1}^{|D|} \mathbf{x}^{D_{[i]}}
+\]</span></p></li>
+<li><p>Bag of words doesn’t consider orders among words</p></li>
+</ul>
+</div>
+<div id="minibatch-stochastic-gradient-descent-sgd-algorithm-p32" class="section level3">
+<h3>Minibatch stochastic gradient descent (SGD) algorithm (p32)</h3>
+<ul>
+<li><p>Goal: set the parameters <span class="math inline">\(\Theta\)</span> to minimize the total loss
+<span class="math display">\[
+\mathcal{L}(\Theta) = \sum_{i=1}^n L\left(f(\mathbf{x}_i; \theta), \mathbf{y}_i  \right)
+\]</span>
+over the training set</p></li>
+<li><p>Learning rate: <span class="math inline">\(\eta_t\)</span></p></li>
+<li><p>Minibatch size <span class="math inline">\(m\)</span>, can vary from <span class="math inline">\(m=1\)</span> to <span class="math inline">\(m=n\)</span></p></li>
+<li><p>After the inner loop, <span class="math inline">\(\hat{\mathbf{g}}\)</span> contains the gradient estimate</p></li>
+</ul>
+</div>
+<div id="section" class="section level3">
+<h3></h3>
+<p><img src="/figures/NN_for_NLP_alg2_2.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="ch4-feed-forward-neural-networks" class="section level1">
+<h1>Ch4 Feed-Forward Neural Networks</h1>
+<div id="a-feed-forward-neural-network-with-one-hidden-layer" class="section level3">
+<h3>A feed-forward neural network with one hidden-layer</h3>
+<p><img src="/figures/NN_for_NLP_eq4_2.png" width="100%" style="display: block; margin: auto;" /></p>
+<ul>
+<li><p><span class="math inline">\(g\)</span> is a nonlinear function</p></li>
+<li><p>The first layer transforms the data into a good representation, while the second layer applies a linear classifier to that representation</p></li>
+<li><p>Layers resulting from linear transformations are called <font color='blue'>fully connected</font>, or <font color='blue'>affline</font></p></li>
+</ul>
+</div>
+<div id="common-nonlinearities-p45" class="section level3">
+<h3>Common nonlinearities (p45)</h3>
+<ul>
+<li><p>Sigmoid (currently considered to be deprecated for use in internal layers of NN)</p></li>
+<li><p>Hyperbolic tangent (tanh): common</p></li>
+<li><p>ReLU: common</p></li>
+</ul>
+<p><img src="/figures/NN_for_NLP_fig4_3.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="regularization-and-dropout" class="section level3">
+<h3>Regularization and dropout</h3>
+<ul>
+<li><p>L2 regularization, also called <font color='blue'>weight decay</font> is effective, and tuning the regularization strength <span class="math inline">\(\lambda\)</span> is advisable</p></li>
+<li><p><font color='blue'>Dropout training</font>: randomly dropping (setting to zero) half of the neurons in the network in each training example in the stochastic-gradient training</p></li>
+<li><p>Dropout is effective in NLP applications of NNs</p></li>
+</ul>
+</div>
+</div>
+<div id="ch5-neural-network-training" class="section level1">
+<h1>Ch5 Neural Network Training</h1>
+<div id="comment" class="section level3">
+<h3>Comment</h3>
+<ul>
+<li><p>The objective function for nonlinear neural networks is not convex, and gradient-based methods may get stuck in a local minima</p></li>
+<li><p>Still, gradient-based methods produce good results in practice</p></li>
+<li><p>Choice of optimization algorithm: the book author likes <font color='blue'>Adam</font>, as it is very effective and relatively robust to the choice of learning rate</p></li>
+</ul>
+</div>
+<div id="initialization" class="section level3">
+<h3>Initialization</h3>
+<ul>
+<li><p>It is advised to run several restarts of the training starting at different random initializations, and choosing the best one based on a development set</p></li>
+<li><p><font color='blue'>Xavier initialization</font>:
+<img src="/figures/NN_for_NLP_eq5_1.png" width="100%" style="display: block; margin: auto;" /></p></li>
+<li><p>When using ReLU nonlinearities, the following Gaussian initialization may work better than Xavier. The weights should be initialized by sampling from a zero-mean Gaussian distribution whose sd is <span class="math inline">\(\sqrt{2/d_{\text{in}}}\)</span></p></li>
+</ul>
+</div>
+<div id="vanishing-and-exploding-gradients" class="section level3">
+<h3>Vanishing and exploding gradients</h3>
+<ul>
+<li><p>Vanishing gradients</p>
+<ul>
+<li><p><font color='blue'>batch-normalization</font>, i.e., for every minibatch, normalize the inputs to each of the network layers to have zero mean and unit variance</p></li>
+<li><p>Or use specialized architectures that are designed to assist in gradient flow (i.e., LSTM and GRU)</p></li>
+</ul></li>
+<li><p>Exploding gradients: clipping the gradients if their norm exceeds a given threshold</p></li>
+</ul>
+</div>
+<div id="learning-rate" class="section level3">
+<h3>Learning rate</h3>
+<ul>
+<li><p>Experiment with a range of initial learning rates in range <span class="math inline">\([0, 1]\)</span>, e.g., 0.001, 0.01, 0.1, 1.</p></li>
+<li><p>Learning rate scheduling decreases the rate as a function of the number of observed minibatches</p>
+<ul>
+<li><p>A common schedule is dividing the initial learning rate by the iteration number</p></li>
+<li><p>Bottou’s recommendation:
+<span class="math display">\[
+  \eta_t = \frac{\eta_0}{1 + \eta_0 \lambda t}
+  \]</span></p></li>
+</ul></li>
+</ul>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li>Goldberg, Yoav. (2017). Neural Network Methods for Natural Language Processing, Morgan &amp; Claypool</li>
+</ul>
+</div>
+</div>
+
+    </div>
+  </article>
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//kfab.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-116913878-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+  </body>
+</html>
+

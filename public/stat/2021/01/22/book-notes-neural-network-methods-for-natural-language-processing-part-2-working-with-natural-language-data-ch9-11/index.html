@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.88.1" />
+
+
+<title>Book Notes: Neural Network Methods for Natural Language Processing -- Part 2 Working with Natural Language Data, Ch9-11 - King Fox And Butterfly</title>
+<meta property="og:title" content="Book Notes: Neural Network Methods for Natural Language Processing -- Part 2 Working with Natural Language Data, Ch9-11 - King Fox And Butterfly">
+
+
+  <link href='http://liyingbo.com/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/yingbo_headshot.jpg"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/cooking/">Cooking</a></li>
+    
+    <li><a href="/stat/">Statistics</a></li>
+    
+    <li><a href="/life/">Life</a></li>
+    
+    <li><a href="/about/">About Me</a></li>
+    
+    <li><a href="/categories/">Categories</a></li>
+    
+    <li><a href="/tags/">Tags</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+
+    <h1 class="article-title">Book Notes: Neural Network Methods for Natural Language Processing -- Part 2 Working with Natural Language Data, Ch9-11</h1>
+
+    
+
+    <div class="article-content">
+      
+
+<div id="TOC">
+<ul>
+<li><a href="#ch9-language-modeling">Ch9 Language Modeling</a><ul>
+<li><a href="#language-modeling-with-the-markov-assumption">Language Modeling with the Markov Assumption</a></li>
+<li><a href="#neural-language-models">Neural Language Models</a></li>
+</ul></li>
+<li><a href="#ch10-pre-trained-word-representations">Ch10 Pre-trained Word Representations</a><ul>
+<li><a href="#word-simiarlity-matrices-and-svd">Word Simiarlity Matrices and SVD</a></li>
+<li><a href="#word2vec-model">Word2Vec Model</a></li>
+<li><a href="#choice-of-contexts">Choice of Contexts</a></li>
+</ul></li>
+<li><a href="#ch11-using-word-embeddings">Ch11 Using Word Embeddings</a><ul>
+<li><a href="#resources-of-common-pre-training-word-embeddings">Resources of Common Pre-Training Word Embeddings</a></li>
+<li><a href="#usages-find-similarity-word-analogies">Usages: Find Similarity, Word Analogies</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p><strong><em><font color='red'>For the pdf slides, click <a href="/pdf/010121_NN_for_NLP_book_part2_ch9-11.pdf">here</a></font></em></strong></p>
+<div id="ch9-language-modeling" class="section level1">
+<h1>Ch9 Language Modeling</h1>
+<div id="language-modeling-with-the-markov-assumption" class="section level2">
+<h2>Language Modeling with the Markov Assumption</h2>
+<div id="language-modeling-with-the-markov-assumption-1" class="section level3">
+<h3>Language modeling with the Markov assumption</h3>
+<ul>
+<li><p>The task of language modeling is to assign a probability to any sequence of words <span class="math inline">\(w_{1:n}\)</span>, i.e., to estimate
+<span class="math display">\[
+P(w_{1:n}) = P(w_1) P(w_2 \mid w_1) P(w_3 \mid w_{1:2}) \cdots P(w_n \mid w_{1:n-1})
+\]</span></p></li>
+<li><p>Non-RNN language models make use of the <font color='blue'>Markov assumption</font>: the future is independent of the past given the present</p>
+<ul>
+<li><p>A <span class="math inline">\(k\)</span>th order Markov assumption assumes
+<span class="math display">\[
+P(w_{i+1} \mid w_{1:i}) \approx P(w_{i+1} \mid w_{i-k+1:i})
+\]</span></p></li>
+<li><p>Thus, the probability of the sentence becomes
+<span class="math display">\[
+P(w_{1:n}) = \prod_{i=1}^n P(w_i \mid w_{i-k:i-1})
+\]</span>
+where <span class="math inline">\(w_{-k}, \ldots, w_0\)</span> are special padding symbols</p></li>
+<li><p>This chapter discusses <span class="math inline">\(k\)</span>th order language model. Chapter 14 will discuss language models without the Markov assumption</p></li>
+</ul></li>
+</ul>
+</div>
+<div id="perplexity-evaluation-of-language-models" class="section level3">
+<h3>Perplexity: evaluation of language models</h3>
+<ul>
+<li><p>An intrinsic evaluation of language models is <font color='blue'>perplexity</font> over unseen sentences</p></li>
+<li><p>Given a text corpus of <span class="math inline">\(n\)</span> words <span class="math inline">\(w_1, \ldots, w_n\)</span> and a language model function <span class="math inline">\(LM\)</span>, the perplexity of LM with respect to the corpus is
+<span class="math display">\[
+2^{-\frac{1}{n} \sum_{i=1}^n \log_2 LM(w_i \mid w_{1:i-1})}
+\]</span></p></li>
+<li><p>Good language models will assign high probabilities to the events in the corpus, resulting in lower perplexity values</p></li>
+<li><p>Perplexities are corpus specific, so perplexities of two language models are only comparable with respect to the same evaluation corpus</p></li>
+</ul>
+</div>
+</div>
+<div id="neural-language-models" class="section level2">
+<h2>Neural Language Models</h2>
+<div id="neural-language-models-1" class="section level3">
+<h3>Neural language models</h3>
+<ul>
+<li>Input to the neural network is a <span class="math inline">\(k\)</span>gram of words <span class="math inline">\(w_{1:k}\)</span>, and the output is a probability distribution over the next word</li>
+</ul>
+<p><img src="/figures/NN_for_NLP_eq9_3.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="approximation-of-the-softmax-operation-in-cross-entropy" class="section level3">
+<h3>Approximation of the softmax operation in cross entropy</h3>
+<ul>
+<li><p><font color='red'>Cross entropy loss works very well, but requires the use of a costly softmax operation which can be prohibitive for very large vocabularies</font></p></li>
+<li>This promotes the use of alternative losses and/or approximations
+<ul>
+<li>Hierarchical softmax (using tree)</li>
+<li>Self-normalizing approaches, e.g., noise-contrastive estimation (NCE)</li>
+<li>Sampling approaches</li>
+</ul></li>
+<li><p>NCE: replaces the cross-entropy objective with a collection of binary classification problems, requiring the evaluation of the assigned scores for <span class="math inline">\(k\)</span> random words rather than the entire vocabulary</p></li>
+</ul>
+</div>
+<div id="using-language-models-for-generation" class="section level3">
+<h3>Using language models for generation</h3>
+<ul>
+<li><p>Predict a probability distribution over the first word conditioned on the start symbol, and draw a random word according to the predicted distribution</p></li>
+<li><p>Then predict a probability distribution over the second word conditioned on the first</p></li>
+<li><p>And so on, until predicting the end-of-sequence <span class="math inline">\(&lt;/s&gt;\)</span> symbol</p></li>
+<li><p>Already with <span class="math inline">\(k=3\)</span> this produces very passable text, and the quality improves with higher orders</p></li>
+<li><p>Another option is to use <font color='blue'>beam search</font> in order to find a sequence with a globally high probability</p></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="ch10-pre-trained-word-representations" class="section level1">
+<h1>Ch10 Pre-trained Word Representations</h1>
+<div id="random-initialization-of-word-embedding-models" class="section level3">
+<h3>Random initialization of word embedding models</h3>
+<ul>
+<li><p>The Word2Vec model initializes word vectors to uniformly sampled
+numbers in the range <span class="math inline">\(\left[-\frac{1}{2d}, \frac{1}{2d}\right]\)</span></p></li>
+<li><p>Another option is xavier initialization, initializing with uniformly sampled
+numbers in the range <span class="math inline">\(\left[-\frac{\sqrt{6}}{\sqrt{d}}, \frac{\sqrt{6}}{\sqrt{d}}\right]\)</span></p></li>
+</ul>
+</div>
+<div id="unsupervised-training-of-word-embedding-vectors" class="section level3">
+<h3>Unsupervised training of word embedding vectors</h3>
+<ul>
+<li><p>Key idea: one would like the embedding vectors of “similar” words to have similar vectors</p></li>
+<li><p>Word similarity is from the distributional hypothesis: <font color='green'>words are similar if they appear in similar contexts</font></p></li>
+<li><p>The different methods all create supervised training instances in which the goal is to</p>
+<ul>
+<li>either predict the word from its context,</li>
+<li>or predict the context from the word</li>
+</ul></li>
+<li><p><font color='green'>An important benefit of training word embedding on large amount of unannotated data: it provides vector representations for words that do not appear in the supervised training set</font></p></li>
+</ul>
+</div>
+<div id="word-simiarlity-matrices-and-svd" class="section level2">
+<h2>Word Simiarlity Matrices and SVD</h2>
+<div id="word-context-matrices" class="section level3">
+<h3>Word-context matrices</h3>
+<ul>
+<li><p>Denote <span class="math inline">\(V_W\)</span> the st of words and <span class="math inline">\(V_C\)</span> the set of possible contexts</p></li>
+<li><p>Assume that <span class="math inline">\(w_i\)</span> is the <span class="math inline">\(i\)</span>th word in the words vocabulary and <span class="math inline">\(c_j\)</span> is the <span class="math inline">\(j\)</span>th word in the context vocabulary</p></li>
+<li><p>The matrix <span class="math inline">\(\mathbf{M}^f \in \mathbb{R}^{|V_W| \times |V_C|}\)</span> is the word-context matrix, with <span class="math inline">\(f\)</span> being an association measure of the strength between a word and a context
+<span class="math display">\[
+\mathbf{M}^f_{[i,j]} = f(w_i, c_j)
+\]</span></p></li>
+</ul>
+</div>
+<div id="similarity-measures" class="section level3">
+<h3>Similarity measures</h3>
+<ul>
+<li>When words are represented as vectors, one can computing similarity by <font color='blue'>cosine similarity</font>
+<span class="math display">\[\begin{align*}
+\text{sim}_{\text{cos}} 
+&amp;= 
+\frac{\mathbf{u} \cdot \mathbf{v}}
+{\|\mathbf{u}\|_2 \|\mathbf{v}\|_2}\\
+&amp;=\frac{\sum_i\mathbf{u}_{[i]} \cdot \mathbf{v}_{[i]}}
+{\sqrt{\sum_i(\mathbf{u}_{[i]})^2} \sqrt{\sum_i(\mathbf{v}_{[i]})^2}}
+\end{align*}\]</span></li>
+</ul>
+</div>
+<div id="word-context-weighting-and-pmi" class="section level3">
+<h3>Word-context weighting and PMI</h3>
+<ul>
+<li><p>Denote by <span class="math inline">\(\#(w, c)\)</span> the number of times word <span class="math inline">\(w\)</span> occurred in the context <span class="math inline">\(c\)</span> in the corpus <span class="math inline">\(D\)</span>, and let <span class="math inline">\(|D|\)</span> be the corpus size</p></li>
+<li><p><font color='blue'>Pointwise mutual information (PMI)</font>
+<span class="math display">\[
+\text{PMI}(w, c) 
+= \log \frac{P(w, c)}{P(w) P(c)}
+= \log \frac{\#(w, c)  |D|}{\#(w) \#(c)}
+\]</span></p></li>
+<li><p>To resolve the <span class="math inline">\(\log 0\)</span> issue for pairs <span class="math inline">\((w, c)\)</span> never observed in the corpus, we can use the <font color='blue'>positive PMI (PPMI)</font>
+<span class="math display">\[
+\text{PPMI}(w,c) =  max\{\text{PMI}(w, c), 0\}
+\]</span></p></li>
+<li><p><font color='red'>A deficiency of PMI: it tends to assign high value to rare events</font></p></li>
+<li><p>Solution: it is advisable to apply a count threshold (to discount rare events) before using the PMI metric</p></li>
+</ul>
+</div>
+<div id="dimensionality-reduction-through-matrix-factorization" class="section level3">
+<h3>Dimensionality reduction through matrix factorization</h3>
+<ul>
+<li><p>Potential obstacle of representing words as the explicit set of contexts: <font color='red'>data sparsity</font>, some entries in <span class="math inline">\(\mathbf{M}\)</span> may be incorrect because we don’t have enough data points</p></li>
+<li><p>Also, the explicit word vectors (row in <span class="math inline">\(\mathbf{M}\)</span>) are of a <font color='red'>very high dimension</font></p></li>
+<li><p><font color='green'>Both issues can be alleviated by using dimension reduction techniques</font>, e.g., <font color='blue'>singular value decomposition (SVD)</font></p></li>
+</ul>
+</div>
+<div id="mathematics-of-svd" class="section level3">
+<h3>Mathematics of SVD</h3>
+<ul>
+<li><p>A <span class="math inline">\(m\times n\)</span> matrix <span class="math inline">\(\mathbf{M}\)</span> can be factorized into
+<span class="math display">\[
+\begin{array}{ccccc}
+\mathbf{M} &amp; = &amp; \mathbf{U} &amp;\mathbf{D} &amp; \mathbf{V}^T\\
+m\times n  &amp;   &amp; m\times m  &amp; m\times n &amp; n\times n
+\end{array}
+\]</span></p>
+<ul>
+<li>Matrix <span class="math inline">\(\mathbf{D}\)</span> is diagonal. Matrices <span class="math inline">\(\mathbf{U}\)</span> and <span class="math inline">\(\mathbf{V}\)</span> are orthonormal, i.e., their rows are unit-length and orthogonal to each other</li>
+</ul></li>
+<li><p>Dimension reduction under SVD: with a small value <span class="math inline">\(d\)</span>,
+<span class="math display">\[
+\begin{array}{ccccc}
+\mathbf{M}&#39; &amp; = &amp; \tilde{\mathbf{U}} &amp; \tilde{\mathbf{D}} &amp; \tilde{\mathbf{V}}^T \\
+m\times n  &amp;   &amp; m\times d  &amp; d\times d &amp; d\times n
+\end{array}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\mathbf{M}&#39;\)</span> is the best rank-<span class="math inline">\(d\)</span> approximation of <span class="math inline">\(\mathbf{M}\)</span> under the <span class="math inline">\(L_2\)</span> loss</li>
+</ul></li>
+</ul>
+</div>
+<div id="use-svd-to-obtain-word-vectors" class="section level3">
+<h3>Use SVD to obtain word vectors</h3>
+<ul>
+<li><p>The low-dimensional rows of
+<span class="math display">\[
+\mathbf{W} = \tilde{\mathbf{U}} \tilde{\mathbf{D}}
+\]</span>
+are low-rank approximations of the high-dimensional rows of the original matrix <span class="math inline">\(\mathbf{M}\)</span></p>
+<ul>
+<li>In the sense that computing the dot product between rows of <span class="math inline">\(\mathbf{W}\)</span> is equivalent to computing dot product between the reconstructed matrix <span class="math inline">\(\mathbf{M}&#39;\)</span>.
+<span class="math display">\[
+  \mathbf{W}_{[i]} \cdot \mathbf{W}_{[j]}
+  = \mathbf{M}&#39;_{[i]} \cdot \mathbf{M}&#39;_{[j]}
+  \]</span></li>
+</ul></li>
+<li><p>When using SVD for word similarity, the rows of <span class="math inline">\(\mathbf{M}\)</span> correspond to words, the columns to contexts. Thus the rows of <span class="math inline">\(\mathbf{W}\)</span> are low-dimensional word representations.</p></li>
+<li><p>In practice, it is often better to not use <span class="math inline">\(\mathbf{W} = \tilde{\mathbf{U}} \tilde{\mathbf{D}}\)</span>, but instead to use the more balanced version
+<span class="math inline">\(\mathbf{W} = \tilde{\mathbf{U}} \sqrt{\tilde{\mathbf{D}}}\)</span>,
+or even directly using <span class="math inline">\(\mathbf{W} = \tilde{\mathbf{U}}\)</span></p></li>
+</ul>
+</div>
+<div id="collobert-and-westons-algorithm" class="section level3">
+<h3>Collobert and Weston’s algorithm</h3>
+<ul>
+<li><p>Instead of computing a probability distribution over target words given a context, Collobert and Weston’s model only attempts to assign a score to each word, such that the correct word scores above the incorrect ones (p123)</p></li>
+<li><p>Denote <span class="math inline">\(w\)</span> the target word, <span class="math inline">\(c_{1:k}\)</span> an ordered list of context items</p></li>
+<li><p>Let <span class="math inline">\(v_w(w)\)</span> and <span class="math inline">\(v_c(c)\)</span> be embedding functions mapping word and context indices to <span class="math inline">\(d_{\text{emb}}\)</span> dimensional vectors</p></li>
+</ul>
+</div>
+</div>
+<div id="word2vec-model" class="section level2">
+<h2>Word2Vec Model</h2>
+<div id="word2vec-model-overview" class="section level3">
+<h3>Word2Vec model: overview</h3>
+<ul>
+<li>Word2Vec is a software package implementing
+<ul>
+<li>two different context representations (<font color='blue'>CBOW</font> and <font color='blue'>Skip-Gram</font>) and</li>
+<li>two different optimization objectives (<font color='blue'>Negative-Sampling</font> and <font color='blue'>Hierarchical Softmax</font>)</li>
+</ul></li>
+<li>Here, we focus on the Negative-Sampling (NS) objective</li>
+</ul>
+</div>
+<div id="word2vec-model-negative-sampling" class="section level3">
+<h3>Word2Vec model: negative sampling</h3>
+<ul>
+<li><p>Consider a set <span class="math inline">\(D\)</span> of correct word-context pairs, and a set <span class="math inline">\(\bar{D}\)</span> of incorrect word-context pairs</p></li>
+<li><p>Goal: estimate the probability <span class="math inline">\(P(D=1 \mid w, c)\)</span>, which should be high (1) for pairs from <span class="math inline">\(D\)</span> and low (0) for pairs from <span class="math inline">\(\bar{D}\)</span></p></li>
+<li><p>The probability function: a sigmoid over the score <span class="math inline">\(s(w, c)\)</span>
+<span class="math display">\[
+P(D=1 \mid w, c) = \frac{1}{1 + e^{-s(w, c)}}
+\]</span></p></li>
+<li><p>The corpus-wide objective function is to maximize the log-likelihood of the data <span class="math inline">\(D \cup \bar{D}\)</span>
+<span class="math display">\[
+\mathcal{L}(\Theta; D, \bar{D})
+= \sum_{(w, c)\in D}\log P(D=1\mid w, c) +
+\sum_{(w, c)\in \bar{D}}\log P(D=0\mid w, c)
+\]</span></p></li>
+<li><p><font color='green'>NS approximates the softmax function (normalizing term expensive to compute) with sigmoid functions</font></p></li>
+</ul>
+</div>
+<div id="word2vec-ns-continued" class="section level3">
+<h3>Word2Vec: NS, continued</h3>
+<ul>
+<li><p>The positive examples <span class="math inline">\(D\)</span> are generated from a corpus</p></li>
+<li><p>The negative samples <span class="math inline">\(\bar{D}\)</span> can be generated as follows</p>
+<ul>
+<li><p>For each good pair <span class="math inline">\((w, c)\in D\)</span>, sample <span class="math inline">\(k\)</span> words <span class="math inline">\(w_{1:k}\)</span> and add each of <span class="math inline">\((w_i, c)\)</span> as a negative example to <span class="math inline">\(\bar{D}\)</span>. This results in <span class="math inline">\(\bar{D}\)</span> being <span class="math inline">\(k\)</span> times as large as <span class="math inline">\(D\)</span>. The number of negative samples <span class="math inline">\(k\)</span> is a parameter of the algorithm</p></li>
+<li><p>The negative words <span class="math inline">\(w\)</span> can be sampled according to their corpus-based frequency. Actually in Word2Vec implementation, a smoothed version in which the counts are raised to the power of <span class="math inline">\(\frac{3}{4}\)</span> before normalizing:
+<span class="math display">\[
+  \frac{\#(w)^{0.75}}{\sum_{w&#39;} \#(w&#39;)^{0.75}}
+  \]</span>
+This version gives more relative weights to less frequent words, and results in better word similarities in practice.</p></li>
+</ul></li>
+</ul>
+</div>
+<div id="word2vec-cbow" class="section level3">
+<h3>Word2Vec: CBOW</h3>
+<ul>
+<li><p>For a multi-word context <span class="math inline">\(c_{1:k}\)</span>, the CBOW variant of Word2Vec defines the context vector <span class="math inline">\(\mathbf{c}\)</span> to be a sum of the embedding vectors of the context components
+<span class="math display">\[
+\mathbf{c} = \sum_{i=1}^k \mathbf{c}_i
+\]</span></p></li>
+<li><p>The score of the word-context pair is simply defined as
+<span class="math display">\[
+s(w, c) = \mathbf{w} \cdot \mathbf{c}
+\]</span></p></li>
+<li><p>Thus, the probability of a true pair is
+<span class="math display">\[
+P(D = 1\mid w, c_{1:k}) = \frac{1}{1 + e^{-(\mathbf{w} \cdot \mathbf{c}_1 + \mathbf{w} \cdot \mathbf{c}_2 + \cdots + \mathbf{w} \cdot \mathbf{c}_k)}}
+\]</span></p></li>
+<li><p><font color='red'>The CBOW variant loses the order information between the context’s elements</font></p></li>
+<li><p><font color='green'>In return, it allows the use of variable-length contexts</font></p></li>
+</ul>
+</div>
+<div id="word2vec-skip-gram" class="section level3">
+<h3>Word2Vec: Skip-Gram</h3>
+<ul>
+<li><p>For a <span class="math inline">\(k\)</span>-element context <span class="math inline">\(c_{1:k}\)</span>, the skip-gram variant assumes that the elements <span class="math inline">\(c_i\)</span> in the context are independent from each other, essentially treating them as <span class="math inline">\(k\)</span> different contexts: <span class="math inline">\((w, c_1), (w, c_2), \ldots, (w, c_k)\)</span></p></li>
+<li><p>The scoring function is the same as the CBOW version
+<span class="math display">\[
+s(w, c_i) = \mathbf{w} \cdot \mathbf{c_i}
+\]</span></p></li>
+<li><p>The probability is a product of <span class="math inline">\(k\)</span> terms
+<span class="math display">\[
+P(D = 1\mid w, c_{1:k}) = \prod_{i=1}^k P(D = 1\mid w, c_i) = 
+\prod_{i=1}^k \frac{1}{1 + e^{-\mathbf{w} \cdot \mathbf{c}_i}}
+\]</span></p></li>
+<li><p>While the independence assumption is strong, the skip-gram variant is very effective in practice</p></li>
+</ul>
+</div>
+<div id="glove" class="section level3">
+<h3>GloVe</h3>
+<ul>
+<li>GloVe constructs an explicit word-context matrix, and trains the word and context vectors <span class="math inline">\(\mathbf{w}\)</span> and <span class="math inline">\(\mathbf{c}\)</span> attempting to satisfy
+<span class="math display">\[
+\mathbf{w} \cdot \mathbf{c} + \mathbf{b}_{[w]} + \mathbf{b}_{[c]} = \log \#(w, c), \quad \forall (w, c) \in D
+\]</span>
+where <span class="math inline">\(\mathbf{b}_{[w]}\)</span> and <span class="math inline">\(\mathbf{b}_{[c]}\)</span> are word-specific and context-specific trained biases</li>
+</ul>
+</div>
+</div>
+<div id="choice-of-contexts" class="section level2">
+<h2>Choice of Contexts</h2>
+<div id="choice-of-contexts-window-approach" class="section level3">
+<h3>Choice of contexts: window approach</h3>
+<ul>
+<li><p>The most common is a sliding window approach, containing a sequence of <span class="math inline">\(2m+1\)</span> words. The middle word is called the <font color='blue'>focus word</font> and the <span class="math inline">\(m\)</span> words to each side are the <font color='blue'>contexts</font></p></li>
+<li><p>Effective window size: usually 2-5.</p>
+<ul>
+<li><p>Larger windows tend to produce more topical similarities (e.g., “dog”, “bark”, and “leash” will be grouped together, as well as “walked”, “run”, and “walking”)</p></li>
+<li><p>Smaller windows tend to produce more functional and syntactic similarities (e.g., “Poodle”, “Pitbull”, and “Rottweiler”, or “walking”, “running”, and “approaching”)</p></li>
+</ul></li>
+<li><p>Many variants on the window approach are possible. One <strong>may</strong></p>
+<ul>
+<li>lemmatize words before learning</li>
+<li>apply text normalization</li>
+<li>filter too short of too long sentences</li>
+<li>remove capitalization</li>
+</ul></li>
+</ul>
+</div>
+<div id="limitations-of-distributional-methods" class="section level3">
+<h3>Limitations of distributional methods</h3>
+<ul>
+<li><p>Black sheep: people are less likely to mention known information than they are to mention novel ones</p>
+<ul>
+<li>For example, when people talk of <em>white sheep</em>, they will likely refer to them as <em>sheep</em>, while for black sheep are are much more likely to retain the color information and say <em>black sheep</em></li>
+</ul></li>
+<li><p>Antonyms: words are opposite of each other (<em>good</em> vs <em>bad</em>, <em>buy</em> vs <em>sell</em>, <em>hot</em> vs <em>cold</em>) tend to appear in similar contexts</p></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="ch11-using-word-embeddings" class="section level1">
+<h1>Ch11 Using Word Embeddings</h1>
+<div id="resources-of-common-pre-training-word-embeddings" class="section level2">
+<h2>Resources of Common Pre-Training Word Embeddings</h2>
+<div id="common-pre-training-word-embeddings" class="section level3">
+<h3>Common pre-training word embeddings</h3>
+<ul>
+<li><p>Efficient implementation of Word2Vec</p>
+<ul>
+<li>GenSim python package: <a href="https://radimrehurek.com/gensim/" class="uri">https://radimrehurek.com/gensim/</a></li>
+</ul></li>
+<li><p>Efficient implementation of GloVe</p>
+<ul>
+<li><a href="https://nlp.stanford.edu/projects/glove/" class="uri">https://nlp.stanford.edu/projects/glove/</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="usages-find-similarity-word-analogies" class="section level2">
+<h2>Usages: Find Similarity, Word Analogies</h2>
+<div id="pre-trained-word-embedding-usages" class="section level3">
+<h3>Pre-trained word embedding usages</h3>
+<ul>
+<li><p>Calculate word similarity, e.g., using cosine similarity</p></li>
+<li><p>Word clustering, e.g., using KMeans</p></li>
+<li><p>Find similar words</p>
+<ul>
+<li><p>With row-normalized embedding matrix, the cosine similarity between two words <span class="math inline">\(w_1\)</span> and <span class="math inline">\(w_2\)</span> is
+<span class="math display">\[
+  \text{sim}_{\text{cos}}(w_1, w_2) = \mathbf{E}_{[w_1]} \cdot \mathbf{E}_{[w_2]}
+  \]</span></p></li>
+<li><p>We are often interested in the <span class="math inline">\(k\)</span> most similar words to a given word <span class="math inline">\(w\)</span>. Let <span class="math inline">\(\mathbf{w} = \mathbf{E}_{[w]}\)</span>, then the similarity to all other words can be computed by the matrix-vector multiplication
+<span class="math display">\[
+  \mathbf{s} = \mathbf{E} \mathbf{w}
+  \]</span></p></li>
+</ul></li>
+</ul>
+</div>
+<div id="more-similarity-measures" class="section level3">
+<h3>More similarity measures</h3>
+<ul>
+<li><p>Similarity to a group of words: average similarity to the items in the group
+<span class="math display">\[
+\mathbf{s}_{[w]} = \text{sim}(w, w_{1:k})
+= \mathbf{E} (\mathbf{w}_1 + \cdots + \mathbf{w}_k) / k
+\]</span></p></li>
+<li><p>Short document similarity: consider two documents <span class="math inline">\(D_1 = w_1^1, \ldots, w_m^1\)</span> and <span class="math inline">\(D_2 = w_1^2, \ldots, w_n^2\)</span>,
+<span class="math display">\[\begin{align*}
+\text{sim}_{\text{doc}}(D_1, D_2)
+&amp;= \sum_{i=1}^m \sum_{j=1}^n \text{cos}(\mathbf{w}_i^1, \mathbf{w}_j^2)\\
+&amp;= \left(\sum_{i=1}^m \mathbf{w}_i^1 \right) \cdot \left(\sum_{j=1}^n \mathbf{w}_j^2 \right)
+\end{align*}\]</span></p></li>
+</ul>
+</div>
+<div id="word-analogies" class="section level3">
+<h3>Word analogies</h3>
+<ul>
+<li><p>One can perform “algebra” on the word vectors and get meaningful results</p>
+<ul>
+<li>For example,
+<span class="math display">\[
+  \mathbf{w}_{\text{king}} - \mathbf{w}_{\text{man}} + \mathbf{w}_{\text{woman}} \approx \mathbf{w}_{\text{queen}}
+  \]</span></li>
+</ul></li>
+<li><p><font color='blue'>Analogy solving</font> task: to answer analogy questions of the form
+<span class="math display">\[
+man : woman \rightarrow king:?
+\]</span></p></li>
+<li><p>Solve the analogy question by maximization
+<span class="math display">\[\begin{align*}
+\text{analogy}(m:w \rightarrow k:?)
+&amp; = \arg\max_{v \in V\backslash \{m, w, k\}} \text{cos}(\mathbf{v}, \mathbf{k} - \mathbf{m} +  \mathbf{w})
+\end{align*}\]</span></p></li>
+</ul>
+</div>
+<div id="practicalities-and-pitfalls" class="section level3">
+<h3>Practicalities and pitfalls</h3>
+<ul>
+<li><p><font color='red'>While off-the-shelf, pre-trained word embeddings can be downloaded and used, it is advised to not just blindly download word embeddings and treat them as a black box</font></p></li>
+<li><p><font color='red'>Be aware of choices such as the source of the training corpus</font></p>
+<ul>
+<li>Larger training corpus is not always better. A smaller but cleaner, or smaller but more domain-focused corpus are often more effective</li>
+</ul></li>
+<li><p><strong>When using off-the-shelf embedding vectors, it is better to use the same tokenization and text normalization schemes that were used when deriving the corpus</strong></p></li>
+</ul>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li>Goldberg, Yoav. (2017). Neural Network Methods for Natural Language Processing, Morgan &amp; Claypool</li>
+</ul>
+</div>
+</div>
+</div>
+
+    </div>
+  </article>
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//kfab.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-116913878-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+  </body>
+</html>
+

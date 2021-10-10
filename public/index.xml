@@ -31,6 +31,27 @@
     </item>
     
     <item>
+      <title>Book Notes: Neural Network Methods for Natural Language Processing -- Part 3 Specialized Architectures, Ch14-16 RNNs</title>
+      <link>http://liyingbo.com/stat/2021/05/18/book-notes-neural-network-methods-for-natural-language-processing-part-3-specialized-architectures-ch14-16-rnns/</link>
+      <pubDate>Tue, 18 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2021/05/18/book-notes-neural-network-methods-for-natural-language-processing-part-3-specialized-architectures-ch14-16-rnns/</guid>
+      <description>Ch14 Recurrent Neural Networks: Modeling Sequences and Stacks The RNN Abstraction Common RNN usages Bidirectional RNNs and Deep RNNs  Ch15 Concrete Recurrent Neural Network Architectures Simple RNN Gated Architectures: LSTM and GRU  Ch16 Modeling with Recurrent Networks Sentiment Classification    For the pdf slides, click here
+Ch14 Recurrent Neural Networks: Modeling Sequences and Stacks RNNs overview  RNNs allow representing arbitrarily sized sequential inputs in fixed-sized vectors, while paying attention to the structured properties of the inputs</description>
+    </item>
+    
+    <item>
+      <title>Book Notes: Neural Network Methods for Natural Language Processing -- Part 3 Specialized Architectures, Ch13 CNN</title>
+      <link>http://liyingbo.com/stat/2021/05/17/book-notes-neural-network-methods-for-natural-language-processing-part-3-specialized-architectures-ch13-cnn/</link>
+      <pubDate>Mon, 17 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2021/05/17/book-notes-neural-network-methods-for-natural-language-processing-part-3-specialized-architectures-ch13-cnn/</guid>
+      <description>Ch13 Ngram Detectors: Convolutional Neural Networks CNN Overivew Basic Convolution \(+\) Pooling Hierarchical Convolutions    For the pdf slides, click here
+Overview on CNN and RNN for NLP  CNN and RNN architectures explored in this part of the book are primarily used as feature extractors
+ CNNs and RNNs as Lego bricks: one just needs to make sure that input and output dimensions of the different components match</description>
+    </item>
+    
+    <item>
       <title>喂食计划 Baby Meal Plan</title>
       <link>http://liyingbo.com/life/2021/05/16/baby-meal-plan/</link>
       <pubDate>Sun, 16 May 2021 00:00:00 +0000</pubDate>
@@ -190,6 +211,37 @@ Overview of Gaussian processes (GP)  The problem is learning in GP is exactly th
       <guid>http://liyingbo.com/cooking/2021/02/21/skillet-roasted-brussels-sprouts/</guid>
       <description>转眼博客开三年了，三年前写过烤箱版的孢子甘蓝菜谱, 这次来个煎锅版的。这个版本最大的特点就是快，10～15分钟就好，不像烤箱版的加预热加烤快要一个小时。 快的代价是需要的油量比较多，但很神奇的是吃的时候完全没有油腻感。 方子还是来自ATK，我这里贴里面两种亚洲人比较能接受的口味。
    煎孢子甘蓝 Skillet Roasted Brussels Sprouts     孢子甘蓝 1磅 Brussels Sprouts 1 lb   橄榄油 5大匙 Extra virgin olive oil 5 tbsp       枫糖香醋口味 酱汁 Maple vinegar flavor, sauce   枫糖 1大匙 Maple syrup 1 tbsp   镇江香醋 1大匙 Sherry vinegar 1 tbsp   盐 1/4小匙 Salt 1/4 tsp       韩式甜辣口味 酱汁 Gochujang flavor, sauce   韩式辣酱 1大匙 Gochujang 1 tbsp   米醋 1大匙 Rice vinegar 1 tbsp   熟白芝麻 2小匙 Toasted sesame seeds 2 tsp      孢子甘蓝略冲洗一下，每颗纵切成两半。</description>
+    </item>
+    
+    <item>
+      <title>Book Notes: Neural Network Methods for Natural Language Processing -- Part 2 Working with Natural Language Data, Ch9-11</title>
+      <link>http://liyingbo.com/stat/2021/01/22/book-notes-neural-network-methods-for-natural-language-processing-part-2-working-with-natural-language-data-ch9-11/</link>
+      <pubDate>Fri, 22 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2021/01/22/book-notes-neural-network-methods-for-natural-language-processing-part-2-working-with-natural-language-data-ch9-11/</guid>
+      <description>Ch9 Language Modeling Language Modeling with the Markov Assumption Neural Language Models  Ch10 Pre-trained Word Representations Word Simiarlity Matrices and SVD Word2Vec Model Choice of Contexts  Ch11 Using Word Embeddings Resources of Common Pre-Training Word Embeddings Usages: Find Similarity, Word Analogies    For the pdf slides, click here
+Ch9 Language Modeling Language Modeling with the Markov Assumption Language modeling with the Markov assumption  The task of language modeling is to assign a probability to any sequence of words \(w_{1:n}\), i.</description>
+    </item>
+    
+    <item>
+      <title>Book Notes: Neural Network Methods for Natural Language Processing -- Part 2 Working with Natural Language Data, Ch6-8</title>
+      <link>http://liyingbo.com/stat/2021/01/21/book-notes-neural-network-methods-for-natural-language-processing-part-2-working-with-natural-language-data-ch6-8/</link>
+      <pubDate>Thu, 21 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2021/01/21/book-notes-neural-network-methods-for-natural-language-processing-part-2-working-with-natural-language-data-ch6-8/</guid>
+      <description>Ch6 Features for Textural Data Preprocessing TF-IDF Weighting Ngrams  Ch7 Case Studies of NLP Features NLP Features for Document Topic Classification  Ch8 From Textual Features to Inputs Embeddings Combining Dense Vectors: sum, concat, CBOW Odds and Ends    For the pdf slides, click here
+Ch6 Features for Textural Data Preprocessing Feature extraction  The mapping from textural data to real valued vectors is called feature extraction or feature representation</description>
+    </item>
+    
+    <item>
+      <title>Book Notes: Neural Network Methods for Natural Language Processing -- Part 1 Supervised Classification and Feed-forward Neural Networks</title>
+      <link>http://liyingbo.com/stat/2021/01/20/book-notes-neural-network-methods-for-natural-language-processing-part-1-supervised-classification-and-feed-forward-neural-networks/</link>
+      <pubDate>Wed, 20 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2021/01/20/book-notes-neural-network-methods-for-natural-language-processing-part-1-supervised-classification-and-feed-forward-neural-networks/</guid>
+      <description>Ch1 Introduction Ch2 Linear Models Ch4 Feed-Forward Neural Networks Ch5 Neural Network Training   For the pdf slides, click here
+Ch1 Introduction Three most common types of NNs in NLP  Feed-forward networks, i.e., multi-layer perceptrons (MLPs), or fully connected layers
+ Allow to work with fixed sized inputs Or with variable length inputs in which we can disregard the order of the elements (continuous bags of words)  Recurrent neural networks (RNNs)</description>
     </item>
     
     <item>

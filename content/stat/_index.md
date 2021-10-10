@@ -30,11 +30,19 @@ title: My Notes on Statistics and Machine Learning Books and Papers
 * Pattern Recognition and Machine Learning, by Bishop [2006]
 
     - [Ch9 Mixture Models and EM Algorithm](https://liyingbo.com/stat/2020/06/13/book-notes-pattern-recognition-and-machine-learning-ch9-mixture-models-and-em-algorithm/) [(pdf)](https://liyingbo.com/pdf/050120_EM_algorithm_ch9.pdf)
-    - [Ch10 Variational Inference]() [(pdf)]()
+    - [Ch10 Variational Inference](https://liyingbo.com/stat/2020/10/27/book-notes-pattern-recognition-and-machine-learning-ch10-variational-inference/) [(pdf)](https://liyingbo.com/pdf/061320_variational_inference_ch10.pdf)
+    
+* Neural Network Methods for Natural Language Processing, by Goldberg [2017]
+
+    - [Part1 Supervised Classification and Feed-forward Neural Networks]() [(pdf)]()
+    - [Part2 Working with Natural Language Data, Ch6-8]() [(pdf)]()
+    - [Part2 Working with Natural Language Data, Ch9-11]() [(pdf)]()
+    - [Part3 Specialized Architectures, Ch13 CNN]() [(pdf)]()
+    - [Part3 Specialized Architectures, Ch14-16 RNNs]() [(pdf)]()
 
 * Gaussian Processes for Machine learning, by Rasmussen and Williams [2006]
 
-    - [Ch2 Gaussian Process Regression]() [(pdf)]()
+    - [Ch2 Gaussian Process Regression](https://liyingbo.com/stat/2021/03/17/book-notes-gaussian-processes-for-machine-learning-ch2-gaussian-process-regression/) [(pdf)](https://liyingbo.com/pdf/022821_Gaussian_process_book_ch2.pdf)
 
 * Computer Age Statistical Inference, by Efron and Hastie [2016]
     - [Ch9 Survival Analysis](https://liyingbo.com/stat/2020/06/13/book-notes-computer-age-statistical-inference-ch-9-survival-analysis/) [(pdf)](https://liyingbo.com/pdf/052219_computer_age_stat_inference_Part2_Ch9.pdf)

@@ -1,0 +1,226 @@
+---
+title: 'Book Notes: Neural Network Methods for Natural Language Processing -- Part
+  2 Working with Natural Language Data, Ch6-8'
+author: ''
+date: '2021-01-21'
+slug: book-notes-neural-network-methods-for-natural-language-processing-part-2-working-with-natural-language-data-ch6-8
+categories:
+  - Book notes
+tags:
+  - Natural Language Processing
+  - Slides
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 2
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#ch6-features-for-textural-data">Ch6 Features for Textural Data</a><ul>
+<li><a href="#preprocessing">Preprocessing</a></li>
+<li><a href="#tf-idf-weighting">TF-IDF Weighting</a></li>
+<li><a href="#ngrams">Ngrams</a></li>
+</ul></li>
+<li><a href="#ch7-case-studies-of-nlp-features">Ch7 Case Studies of NLP Features</a><ul>
+<li><a href="#nlp-features-for-document-topic-classification">NLP Features for Document Topic Classification</a></li>
+</ul></li>
+<li><a href="#ch8-from-textual-features-to-inputs">Ch8 From Textual Features to Inputs</a><ul>
+<li><a href="#embeddings">Embeddings</a></li>
+<li><a href="#combining-dense-vectors-sum-concat-cbow">Combining Dense Vectors: sum, concat, CBOW</a></li>
+<li><a href="#odds-and-ends">Odds and Ends</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p><strong><em><font color='red'>For the pdf slides, click <a href="/pdf/010121_NN_for_NLP_book_part2_ch6-8.pdf">here</a></font></em></strong></p>
+<div id="ch6-features-for-textural-data" class="section level1">
+<h1>Ch6 Features for Textural Data</h1>
+<div id="preprocessing" class="section level2">
+<h2>Preprocessing</h2>
+<div id="feature-extraction" class="section level3">
+<h3>Feature extraction</h3>
+<ul>
+<li><p>The mapping from textural data to real valued vectors is called <font color='blue'>feature extraction</font> or feature representation</p></li>
+<li><p>A process called <font color='blue'>tokenization</font> is in charge of splitting text into tokens (what we call here words) based on whitespace and punctuation</p></li>
+</ul>
+</div>
+<div id="features-of-words" class="section level3">
+<h3>Features of words</h3>
+<ul>
+<li><p>We often look at the <font color='blue'>lemma</font> (the dictionary entry) of the word, mapping forms such as <em>booking, booked, books</em> to their common lemma <em>book</em>.</p></li>
+<li><p>A coarser process than lemmatization, that can work on any sequence of letters, is called <font color='blue'>stemming</font>. For example, <em>picture, pictures, pictured</em> will all be stemmed to <em>pictur</em></p></li>
+</ul>
+</div>
+</div>
+<div id="tf-idf-weighting" class="section level2">
+<h2>TF-IDF Weighting</h2>
+<div id="features-of-text-weighting" class="section level3">
+<h3>Features of text: weighting</h3>
+<ul>
+<li><p>When using the bag-of-words approach, it is common to use <font color='blue'>TF-IDF</font> weighting: <span class="math inline">\(\text{TF}\times \text{IDF}\)</span></p></li>
+<li><p>Consider a document <span class="math inline">\(d\)</span> which is part of a larger corpus <span class="math inline">\(D\)</span>. For each word <span class="math inline">\(w\)</span> in <span class="math inline">\(d\)</span>, its normalized count in the document is the <font color='blue'>Term Frequency</font>:
+<span class="math display">\[
+\text{TF} = \frac{\#_d(w)}{\sum_{w&#39;\in d} \#_d(w&#39;)}
+\]</span></p></li>
+<li><p><font color='blue'>Inverse Document Frequency</font>
+<span class="math display">\[
+\text{IDF} = \log \frac{|D|}{|\{d\in D: w \in d\}|}
+\]</span></p></li>
+</ul>
+</div>
+</div>
+<div id="ngrams" class="section level2">
+<h2>Ngrams</h2>
+<div id="ngram-features" class="section level3">
+<h3>Ngram features</h3>
+<ul>
+<li><p>Word-bigrams, as well as trigrams of letters or words, are common</p></li>
+<li><p><font color='green'>A bag-of-bigrams representation is much more powerful than bag-of-words, and in many cases proves very hard to beat</font></p></li>
+<li><p>Since it is hard to know a-priori which ngrams will be useful for a given task, a common solution is to include all ngrams up to a given length, and let the model regularization discard of the less interesting ones by assigning them very low weights</p></li>
+</ul>
+</div>
+<div id="ngram-and-neural-networks" class="section level3">
+<h3>Ngram and neural networks</h3>
+<ul>
+<li><p>Note that vanilla neural network architectures such as MLP cannot infer ngram features from a document on their own in the general case. <font color='green'>Thus, ngram features are also useful in the context of nonlinear classification</font></p></li>
+<li><p>Bidirectional RNNs generalize the ngram concept even further, and can be sensitive to information ngrams of varying lengths, as well as ngrams with gaps in them</p></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="ch7-case-studies-of-nlp-features" class="section level1">
+<h1>Ch7 Case Studies of NLP Features</h1>
+<div id="nlp-features-for-document-topic-classification" class="section level2">
+<h2>NLP Features for Document Topic Classification</h2>
+<div id="nlp-features-for-document-topic-classification-1" class="section level3">
+<h3>NLP features for document topic classification</h3>
+<ul>
+<li><p>A good set of features will be the bag-of words, perhaps plus a bag-of-word-bigrams</p></li>
+<li><p>If we do not have many training examples</p>
+<ul>
+<li>We may benefit from pre-processing document by replacing each word with its lemma</li>
+<li>We may also replace or supplement words by distributional features such as word clusters or word-embedding vectors</li>
+</ul></li>
+<li><p><font color='green'>When using a bag-of-words, it is sometimes useful to weigh each word with proportion to its informativeness, for example, using TF-IDF weighting</font></p></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="ch8-from-textual-features-to-inputs" class="section level1">
+<h1>Ch8 From Textual Features to Inputs</h1>
+<div id="embeddings" class="section level2">
+<h2>Embeddings</h2>
+<div id="dense-encoding-feature-embeddings" class="section level3">
+<h3>Dense encoding (feature embeddings)</h3>
+<ul>
+<li><p>Each core feature (e.g., word) is embedded into a <span class="math inline">\(d\)</span> dimensional space, and represented as a vector in that space</p></li>
+<li><p>The dimension <span class="math inline">\(d\)</span> is usually much smaller than the number of features</p>
+<ul>
+<li>For example, each item in a vocabulary of 40000 items can be represented as 100 or 200 dimensional vector</li>
+</ul></li>
+<li><p>In current research, <span class="math inline">\(d\)</span> ranges between 50 to a few hundreds (and in some extreme cases, thousands)</p></li>
+<li><p>A good rule of thumb would be to experiment with a few different sizes, and choose a good trade-off between speed and task accuracy</p></li>
+</ul>
+</div>
+<div id="embeddings-and-neural-networks" class="section level3">
+<h3>Embeddings and neural networks</h3>
+<ul>
+<li><p>The biggest change in the input when moving from linear to deeper classfier is the move from sparse representations (one-hot encoding) to a dense representation (embedding)</p></li>
+<li><p><font color='green'>Another difference is that we mostly need to extract only core features and not feature combinations (we don not need to manually do feature engineering)</font></p></li>
+<li><p><font color='green'>One benefit of using dense and low-dimensional vectors (embeddings) is computational: the majority of neural network toolkits do not play well with very high-dimensional, sparse vectors</font></p></li>
+</ul>
+</div>
+<div id="one-hot-vectors-vs-dense-embeddings" class="section level3">
+<h3>One-hot vectors vs dense embeddings</h3>
+<ul>
+<li><p><font color='green'>The main benefit of the dense representations is in generalization power: if we believe some features may provide similar clues, it is worthwhile to provide a representation that is able to capture these similarities</font></p></li>
+<li><p><font color='red'>When one-hot representations might be better than embeddings: when the feature space is relatively small and the training data is plentiful</font></p></li>
+</ul>
+</div>
+</div>
+<div id="combining-dense-vectors-sum-concat-cbow" class="section level2">
+<h2>Combining Dense Vectors: sum, concat, CBOW</h2>
+<div id="combining-dense-vectors-window-based-features" class="section level3">
+<h3>Combining dense vectors: window based features</h3>
+<ul>
+<li><p>The prominent options are concatenation, summation (or averaging), and combinations of the two</p></li>
+<li><p>Consider the case of encoding a window of size <span class="math inline">\(k=2\)</span> to each side of a focus word. The word vectors of the window items are <span class="math inline">\(\mathbf{a}, \mathbf{b}, \mathbf{c}, \mathbf{d}\)</span></p>
+<ul>
+<li>Summation: if we do not care about the relative positions of the words within the window, we can encode the window as a sum <span class="math inline">\(\mathbf{a} + \mathbf{b} + \mathbf{c} + \mathbf{d}\)</span></li>
+<li>Concatenation: if we do care about the order, then we should rather use concatenation <span class="math inline">\([\mathbf{a}; \mathbf{b}; \mathbf{c}; \mathbf{d}]\)</span></li>
+<li>We may not care about the order, but would want to consider words further away from the context word less important. Then we can use a weighted sum <span class="math inline">\(\frac{1}{2}\mathbf{a} + \mathbf{b} + \mathbf{c} + \frac{1}{2}\mathbf{d}\)</span></li>
+<li>We can mix-and-match. For example, <span class="math inline">\([(\mathbf{a} +\mathbf{b}); (\mathbf{c}+ \mathbf{d})]\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="variable-number-of-features-continuous-bag-of-words" class="section level3">
+<h3>Variable number of features: continuous bag of words</h3>
+<ul>
+<li><p><font color='red'>Feed-forward networks assume a fixed dimensional inputs</font></p></li>
+<li><p>When we need to represent an unbounded number of features using a fixed size vector, one way is through <font color='blue'>continuous bag of words (CBOW)</font>. For features <span class="math inline">\(f_1, \ldots, f_k\)</span>, CBOW is the average of and their corresponding vectors <span class="math inline">\(v(f_1), \ldots, v(f_k)\)</span>, i.e.,
+<span class="math display">\[
+\text{CBOW}(f_1, \ldots, f_k) = \frac{1}{k}\sum_{i=1}^k v(f_i)
+\]</span></p></li>
+<li><p>A simple variation is <font color='blue'>weighted CBOW</font>, where each feature <span class="math inline">\(f_i\)</span> has weight <span class="math inline">\(a_i\)</span>
+<span class="math display">\[
+\text{WCBOW}(f_1, \ldots, f_k) = \frac{1}{\sum_{i=1}^k a_i}\sum_{i=1}^k a_i v(f_i)
+\]</span></p>
+<ul>
+<li>For example, in a document classification task, we can use TF-IDF as the weights</li>
+</ul></li>
+</ul>
+</div>
+<div id="relationship-between-one-hot-and-dense-vectors" class="section level3">
+<h3>Relationship Between One-Hot and Dense Vectors</h3>
+</div>
+<div id="relationship-between-one-hot-and-dense-vectors-1" class="section level3">
+<h3>Relationship between one-hot and dense vectors</h3>
+<ul>
+<li><p>Using one-hot vectors as input when training a neural network is to dedicate the first layer of the network to learning a dense embedding vector for each feature based on the training data</p></li>
+<li><p>When using dense vectors, each categorical feature value (e.g., word) <span class="math inline">\(f_i\)</span> is mapped to a dense, <span class="math inline">\(d\)</span>-dimensional vector <span class="math inline">\(v(f_i)\)</span>. This mapping is performed through the use of an <font color='blue'>embedding layer</font> or a <font color='blue'>lookup layer</font></p></li>
+<li><p>For a vocabulary of <span class="math inline">\(|V|\)</span> words, the collection of vectors can be thought of as a <span class="math inline">\(|V| \times d\)</span> embedding matrix <span class="math inline">\(\mathbf{E}\)</span>,
+in which each row corresponds to an embedded feature</p></li>
+<li><p>Let <span class="math inline">\(\mathbf{f}_i\)</span> be the one-hot representation of feature <span class="math inline">\(f_i\)</span>, then its embedding row is
+<span class="math display">\[
+v(f_i) = \mathbf{f}_i \mathbf{E}
+\]</span></p></li>
+<li><p>The word vectors are often concatenated to each other before being passed to the next layer</p></li>
+</ul>
+</div>
+</div>
+<div id="odds-and-ends" class="section level2">
+<h2>Odds and Ends</h2>
+<div id="padding-and-unknown-words" class="section level3">
+<h3>Padding and unknown words</h3>
+<ul>
+<li><p>In some cases the feature extractor will look for things that do not exist. The suggested solution is to add a special <font color='blue'>padding</font> symbol to the embedding vocabulary</p></li>
+<li><p>For out-of-vocabulary (OOV) items, it is recommended to reserve a special symbol <font color='blue'>Unk</font>, representing an unknown token</p></li>
+<li><p>In any case, it is advised to not share the padding and the unknown vectors, as they reflect two very different conditions</p></li>
+</ul>
+</div>
+<div id="word-dropout" class="section level3">
+<h3>Word dropout</h3>
+<ul>
+<li><p>Reserving a special embedding vector for unknown words is not enough, because if all the features in the training set have their own embedding vectors, the unknown-word condition will not be observed in training</p></li>
+<li><p>Since the model needs to be exposed to the unknown-word condition during training, we can use <font color='blue'>word-dropout</font>, i.e., when extracting features in training, randomly replace words with the unknown symbol</p></li>
+<li><p>This can be based on word’s frequency: less frequent words will be more likely to be replaced by the unknown symbol than frequent ones</p></li>
+</ul>
+</div>
+<div id="feature-combinations" class="section level3">
+<h3>Feature combinations</h3>
+<ul>
+<li><p><font color='green'>One of the promises of the nonlinear neural network models is that one needs to define only the core features. The nonlinearity of the classifier, as defined by the network structure, is expected to take care of finding the indicative feature combinations, alleviating the need for feature combination engineering</font></p></li>
+<li><p>Computational complexity of classification in kernel methods scales linearly with the size of the training data, make them too slow for most practical purpose</p></li>
+<li><p><font color='green'>Computational complexity of classification using neural networks scales linearly with the size of the network, regardless of the training data size</font></p></li>
+</ul>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li>Goldberg, Yoav. (2017). Neural Network Methods for Natural Language Processing, Morgan &amp; Claypool</li>
+</ul>
+</div>
+</div>
+</div>

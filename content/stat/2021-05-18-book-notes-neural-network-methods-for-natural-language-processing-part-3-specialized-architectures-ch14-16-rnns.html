@@ -1,0 +1,361 @@
+---
+title: 'Book Notes: Neural Network Methods for Natural Language Processing -- Part
+  3 Specialized Architectures, Ch14-16 RNNs'
+author: ''
+date: '2021-05-18'
+slug: book-notes-neural-network-methods-for-natural-language-processing-part-3-specialized-architectures-ch14-16-rnns
+categories:
+  - Book notes
+tags:
+  - Natural Language Processing
+  - Slides
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 2
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#ch14-recurrent-neural-networks-modeling-sequences-and-stacks">Ch14 Recurrent Neural Networks: Modeling Sequences and Stacks</a><ul>
+<li><a href="#the-rnn-abstraction">The RNN Abstraction</a></li>
+<li><a href="#common-rnn-usages">Common RNN usages</a></li>
+<li><a href="#bidirectional-rnns-and-deep-rnns">Bidirectional RNNs and Deep RNNs</a></li>
+</ul></li>
+<li><a href="#ch15-concrete-recurrent-neural-network-architectures">Ch15 Concrete Recurrent Neural Network Architectures</a><ul>
+<li><a href="#simple-rnn">Simple RNN</a></li>
+<li><a href="#gated-architectures-lstm-and-gru">Gated Architectures: LSTM and GRU</a></li>
+</ul></li>
+<li><a href="#ch16-modeling-with-recurrent-networks">Ch16 Modeling with Recurrent Networks</a><ul>
+<li><a href="#sentiment-classification">Sentiment Classification</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p><strong><em><font color='red'>For the pdf slides, click <a href="/pdf/010121_NN_for_NLP_book_part3_ch14-16.pdf">here</a></font></em></strong></p>
+<div id="ch14-recurrent-neural-networks-modeling-sequences-and-stacks" class="section level1">
+<h1>Ch14 Recurrent Neural Networks: Modeling Sequences and Stacks</h1>
+<div id="rnns-overview" class="section level3">
+<h3>RNNs overview</h3>
+<ul>
+<li><p>RNNs allow representing arbitrarily sized sequential inputs in fixed-sized vectors, while paying attention to the structured properties of the inputs</p></li>
+<li><p>This chapter describes RNNs as an abstraction: an interface for translating a sequence of inputs into a fixed sized output, that can be plugged as components in larger networks</p></li>
+<li><p><font color='green'>RNNs allow for language models that do not make the markov assumption, and condition the next word on the entire sentence history</font></p></li>
+<li><p>It is important to understand that the RNN does not do much on its own, but serves as a trainable component in a larger network</p></li>
+</ul>
+</div>
+<div id="the-rnn-abstraction" class="section level2">
+<h2>The RNN Abstraction</h2>
+<div id="the-rnn-abstraction-1" class="section level3">
+<h3>The RNN abstraction</h3>
+<ul>
+<li><p>On a high level, the RNN is a function that</p>
+<ul>
+<li>Takes as input an arbitrary length ordered sequence of <span class="math inline">\(n\)</span> <span class="math inline">\(d_{\text{in}}\)</span>-dimensional vectors <span class="math inline">\(\mathbf{x}_{1:n} = \mathbf{x}_1, \ldots, \mathbf{x}_n\)</span>, and</li>
+<li>Returns as output a single <span class="math inline">\(d_{\text{out}}\)</span> dimensional vector <span class="math inline">\(\mathbf{y}_n\)</span></li>
+<li>The output vector <span class="math inline">\(\mathbf{y}_n\)</span> is then used for further prediction
+<span class="math display">\[\begin{align*}
+&amp; \mathbf{y}_n = \text{RNN}(\mathbf{x}_{1:n})\\
+&amp; \mathbf{x}_i \in \mathbb{R}^{d_{\text{in}}}, \quad
+\mathbf{y}_n \in \mathbb{R}^{d_{\text{out}}}
+\end{align*}\]</span></li>
+</ul></li>
+<li><p>This implicitly defines an output vector <span class="math inline">\(\mathbf{y}_i\)</span> for each prefix <span class="math inline">\(\mathbf{x}_{1:i}\)</span>. We denote by RNN<span class="math inline">\(^*\)</span> the function returning this sequence
+<span class="math display">\[\begin{align*}
+&amp; \mathbf{y}_{1:n} = \text{RNN}^*(\mathbf{x}_{1:n})\\
+&amp; \mathbf{y}_i = \text{RNN}(\mathbf{x}_{1:i})\\
+&amp; \mathbf{x}_i \in \mathbb{R}^{d_{\text{in}}}, \quad
+\mathbf{y}_i \in \mathbb{R}^{d_{\text{out}}}
+\end{align*}\]</span></p></li>
+<li><p>The RNN function provides a framework for conditioning on the entire history <span class="math inline">\(\mathbf{x}_1, \ldots, \mathbf{x}_i\)</span> without the Markov assumption</p></li>
+</ul>
+</div>
+<div id="the-r-function-and-the-o-function" class="section level3">
+<h3>The R function and the O function</h3>
+<ul>
+<li><p>The RNN is defined recursively, by means of a function <span class="math inline">\(R\)</span> taking as the state vector <span class="math inline">\(\mathbf{s}_{i-1}\)</span> and an input vector <span class="math inline">\(\mathbf{x}_i\)</span> and returning a new state vector <span class="math inline">\(\mathbf{s}_i\)</span></p></li>
+<li><p>The state vector <span class="math inline">\(\mathbf{s}_i\)</span> is then mapped to an output vector <span class="math inline">\(\mathbf{y}_i\)</span> using a simple deterministic function <span class="math inline">\(O\)</span>
+<span class="math display">\[\begin{align*}
+\mathbf{s}_i &amp; = R(\mathbf{s}_{i-1}, \mathbf{x}_i)\\
+\mathbf{y}_i &amp; = O(\mathbf{s}_i)
+\end{align*}\]</span></p></li>
+<li><p>The functions <span class="math inline">\(R\)</span> and <span class="math inline">\(O\)</span> are the same across the sequence positions, but the RNN keeps track of the states of computation through the state vector <span class="math inline">\(\mathbf{s}_i\)</span> that is kept and being passed across invocations of <span class="math inline">\(R\)</span></p></li>
+</ul>
+</div>
+<div id="an-illustration-of-the-rnn" class="section level3">
+<h3>An illustration of the RNN</h3>
+<p><img src="/figures/NN_for_NLP_fig14_1.png" width="100%" style="display: block; margin: auto;" /></p>
+<ul>
+<li>We include here the parameters <span class="math inline">\(\theta\)</span> in order to highlight the fact that the same parameters are shared across all time steps</li>
+</ul>
+</div>
+<div id="an-illustration-of-the-rnn-unrolled" class="section level3">
+<h3>An illustration of the RNN (unrolled)</h3>
+<p><img src="/figures/NN_for_NLP_fig14_2.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="common-rnn-usages" class="section level2">
+<h2>Common RNN usages</h2>
+<div id="common-rnn-usage-patterns-acceptor" class="section level3">
+<h3>Common RNN usage patterns: acceptor</h3>
+<ul>
+<li><p><font color='blue'>Acceptor</font>: based on the supervision signal only at the final output vector <span class="math inline">\(\mathbf{y}_n\)</span></p>
+<ul>
+<li>Typically, the RNN’s output vector <span class="math inline">\(\mathbf{y}_n\)</span> is fed into a fully connected layer or an MLP, which produce a prediction</li>
+</ul></li>
+</ul>
+<p><img src="/figures/NN_for_NLP_fig14_3.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="common-rnn-usage-patterns-encoder" class="section level3">
+<h3>Common RNN usage patterns: encoder</h3>
+<ul>
+<li><font color='blue'>Encoder</font>: also only uses the final output vector <span class="math inline">\(\mathbf{y}_n\)</span>. Here <span class="math inline">\(\mathbf{y}_n\)</span> is treated as an encoding of the information in the sequence, and is used as additional information together with other signals</li>
+</ul>
+</div>
+<div id="common-rnn-usage-patterns-transducer" class="section level3">
+<h3>Common RNN usage patterns: transducer</h3>
+<ul>
+<li><p><font color='blue'>Transducer</font>: The loss of unrolled sequence will be used</p></li>
+<li><p>A natural use case of the transduction is for language modeling, where the sequence of words <span class="math inline">\(\mathbf{x}_{1:i}\)</span> is used to predict a distribution over the <span class="math inline">\((i+1)\)</span>th word</p></li>
+<li><p><font color='green'>RNN based lanuage models are shown to provide vastly better perplxities than traditional language models</font></p></li>
+<li><p><font color='green'>Using RNNs as transducers allows us to relax the Markov assumption and condition on the entire prediction history</font></p></li>
+</ul>
+</div>
+<div id="an-illustration-of-transducer" class="section level3">
+<h3>An illustration of transducer</h3>
+<p><img src="/figures/NN_for_NLP_fig14_4.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="bidirectional-rnns-and-deep-rnns" class="section level2">
+<h2>Bidirectional RNNs and Deep RNNs</h2>
+<div id="bidirectional-rnns-birnn" class="section level3">
+<h3>Bidirectional RNNs (biRNN)</h3>
+<ul>
+<li><p><font color='green'>A useful elaboration of an RNN is a biRNN</font></p></li>
+<li><p>Consider an input sequence <span class="math inline">\(\mathbf{x}_{1:n}\)</span>. The biRNN works by maintaining two separate states, <span class="math inline">\(\mathbf{s}_i^f\)</span> and <span class="math inline">\(\mathbf{s}_i^b\)</span> for each input position <span class="math inline">\(i\)</span></p>
+<ul>
+<li>The <font color='blue'>forward state</font> <span class="math inline">\(\mathbf{s}_i^f\)</span> is based on <span class="math inline">\(\mathbf{x}_1, \mathbf{x}_2, \ldots, \mathbf{x}_i\)</span></li>
+<li>The <font color='blue'>backward state</font> <span class="math inline">\(\mathbf{s}_i^b\)</span> is based on <span class="math inline">\(\mathbf{x}_n, \mathbf{x}_{n-1}, \ldots, \mathbf{x}_i\)</span></li>
+</ul></li>
+<li><p>The output at position <span class="math inline">\(i\)</span> is based on the concatenation of the two output vectors
+<span class="math display">\[
+\mathbf{y}_i 
+= \left[ \mathbf{y}_i^f; \mathbf{y}_i^b \right] 
+= \left[ O^f(\mathbf{s}_i^f); O^b(\mathbf{s}_i^b) \right]
+\]</span></p></li>
+<li><p>Thus, we define biRNN as
+<span class="math display">\[
+\text{biRNN}(\mathbf{x}_{1:n}, i) = \mathbf{y}_i
+= \left[ \text{RNN}^f(\mathbf{x}_{1:i}), \text{RNN}^b(\mathbf{x}_{n:i})
+\right]
+\]</span></p></li>
+</ul>
+</div>
+<div id="an-illustration-of-birnn" class="section level3">
+<h3>An illustration of biRNN</h3>
+<p><img src="/figures/NN_for_NLP_fig14_5.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="deep-multi-layer-stacked-rnns" class="section level3">
+<h3>Deep (multi-layer stacked) RNNs</h3>
+<ul>
+<li><p>The input for the first RNN are <span class="math inline">\(\mathbf{x}_{1:n}\)</span>, while the input of the <span class="math inline">\(j\)</span>th RNN (<span class="math inline">\(j \geq 2\)</span>) are the outputs of the RNN below it, <span class="math inline">\(\mathbf{y}_{1:n}^{j-1}\)</span></p></li>
+<li><p>While it is not theoretically clear what is the additional power gained by the deeper architecture, it was observed empirically that deep RNNs work better than shallower ones on some tasks</p></li>
+<li><p>The author’s experience: <font color='green'>using two or more layers indeed often improves over using a single one</font></p></li>
+</ul>
+</div>
+<div id="a-note-on-reading-the-literature" class="section level3">
+<h3>A note on reading the literature</h3>
+<ul>
+<li><p>Unfortunately, it is often the case that inferring the exact model form from reading its description in a research paper can be quite challenging</p></li>
+<li>For example,
+<ul>
+<li>The inputs to the RNN can be either one-hot vectors or embedded representations</li>
+<li>The input sequence can be padded with start-of-sequence and/or end-of-sequence symbols, or not</li>
+</ul></li>
+</ul>
+</div>
+<div id="an-illustration-of-deep-rnn" class="section level3">
+<h3>An illustration of deep RNN</h3>
+<p><img src="/figures/NN_for_NLP_fig14_7.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="ch15-concrete-recurrent-neural-network-architectures" class="section level1">
+<h1>Ch15 Concrete Recurrent Neural Network Architectures</h1>
+<div id="simple-rnn" class="section level2">
+<h2>Simple RNN</h2>
+<div id="simple-rnn-srnn" class="section level3">
+<h3>Simple RNN (SRNN)</h3>
+<ul>
+<li>The nonlinear function <span class="math inline">\(g\)</span> is usually tanh or ReLU</li>
+<li><p>The output function <span class="math inline">\(O(\cdot)\)</span> is the identify function
+<span class="math display">\[\begin{align*}
+\mathbf{s}_i &amp; = R_\text{SRNN}(\mathbf{x}_i, \mathbf{s}_{i-1})
+= g\left( \mathbf{s}_{i-1} \mathbf{W}^s + \mathbf{x}_{i} \mathbf{W}^x + \mathbf{b}  \right)\\
+\mathbf{y}_i &amp; = O_\text{SRNN}(\mathbf{s}_i) = \mathbf{s}_i
+\end{align*}\]</span>
+<span class="math display">\[
+\mathbf{s}_i, \mathbf{y}_i \in \mathbb{R}^{d_s}, \quad
+\mathbf{x}_i \in \mathbb{R}^{d_x}, \quad
+\mathbf{W}^x \in \mathbb{R}^{d_x \times d_s}, \quad
+\mathbf{W}^s \in \mathbb{R}^{d_s \times d_s}, \quad
+\mathbf{b} \in \mathbb{R}^{d_s}
+\]</span></p></li>
+<li><p><font color='red'>SRNN is hard to train effectively because of the vanishing gradients problem</font></p></li>
+</ul>
+</div>
+</div>
+<div id="gated-architectures-lstm-and-gru" class="section level2">
+<h2>Gated Architectures: LSTM and GRU</h2>
+<div id="gated-architectures" class="section level3">
+<h3>Gated architectures</h3>
+<ul>
+<li><p><font color='red'>An apparent problem with SRNN is that the memory access is not controlled. At each step of the computation, the entire memory state is read, and the entire memory state is written</font></p></li>
+<li><p>We denote the hadamard-product operation (element-wise product) as <span class="math inline">\(\odot\)</span></p></li>
+<li><p>To control memory access, consider a binary vector <span class="math inline">\(\mathbf{g} \in \{0, 1\}^{n}\)</span></p></li>
+<li><p>For a memory <span class="math inline">\(\mathbf{s} \in \mathbb{R}^d\)</span> and an input <span class="math inline">\(\mathbf{x} \in \mathbb{R}^d\)</span>, the computation</p></li>
+</ul>
+<p><span class="math display">\[
+\mathbf{s}^{\prime} \longleftarrow \mathbf{g} \odot \mathbf{x}
++ (\mathbf{1} - \mathbf{g} ) \odot \mathbf{s}
+\]</span>
+“reads” the entries in <span class="math inline">\(\mathbf{x}\)</span> that correspond to the 1 values in <span class="math inline">\(\mathbf{g}\)</span>, and writes them to the new memory <span class="math inline">\(\mathbf{s}&#39;\)</span>.
+Locations that weren’t read to are copied from the memory <span class="math inline">\(\mathbf{s}\)</span> to the new memory <span class="math inline">\(\mathbf{s}&#39;\)</span> through the use of the gate <span class="math inline">\((1-\mathbf{g})\)</span></p>
+</div>
+<div id="an-illustration-of-binary-gate" class="section level3">
+<h3>An illustration of binary gate</h3>
+<p><img src="/figures/NN_for_NLP_fig15_1.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="differentiable-gates" class="section level3">
+<h3>Differentiable gates</h3>
+<ul>
+<li><p>The gates should not be static, but be controlled by the current memory state and the input, and their behavior should be learned</p></li>
+<li><p><font color='red'>Obstacle: learning in our framework entails being differentiable (because of the backpropagation algorithm), but the binary 0-1 values used in th e gates are not differentiable</font></p></li>
+<li><p><font color='green'>Solution: approximate the hard gating mechanism with a soft, but diffrentiable, gating mechanism</font></p></li>
+<li><p>To achieve these <font color='blue'>differentiable gates</font>, we replace the requirement that <span class="math inline">\(\mathbf{g} \in \{0, 1\}^{n}\)</span>, and allow arbitrary real numbers <span class="math inline">\(\mathbf{g}&#39; \in \mathbb{R}^{n}\)</span>. These are then passed through a sigmoid function <span class="math inline">\(\sigma(\mathbf{g}&#39;)\)</span>, which take values in the range <span class="math inline">\((0, 1)\)</span></p></li>
+</ul>
+</div>
+<div id="lstm" class="section level3">
+<h3>LSTM</h3>
+<ul>
+<li><font color='blue'>Long Short-Term Memory (LSTM)</font>: explicitly splits the state vector <span class="math inline">\(\mathbf{s}_i\)</span> into two halves, where one half is treated as “memory cells” <span class="math inline">\(\mathbf{c}_j\)</span>, and the hidden state component <span class="math inline">\(\mathbf{h}_j\)</span></li>
+</ul>
+<p><span class="math display">\[
+\mathbf{s}_j = \text{R}_{\text{LSTM}}(\mathbf{s}_{j-1}, \mathbf{x}_j) = \left[\mathbf{c}_j; \mathbf{h}_j  \right]
+\]</span></p>
+<ul>
+<li>There are three gates, <span class="math inline">\(\mathbf{i}\)</span>nput, <span class="math inline">\(\mathbf{f}\)</span>orget, and <span class="math inline">\(\mathbf{o}\)</span>utput
+<span class="math display">\[\begin{align*}
+\mathbf{c}_j &amp;= \mathbf{f} \odot \mathbf{c}_{j-1} +  \mathbf{i} \odot \mathbf{z}\\
+\mathbf{z} &amp;= \text{tanh}\left(\mathbf{x}_j \mathbf{W}^{xz} + \mathbf{h}_{j-1} \mathbf{W}^{hz} \right)\\
+\mathbf{h}_{j} &amp;= \mathbf{o} \odot \text{tanh}(\mathbf{c}_j) \\
+\mathbf{y}_j &amp;= O_{\text{LSTM}}(\mathbf{s}_j) = \mathbf{h}_{j}
+\end{align*}\]</span></li>
+</ul>
+</div>
+<div id="lstm-gates" class="section level3">
+<h3>LSTM gates</h3>
+<ul>
+<li><p>The gates are based on <span class="math inline">\(\mathbf{x}_j, \mathbf{h}_{j-1}\)</span> and are passed through a sigmoid activation function
+<span class="math display">\[\begin{align*}
+\mathbf{i} &amp; = \sigma\left( \mathbf{x}_j \mathbf{W}^{xi} + \mathbf{h}_{j-1} \mathbf{W}^{hi} \right)\\
+\mathbf{f} &amp; = \sigma\left( \mathbf{x}_j \mathbf{W}^{xf} + \mathbf{h}_{j-1} \mathbf{W}^{hf} \right)\\
+\mathbf{o} &amp; = \sigma\left( \mathbf{x}_j \mathbf{W}^{xo} + \mathbf{h}_{j-1} \mathbf{W}^{ho} \right)\\
+\end{align*}\]</span></p></li>
+<li><p>When training LSTM networks, it is strongly recommended to always initialize the bias term of the forget gate to be close to one</p></li>
+</ul>
+</div>
+<div id="gru" class="section level3">
+<h3>GRU</h3>
+<ul>
+<li><p><font color='blue'>Gated Recurrent Unit (GRU)</font> is shown to perform comparably to the LSTM on several datasets</p></li>
+<li><p>GRU has substantially fewer gates that LSTM and doesn’t have a separate memory component
+<span class="math display">\[\begin{align*}
+\mathbf{s}_j &amp;= \text{R}_{\text{GRU}}(\mathbf{s}_{j-1}, \mathbf{x}_j) = \mathbf{(\mathbf{1} - \mathbf{z})} \odot \mathbf{s}_{j-1} +  \mathbf{z} \odot \tilde{\mathbf{s}}_j\\
+\tilde{\mathbf{s}}_j &amp;= \text{tanh}\left( \mathbf{x}_j \mathbf{W}^{xs} + (\mathbf{r}\odot \mathbf{s}_{j-1}) \mathbf{W}^{sg}\right)\\
+\mathbf{y}_j &amp;= O_{\text{GRU}}(\mathbf{s}_j) = \mathbf{s}_{j}
+\end{align*}\]</span></p></li>
+<li>Gate <span class="math inline">\(\mathbf{r}\)</span> controls access to the previous state
+<span class="math inline">\(\mathbf{s}_{j-1}\)</span> in <span class="math inline">\(\tilde{\mathbf{s}}_j\)</span></li>
+<li><p>Gate <span class="math inline">\(\mathbf{z}\)</span> controls the proportions of the interpolation between <span class="math inline">\(\mathbf{s}_{j-1}\)</span> and <span class="math inline">\(\tilde{\mathbf{s}}_j\)</span> when in the updated state <span class="math inline">\(\mathbf{s}_j\)</span>
+<span class="math display">\[\begin{align*}
+\mathbf{z} &amp; = \sigma\left( \mathbf{x}_j \mathbf{W}^{xz} + \mathbf{s}_{j-1} \mathbf{W}^{sz} \right)\\
+\mathbf{r} &amp; = \sigma\left( \mathbf{x}_j \mathbf{W}^{xr} + \mathbf{s}_{j-1} \mathbf{W}^{sr} \right)
+\end{align*}\]</span></p></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="ch16-modeling-with-recurrent-networks" class="section level1">
+<h1>Ch16 Modeling with Recurrent Networks</h1>
+<div id="sentiment-classification" class="section level2">
+<h2>Sentiment Classification</h2>
+<div id="acceptors" class="section level3">
+<h3>Acceptors</h3>
+<ul>
+<li><p>The simplest use of RNN: read in an input sequence, and produce a binary of multi-class answer at the end</p></li>
+<li><p><font color='red'>The power of RNN is often not needed for many natural language classification tasks, because the word-order and sentence structure turn out to not be very important in many cases, and bag-of-words or bag-of-ngrams classifier often works just as well or even better than RNN acceptors</font></p></li>
+</ul>
+</div>
+<div id="sentiment-classification-sentence-level" class="section level3">
+<h3>Sentiment classification: sentence level</h3>
+<ul>
+<li><p>The sentence level sentiment classification is straightforward to model using an RNN acceptor:</p>
+<ul>
+<li>Tokenization</li>
+<li>RNN reads in the words of the sentence one at a time</li>
+<li>The final RNN state is then fed into a MLP followed by a softmax-layer with two outputs</li>
+<li>The network is trained with cross-entropy loss based on the gold sentiment labels
+<span class="math display">\[\begin{align*}
+p(\text{label}=k \mid w_{1:n}) &amp; = \hat{\mathbf{y}}_{[k]}\\
+\hat{\mathbf{y}} &amp;= \text{softmax}\left\{ \text{MLP}\left[\text{RNN}(x_{1:n})  \right] \right\}\\
+\mathbf{x}_{1:n} &amp;= \mathbf{E}_{[w_1]}, \ldots, \mathbf{E}_{[w_n]}
+\end{align*}\]</span></li>
+</ul></li>
+<li><p>biRNN: it is often helpful to extend the RNN model into the biRNN
+<span class="math display">\[
+\hat{\mathbf{y}} = \text{softmax}\left\{ \text{MLP}\left[\text{RNN}^f(x_{1:n});  \text{RNN}^b(x_{n:1}) \right] \right\}
+\]</span></p></li>
+</ul>
+</div>
+<div id="hierarchical-birnn" class="section level3">
+<h3>Hierarchical biRNN</h3>
+<ul>
+<li><p>For longer sentences, it can be useful to use a hierarchical architecture, in which the sentence is split into smaller spans based on punctuation</p></li>
+<li><p>Suppose a sentence <span class="math inline">\(w_{1:n}\)</span> is split into <span class="math inline">\(m\)</span> spans <span class="math inline">\(w_{1:\ell_1}^1, \ldots, w_{1:\ell_m}^m\)</span>, then the architecture is
+<span class="math display">\[\begin{align*}
+p(\text{label}=k \mid w_{1:n}) &amp; = \hat{\mathbf{y}}_{[k]}\\
+\hat{\mathbf{y}} &amp;= \text{softmax}\left\{ \text{MLP}\left[\text{RNN}(\mathbf{z}_{1:m})\right] \right\}\\
+\mathbf{z}_i &amp;= \left[\text{RNN}^f(\mathbf{x}_{1:\ell_i}^i), \text{RNN}^b(\mathbf{x}_{\ell_i:1}^i)\right] \\
+\mathbf{x}_{1:\ell_i}^i &amp;= \mathbf{E}_{[w_1^i]}, \ldots, \mathbf{E}_{[w_{\ell_i}^i]}
+\end{align*}\]</span></p></li>
+<li><p>Each of the <span class="math inline">\(m\)</span> different spans may convey a different sentiment</p></li>
+<li><p>The higher-level acceptor reads the summary <span class="math inline">\(\mathbf{z}_{1:m}\)</span> produced by the lower level encoder, and decides on the overall sentiment</p></li>
+</ul>
+</div>
+<div id="document-level-sentiment-classification" class="section level3">
+<h3>Document level sentiment classification</h3>
+<ul>
+<li><p>Document level sentiment classification and harder than sentence level classification</p></li>
+<li><p>A hierarchical architecture is useful:</p>
+<ul>
+<li>Each sentence <span class="math inline">\(s_i\)</span> is encoded using a gated RNN, producing a vector <span class="math inline">\(\mathbf{z}_i\)</span></li>
+<li>The vectors <span class="math inline">\(\mathbf{z}_{1:n}\)</span> are then fed into a second gated RNN, producing a vector <span class="math inline">\(\mathbf{h} = \text{RNN}(\mathbf{z}_{1:n})\)</span></li>
+<li><span class="math inline">\(\mathbf{h}\)</span> is then used fro prediction <span class="math inline">\(\hat{\mathbf{y}} = \text{softmax}(\text{MLP}(\mathbf{h}))\)</span></li>
+</ul></li>
+<li><p>Keeping all intermediate vectors of the document-level RNN produces slightly higher results in some cases
+<span class="math display">\[\begin{align*}
+\mathbf{h}_{1:n} &amp;= \text{RNN}^*(\mathbf{z}_{1:n})\\
+\hat{\mathbf{y}} &amp;= \text{softmax}\left(\text{MLP}\left(\frac{1}{n}\sum_{i=1}^n\mathbf{h}_i\right)\right)
+\end{align*}\]</span></p></li>
+</ul>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li>Goldberg, Yoav. (2017). Neural Network Methods for Natural Language Processing, Morgan &amp; Claypool</li>
+</ul>
+</div>
+</div>
+</div>
