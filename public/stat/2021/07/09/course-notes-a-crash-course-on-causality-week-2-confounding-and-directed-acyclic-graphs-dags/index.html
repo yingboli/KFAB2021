@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.88.1" />
+
+
+<title>Course Notes: A Crash Course on Causality -- Week 2: Confounding and Directed Acyclic Graphs (DAGs) - King Fox And Butterfly</title>
+<meta property="og:title" content="Course Notes: A Crash Course on Causality -- Week 2: Confounding and Directed Acyclic Graphs (DAGs) - King Fox And Butterfly">
+
+
+  <link href='http://liyingbo.com/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/yingbo_headshot.jpg"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/cooking/">Cooking</a></li>
+    
+    <li><a href="/stat/">Statistics</a></li>
+    
+    <li><a href="/life/">Life</a></li>
+    
+    <li><a href="/about/">About Me</a></li>
+    
+    <li><a href="/categories/">Categories</a></li>
+    
+    <li><a href="/tags/">Tags</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+
+    <h1 class="article-title">Course Notes: A Crash Course on Causality -- Week 2: Confounding and Directed Acyclic Graphs (DAGs)</h1>
+
+    
+
+    <div class="article-content">
+      
+
+<div id="TOC">
+<ul>
+<li><a href="#confounding">Confounding</a></li>
+<li><a href="#causal-graphs">Causal Graphs</a><ul>
+<li><a href="#terminologies-of-directed-acyclic-graphs-dags">Terminologies of Directed Acyclic Graphs (DAGs)</a></li>
+<li><a href="#relationship-between-dags-and-probability-distributions">Relationship between DAGs and probability distributions</a></li>
+<li><a href="#types-of-paths-blocking-and-colliders">Types of paths, blocking, and colliders</a></li>
+<li><a href="#d-separation">d-separation</a></li>
+<li><a href="#frontdoor-and-backdoor-paths">Frontdoor and backdoor paths</a></li>
+<li><a href="#backdoor-path-criterion">Backdoor path criterion</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p><strong><em><font color='red'>For the pdf slides, click <a href="/pdf/070521_crash_course_Causality_week2.pdf">here</a></font></em></strong></p>
+<div id="confounding" class="section level1">
+<h1>Confounding</h1>
+<div id="confounding-1" class="section level3">
+<h3>Confounding</h3>
+<ul>
+<li><p><font color='blue'>Confounders</font>: variables that affect both the treatment and the outcome</p>
+<ul>
+<li><p>If we assign treatment based on a coin flip, since the coin flip doesn’t affect the outcome, it’s not a confounder</p></li>
+<li><p>If older people are at higher risk of heart disease (the outcome) and are more likely to receive the treatment, then age is a confounder</p></li>
+</ul></li>
+<li><p>To control for confounders, we need to</p>
+<ol style="list-style-type: decimal">
+<li>Identify a set of variables <span class="math inline">\(X\)</span> that will make the ignorability assumption hold</li>
+</ol>
+<ul>
+<li><font color='green'>Causal graphs will help answer this question</font></li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>Use statistical methods to control for these variables and estimate causal effects</li>
+</ol></li>
+</ul>
+</div>
+</div>
+<div id="causal-graphs" class="section level1">
+<h1>Causal Graphs</h1>
+<div id="overview-of-graphical-models" class="section level3">
+<h3>Overview of graphical models</h3>
+<ul>
+<li><p>Encode assumption about relationship among variables</p>
+<ul>
+<li>Tells use which variables are independent, dependent,
+conditionally independent, etc</li>
+</ul></li>
+</ul>
+</div>
+<div id="terminologies-of-directed-acyclic-graphs-dags" class="section level2">
+<h2>Terminologies of Directed Acyclic Graphs (DAGs)</h2>
+<div id="terminology-of-graphs" class="section level3">
+<h3>Terminology of graphs</h3>
+<ul>
+<li><font color='blue'>Directed graph</font>: shows that <span class="math inline">\(A\)</span> affects <span class="math inline">\(Y\)</span></li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-1-1.png" width="16%" /></p>
+<ul>
+<li><font color='blue'>Undirected graph</font>: <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span> are associated with each other</li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-2-1.png" width="16%" /></p>
+<ul>
+<li><p><font color='blue'>Nodes</font> or <font color='blue'>vertices</font>: <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span></p>
+<ul>
+<li>We can think of them as variables</li>
+</ul></li>
+<li><p><font color='blue'>Edge</font>: the link between <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span></p></li>
+<li><p><font color='blue'>Directed graph</font>: all edges are directed</p></li>
+<li><p><font color='blue'>Adjacent</font> variables: if connected by an edge</p></li>
+</ul>
+</div>
+<div id="paths" class="section level3">
+<h3>Paths</h3>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-3-1.png" width="25%" /></p>
+<ul>
+<li><p>A <font color='blue'>path</font> is a way to get from one vertex to another, traveling along edges</p></li>
+<li>There are 2 paths from <span class="math inline">\(W\)</span> to <span class="math inline">\(B\)</span>:
+<ul>
+<li><span class="math inline">\(W \rightarrow Z \rightarrow B\)</span></li>
+<li><span class="math inline">\(W \rightarrow Z \rightarrow A \rightarrow B\)</span></li>
+</ul>
+<h3 id="directed-acyclic-graphs-dags">Directed Acyclic Graphs (DAGs)</h3>
+<ul>
+<li>No undirected paths</li>
+</ul></li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-4-1.png" width="16%" /></p>
+<ul>
+<li>No cycles</li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-5-1.png" width="16%" /></p>
+<ul>
+<li>This is a DAG</li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-6-1.png" width="16%" /></p>
+</div>
+<div id="more-terminology" class="section level3">
+<h3>More terminology</h3>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-7-1.png" width="25%" /></p>
+<ul>
+<li><span class="math inline">\(A\)</span> is <span class="math inline">\(Z\)</span>’s <font color='blue'>parent</font></li>
+<li><span class="math inline">\(D\)</span> has two parents, <span class="math inline">\(B\)</span> and <span class="math inline">\(Z\)</span></li>
+<li><span class="math inline">\(B\)</span> is a <font color='blue'>child</font> of <span class="math inline">\(Z\)</span></li>
+<li><span class="math inline">\(D\)</span> is a <font color='blue'>descendant</font> of <span class="math inline">\(A\)</span></li>
+<li><span class="math inline">\(Z\)</span> is a <font color='blue'>ancestor</font> of <span class="math inline">\(D\)</span></li>
+</ul>
+</div>
+</div>
+<div id="relationship-between-dags-and-probability-distributions" class="section level2">
+<h2>Relationship between DAGs and probability distributions</h2>
+<div id="dag-example-1" class="section level3">
+<h3>DAG example 1</h3>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-8-1.png" width="25%" /></p>
+<ul>
+<li><p>C is independent of all variables
+<span class="math display">\[
+P(C\mid A, B, D) = P(C)
+\]</span></p></li>
+<li><p><span class="math inline">\(B\)</span> and <span class="math inline">\(C, D\)</span> are independent, conditional on <span class="math inline">\(A\)</span>
+<span class="math display">\[
+P(B\mid A, C, D) = P(B\mid A) \Longleftrightarrow
+B \perp C, D \mid A
+\]</span></p></li>
+<li><p><span class="math inline">\(B\)</span> and <span class="math inline">\(D\)</span> are marginally dependent
+<span class="math display">\[
+P(B\mid D) \neq P(B)
+\]</span></p></li>
+</ul>
+</div>
+<div id="dag-example-2" class="section level3">
+<h3>DAG example 2</h3>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-9-1.png" width="25%" /></p>
+<ul>
+<li><p><span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are independent, conditional on <span class="math inline">\(C\)</span> and <span class="math inline">\(D\)</span>
+<span class="math display">\[
+P(A\mid B, C, D) = P(A\mid C, D) \Longleftrightarrow
+A \perp B \mid C, D
+\]</span></p></li>
+<li><p><span class="math inline">\(C\)</span> and <span class="math inline">\(D\)</span> are independent, conditional on <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>
+<span class="math display">\[
+P(D\mid A, B, C) = P(D\mid A, B) \Longleftrightarrow
+D \perp C \mid A, B
+\]</span></p></li>
+</ul>
+</div>
+<div id="decomposition-of-joint-distributions" class="section level3">
+<h3>Decomposition of joint distributions</h3>
+<ol style="list-style-type: decimal">
+<li><p>Start with <font color='blue'>roots</font> (nodes with no parents)</p></li>
+<li><p>Proceed down the descendant line, always conditioning on parents</p></li>
+</ol>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-10-1.png" width="25%" /></p>
+<ul>
+<li><span class="math inline">\(P(A, B, C, D) = P(C)P(D)P(A\mid D)P(B\mid A)\)</span></li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-11-1.png" width="25%" /></p>
+<ul>
+<li><span class="math inline">\(P(A, B, C, D) = P(D)P(A\mid D)P(B\mid D)P(C\mid A, B)\)</span></li>
+</ul>
+</div>
+<div id="compatibility-between-dags-and-distributions" class="section level3">
+<h3>Compatibility between DAGs and distributions</h3>
+<ul>
+<li><p>In the above examples, the DAGs admit the probability
+factorizations. Hence, the probability function and the DAG are <font color='blue'>compatible</font></p></li>
+<li><p>DAGs that are compatible with a particular probability function are not necessarily unique</p></li>
+<li><p>Example 1:</p></li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-12-1.png" width="16%" /></p>
+<ul>
+<li>Example 2:</li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-13-1.png" width="16%" /></p>
+<ul>
+<li>In both of the above examples, <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are dependent, i.e., <span class="math inline">\(P(A, B) \neq P(A) P(B)\)</span></li>
+</ul>
+</div>
+</div>
+<div id="types-of-paths-blocking-and-colliders" class="section level2">
+<h2>Types of paths, blocking, and colliders</h2>
+<div id="types-of-paths" class="section level3">
+<h3>Types of paths</h3>
+<ul>
+<li><font color='blue'>Forks</font></li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-14-1.png" width="25%" /></p>
+<ul>
+<li><font color='blue'>Chains</font></li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-15-1.png" width="25%" /></p>
+<ul>
+<li><font color='blue'>Inverted forks</font></li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-16-1.png" width="25%" /></p>
+</div>
+<div id="when-do-paths-induce-associations" class="section level3">
+<h3>When do paths induce associations?</h3>
+<ul>
+<li><p>If nodes <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are on the ends of a path, then they are associated (via this path), if</p>
+<ul>
+<li>Some information flows to both of them (aka Fork), or</li>
+<li>Information from one makes it to the other (aka Chain)</li>
+</ul></li>
+<li><p>Example: information flows from <span class="math inline">\(E\)</span> to <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span></p></li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-17-1.png" width="20%" /></p>
+<ul>
+<li>Example: information from <span class="math inline">\(A\)</span> makes it to <span class="math inline">\(B\)</span></li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-18-1.png" width="50%" /></p>
+</div>
+<div id="paths-that-do-not-induce-association" class="section level3">
+<h3>Paths that do not induce association</h3>
+<ul>
+<li>Information from <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> collide at <span class="math inline">\(G\)</span></li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-19-1.png" width="25%" /></p>
+<ul>
+<li><p><span class="math inline">\(G\)</span> is a <font color='blue'>collider</font></p></li>
+<li><p><span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> both affect <span class="math inline">\(G\)</span>:</p>
+<ul>
+<li>Information does not flow from <span class="math inline">\(G\)</span> to either <span class="math inline">\(A\)</span> or <span class="math inline">\(B\)</span></li>
+<li><strong>So <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are independent</strong> (if this is the only path between them)</li>
+</ul></li>
+<li><p>If there is a collider anywhere on the path from <span class="math inline">\(A\)</span> to <span class="math inline">\(B\)</span>, then no association between <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> comes from this path</p></li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-20-1.png" width="30%" /></p>
+</div>
+<div id="blocking-on-a-chain" class="section level3">
+<h3>Blocking on a chain</h3>
+<ul>
+<li><p>Paths can be <font color='blue'>blocked</font> by conditioning on nodes in the path</p></li>
+<li><p>In the graph below, <span class="math inline">\(G\)</span> is a node in the middle of a chain.
+If we condition on <span class="math inline">\(G\)</span>, then we block the path from <span class="math inline">\(A\)</span> to <span class="math inline">\(B\)</span></p></li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-21-1.png" width="25%" /></p>
+<ul>
+<li>For example, <span class="math inline">\(A\)</span> is the temperature, <span class="math inline">\(G\)</span> is whether sidewalks are icy, and <span class="math inline">\(B\)</span> is whether someone falls
+<ul>
+<li><span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are associated marginally</li>
+<li>But if we conditional on the sidewalk condition <span class="math inline">\(G\)</span>, then <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are independent</li>
+</ul></li>
+</ul>
+</div>
+<div id="blocking-on-a-fork" class="section level3">
+<h3>Blocking on a fork</h3>
+<ul>
+<li><p>Associations on a fork can also be blocked</p></li>
+<li><p>In the following fork, if we condition on <span class="math inline">\(G\)</span>, then the path from <span class="math inline">\(A\)</span> to <span class="math inline">\(B\)</span> is block</p></li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-22-1.png" width="25%" /></p>
+</div>
+<div id="no-need-to-to-block-a-collider" class="section level3">
+<h3>No need to to block a collider</h3>
+<ul>
+<li>The opposite situation occurs if a conllider is blocked</li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-23-1.png" width="25%" /></p>
+<ul>
+<li><p>In the following inverted fork</p>
+<ul>
+<li>Originally <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are not associated, since information collides at <span class="math inline">\(G\)</span></li>
+<li><font color='red'>But if we condition on <span class="math inline">\(G\)</span>, then <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> become associated</font></li>
+</ul></li>
+<li><p>Example: <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are the states of two on/off switches, and <span class="math inline">\(G\)</span> is whether the lightbulb is lit up.</p>
+<ul>
+<li><p>The two switches <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are determined by two independent coin flips</p></li>
+<li><p><span class="math inline">\(G\)</span> is lit up only if both <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are in the on state</p></li>
+<li><p>Conditional on <span class="math inline">\(G\)</span>, the two switches are not independent: if <span class="math inline">\(G\)</span> is off, then <span class="math inline">\(A\)</span> must be off if <span class="math inline">\(B\)</span> is on</p></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="d-separation" class="section level2">
+<h2>d-separation</h2>
+<div id="d-separation-1" class="section level3">
+<h3>d-separation</h3>
+<ul>
+<li><p>A path is <font color='blue'>d-separated</font> by a set of nodes <span class="math inline">\(C\)</span> if</p>
+<ul>
+<li><p>It contains a chain (<span class="math inline">\(D\rightarrow E \rightarrow F\)</span>) and the middle part is in <span class="math inline">\(C\)</span>, or</p></li>
+<li><p>It contains a fork (<span class="math inline">\(D\leftarrow E \rightarrow F\)</span>) and the middle part is in <span class="math inline">\(C\)</span>, or</p></li>
+<li><p>It contains an inverted fork (<span class="math inline">\(D\rightarrow E \leftarrow F\)</span>), and the middle part is not in <span class="math inline">\(C\)</span>, nor are any descendants of it</p></li>
+</ul></li>
+<li><p>Two nodes, <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>, are d-separated by a set of nodes <span class="math inline">\(C\)</span> if it <strong>blocks every path</strong> from <span class="math inline">\(A\)</span> to <span class="math inline">\(B\)</span>. Thus
+<span class="math display">\[
+A\perp B \mid C
+\]</span></p></li>
+<li><p>Recall the ignorability assumption
+<span class="math display">\[
+Y^0, Y^1 \perp A \mid X
+\]</span></p></li>
+</ul>
+</div>
+<div id="confounders-on-paths" class="section level3">
+<h3>Confounders on paths</h3>
+<ul>
+<li>A simple DAG: <span class="math inline">\(X\)</span> is a confounder between the relationship between treatment <span class="math inline">\(A\)</span> and outcome <span class="math inline">\(Y\)</span></li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-24-1.png" width="20%" /></p>
+<ul>
+<li><p>A slightly more complicated graph</p>
+<ul>
+<li><span class="math inline">\(V\)</span> affects <span class="math inline">\(A\)</span> directly</li>
+<li><span class="math inline">\(V\)</span> affects <span class="math inline">\(Y\)</span> indirectly, through <span class="math inline">\(W\)</span></li>
+<li>Thus, <span class="math inline">\(V\)</span> is a confounder</li>
+</ul></li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-25-1.png" width="30%" /></p>
+</div>
+</div>
+<div id="frontdoor-and-backdoor-paths" class="section level2">
+<h2>Frontdoor and backdoor paths</h2>
+<div id="frontdoor-paths" class="section level3">
+<h3>Frontdoor paths</h3>
+<ul>
+<li><p>A <font color='blue'>frontdoor path</font> from <span class="math inline">\(A\)</span> to <span class="math inline">\(Y\)</span> is one that <strong>begins with an arrow emanating out of <span class="math inline">\(A\)</span></strong></p></li>
+<li><p><font color='green'>We do not worry about frontdoor paths, because they capture effects of treatment</font></p></li>
+<li><p>Example: <span class="math inline">\(A\rightarrow Y\)</span> is a frontdoor path from <span class="math inline">\(A\)</span> to <span class="math inline">\(Y\)</span></p></li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-26-1.png" width="20%" /></p>
+<ul>
+<li>Example: <span class="math inline">\(A\rightarrow Z \rightarrow Y\)</span> is a frontdoor path from <span class="math inline">\(A\)</span> to <span class="math inline">\(Y\)</span></li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-27-1.png" width="25%" /></p>
+</div>
+<div id="do-not-block-nodes-on-the-frontdoor-path" class="section level3">
+<h3>Do not block nodes on the frontdoor path</h3>
+<ul>
+<li><p>If we are interested in the causal effect of <span class="math inline">\(A\)</span> on <span class="math inline">\(Y\)</span>, we should not control for (aka block) <span class="math inline">\(Z\)</span></p>
+<ul>
+<li>This is because controlling for <span class="math inline">\(Z\)</span> would be controlling for an affect of treatment</li>
+</ul></li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-28-1.png" width="25%" /></p>
+<ul>
+<li>Causal mediation analysis involves understanding frontdoor paths from <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span></li>
+</ul>
+</div>
+<div id="backdoor-paths" class="section level3">
+<h3>Backdoor paths</h3>
+<ul>
+<li><p><font color='blue'>Backdoor paths</font> from treatment <span class="math inline">\(A\)</span> to outcome <span class="math inline">\(Y\)</span> are paths from <span class="math inline">\(A\)</span> to <span class="math inline">\(Y\)</span> that <strong>travels through arrows going into <span class="math inline">\(A\)</span></strong></p></li>
+<li><p>Here, <span class="math inline">\(A \leftarrow X \rightarrow Y\)</span> is a backdoor path from <span class="math inline">\(A\)</span> to <span class="math inline">\(Y\)</span></p></li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-29-1.png" width="20%" /></p>
+<ul>
+<li><p><font color='red'>Backdoor paths confound the relationship between <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span>, so they need to be blocked!</font></p></li>
+<li><p>To sufficiently control for confounding, we must identify a set of variables that block all backdoor paths from treatment to outcome</p>
+<ul>
+<li>Recall the ignorability: if <span class="math inline">\(X\)</span> is this set of variables, then <span class="math inline">\(Y^0, Y^1 \perp A \mid X\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="criteria" class="section level3">
+<h3>Criteria</h3>
+<ul>
+<li><p>Next we will discuss two criteria to identify sets of variables that are sufficient to control for confounding</p>
+<ul>
+<li>Backdoor path criterion: if the graph is known</li>
+<li>Disjunctive cause criterion: if the graph is not known</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="backdoor-path-criterion" class="section level2">
+<h2>Backdoor path criterion</h2>
+<div id="backdoor-path-criterion-1" class="section level3">
+<h3>Backdoor path criterion</h3>
+<ul>
+<li><p><font color='blue'>Backdoor path criterion</font>: a set of variables <span class="math inline">\(X\)</span> is sufficient to control for confounding if</p>
+<ul>
+<li>It blocks all backdoor paths from treatment to the outcome, and</li>
+<li>It does not include any descendants of treatment</li>
+</ul></li>
+<li><p>Note: the solution <span class="math inline">\(X\)</span> is not necessarily unique</p></li>
+</ul>
+</div>
+<div id="backdoor-path-criterion-a-simple-example" class="section level3">
+<h3>Backdoor path criterion: a simple example</h3>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-30-1.png" width="30%" /></p>
+<ul>
+<li><p>There is one backdoor path from <span class="math inline">\(A\)</span> to <span class="math inline">\(Y\)</span></p>
+<ul>
+<li>It is not blocked by a collider</li>
+</ul></li>
+<li><p>Sets of variables that are sufficient to control for confounding:</p>
+<ul>
+<li><span class="math inline">\(\{V\}\)</span>, or</li>
+<li><span class="math inline">\(\{W\}\)</span>, or</li>
+<li><span class="math inline">\(\{V, W\}\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="backdoor-path-criterion-a-collider-example" class="section level3">
+<h3>Backdoor path criterion: a collider example</h3>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-31-1.png" width="20%" /></p>
+<ul>
+<li><p>There is one backdoor path from <span class="math inline">\(A\)</span> to <span class="math inline">\(Y\)</span></p>
+<ul>
+<li>It is blocked by a collider <span class="math inline">\(M\)</span>, so there is no confounding</li>
+</ul></li>
+<li><p>If we condition on <span class="math inline">\(M\)</span>, then it open a path between <span class="math inline">\(V\)</span> and <span class="math inline">\(W\)</span></p></li>
+</ul>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-32-1.png" width="20%" /></p>
+<ul>
+<li>Sets of variables that are sufficient to control for confounding:
+<ul>
+<li><span class="math inline">\(\{\}\)</span>, <span class="math inline">\(\{V\}\)</span>, <span class="math inline">\(\{W\}\)</span>, <span class="math inline">\(\{M, V\}\)</span>, <span class="math inline">\(\{M, W\}\)</span>, <span class="math inline">\(\{M, V, W\}\)</span></li>
+<li>But not <span class="math inline">\(\{M\}\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="backdoor-path-criterion-a-multi-backdoor-paths-example" class="section level3">
+<h3>Backdoor path criterion: a multi backdoor paths example</h3>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-33-1.png" width="25%" /></p>
+<ul>
+<li><p>First path: <span class="math inline">\(A \leftarrow Z \leftarrow V \rightarrow Y\)</span></p>
+<ul>
+<li>No collider on this path</li>
+<li>So controlling for either <span class="math inline">\(Z\)</span>, <span class="math inline">\(V\)</span>, or both is sufficient</li>
+</ul></li>
+<li><p>Second path: <span class="math inline">\(A \leftarrow W \rightarrow Z \leftarrow V \rightarrow Y\)</span></p>
+<ul>
+<li><span class="math inline">\(Z\)</span> is a collider</li>
+<li>So controlling <span class="math inline">\(Z\)</span> opens a path between <span class="math inline">\(W\)</span> and <span class="math inline">\(V\)</span></li>
+<li>We can block <span class="math inline">\(\{V\}\)</span>, <span class="math inline">\(\{W\}\)</span>, <span class="math inline">\(\{Z, V\}\)</span>, <span class="math inline">\(\{Z, W\}\)</span>, or <span class="math inline">\(\{Z, V, W\}\)</span></li>
+</ul></li>
+<li><p>To block both paths, it’s sufficient to control for</p></li>
+<li><span class="math inline">\(\{V\}\)</span>, <span class="math inline">\(\{Z, V\}\)</span>, <span class="math inline">\(\{Z, W\}\)</span>, or <span class="math inline">\(\{Z, V, W\}\)</span>
+<ul>
+<li>But not <span class="math inline">\(\{Z\}\)</span> or <span class="math inline">\(\{W\}\)</span></li>
+</ul>
+<h2 id="disjunctive-cause-criterion">Disjunctive cause criterion</h2>
+<h3 id="disjunctive-cause-criterion-1">Disjunctive cause criterion</h3>
+<ul>
+<li>For many problems, it is difficult to write down accurate DAGs</li>
+</ul></li>
+<li><p>In this case, we can use the <font color='blue'>disjunctive cause criterion</font>: control for all observed causes of the treatment, the outcome, or both</p></li>
+<li><p><font color='green'>If there exists a set of observed variables that satisfy the backdoor path criterion, then the variables selected based on the disjunctive cause criterion are sufficient to control for confounding</font></p></li>
+<li><p>Disjunctive cause criterion does not always select the smallest set of variable to control for, but it is conceptually simple</p></li>
+</ul>
+</div>
+<div id="example" class="section level3">
+<h3>Example</h3>
+<ul>
+<li><p>Observed pre-treatment variables: <span class="math inline">\(\{M, W, V\}\)</span></p>
+<ul>
+<li><p>Unobserved pre-treatment variables: <span class="math inline">\(\{U_1, U_2\}\)</span></p></li>
+<li><p>Suppose we know: <span class="math inline">\(W, V\)</span> are causes of <span class="math inline">\(A\)</span>, <span class="math inline">\(Y\)</span> or both</p></li>
+</ul></li>
+<li><p>Suppose <span class="math inline">\(M\)</span> is not a cause of either <span class="math inline">\(A\)</span> or <span class="math inline">\(Y\)</span></p>
+<ul>
+<li>Comparing two methods for selecting variables</li>
+</ul></li>
+</ul>
+<ol style="list-style-type: decimal">
+<li>Use all pre-treatment covariates: <span class="math inline">\(\{M, W, V\}\)</span></li>
+<li>Use variables based on disjunctive cause criterion: <span class="math inline">\(\{W, V\}\)</span></li>
+</ol>
+</div>
+<div id="example-continued-hypothetical-dag-1" class="section level3">
+<h3>Example continued: hypothetical DAG 1</h3>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-34-1.png" width="30%" /></p>
+<ol style="list-style-type: decimal">
+<li>Use all pre-treatment covariates: <span class="math inline">\(\{M, W, V\}\)</span></li>
+</ol>
+<ul>
+<li>Satisfy backdoor path criterion? Yes</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>Use variables based on disjunctive cause criterion: <span class="math inline">\(\{W, V\}\)</span></li>
+</ol>
+<ul>
+<li>Satisfy backdoor path criterion? Yes</li>
+</ul>
+</div>
+<div id="example-continued-hypothetical-dag-2" class="section level3">
+<h3>Example continued: hypothetical DAG 2</h3>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-35-1.png" width="20%" /></p>
+<ol style="list-style-type: decimal">
+<li>Use all pre-treatment covariates: <span class="math inline">\(\{M, W, V\}\)</span></li>
+</ol>
+<ul>
+<li>Satisfy backdoor path criterion? Yes</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>Use variables based on disjunctive cause criterion: <span class="math inline">\(\{W, V\}\)</span></li>
+</ol>
+<ul>
+<li>Satisfy backdoor path criterion? Yes</li>
+</ul>
+</div>
+<div id="example-continued-hypothetical-dag-3" class="section level3">
+<h3>Example continued: hypothetical DAG 3</h3>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-36-1.png" width="30%" /></p>
+<ol style="list-style-type: decimal">
+<li>Use all pre-treatment covariates: <span class="math inline">\(\{M, W, V\}\)</span></li>
+</ol>
+<ul>
+<li>Satisfy backdoor path criterion? No</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>Use variables based on disjunctive cause criterion: <span class="math inline">\(\{W, V\}\)</span></li>
+</ol>
+<ul>
+<li>Satisfy backdoor path criterion? Yes</li>
+</ul>
+</div>
+<div id="example-continued-hypothetical-dag-4" class="section level3">
+<h3>Example continued: hypothetical DAG 4</h3>
+<p><img src="/stat/2021-07-09-course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags_files/figure-html/unnamed-chunk-37-1.png" width="25%" /></p>
+<ol style="list-style-type: decimal">
+<li>Use all pre-treatment covariates: <span class="math inline">\(\{M, W, V\}\)</span></li>
+</ol>
+<ul>
+<li>Satisfy backdoor path criterion? No</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>Use variables based on disjunctive cause criterion: <span class="math inline">\(\{W, V\}\)</span></li>
+</ol>
+<ul>
+<li>Satisfy backdoor path criterion? No</li>
+</ul>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li><p>Coursera class: “A Crash Course on Causality: Inferring Causal Effects from Observational Data”, by Jason A. Roy (University of Pennsylvania)</p>
+<ul>
+<li><a href="https://www.coursera.org/learn/crash-course-in-causality" class="uri">https://www.coursera.org/learn/crash-course-in-causality</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+
+    </div>
+  </article>
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//kfab.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-116913878-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+  </body>
+</html>
+

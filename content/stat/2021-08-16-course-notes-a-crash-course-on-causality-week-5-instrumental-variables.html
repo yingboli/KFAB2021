@@ -1,0 +1,558 @@
+---
+title: 'Course Notes: A Crash Course on Causality -- Week 5: Instrumental Variables'
+author: ''
+date: '2021-08-16'
+slug: course-notes-a-crash-course-on-causality-week-5-instrumental-variables
+categories:
+  - Lecture notes
+tags:
+  - Causal Inference
+  - Slides
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 2
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#introduction-to-instrumental-variables">Introduction to Instrumental Variables</a><ul>
+<li><a href="#randomized-trials-with-noncompliance">Randomized trials with noncompliance</a></li>
+<li><a href="#compliance-classes">Compliance classes</a></li>
+<li><a href="#instrumental-variable-assumptions">Instrumental variable assumptions</a></li>
+</ul></li>
+<li><a href="#estimate-causal-effects-with-instrumental-variables">Estimate Causal Effects with Instrumental Variables</a><ul>
+<li><a href="#ivs-in-observational-studies">IVs in observational studies</a></li>
+<li><a href="#two-stage-least-squares">Two stage least squares</a></li>
+<li><a href="#sensitivity-analysis-and-weak-instruments">Sensitivity analysis and weak instruments</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p><strong><em><font color='red'>For the pdf slides, click <a href="/pdf/080221_crash_course_Causality_week5.pdf">here</a></font></em></strong></p>
+<div id="introduction-to-instrumental-variables" class="section level1">
+<h1>Introduction to Instrumental Variables</h1>
+<div id="unmeasured-confounding" class="section level3">
+<h3>Unmeasured confounding</h3>
+<ul>
+<li>Suppose there are unobserved variables <span class="math inline">\(U\)</span> that affect both <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span>, then <span class="math inline">\(U\)</span> is an <font color='blue'>unmeasured confounding</font></li>
+</ul>
+<p><img src="/stat/2021-08-16-course-notes-a-crash-course-on-causality-week-5-instrumental-variables_files/figure-html/unnamed-chunk-1-1.png" width="20%" /></p>
+<ul>
+<li><p><font color='red'>This violates ignorability assumption</font></p></li>
+<li><p>Since we cannot control for the unobserved confounders <span class="math inline">\(U\)</span> and average over its distribution, if using matching or IPTW methods, <font color='red'>the estimates of causal effects is biased</font></p></li>
+<li><p><font color='green'>Solution: instrumental variables</font></p></li>
+</ul>
+</div>
+<div id="instrumental-variables" class="section level3">
+<h3>Instrumental variables</h3>
+<ul>
+<li><font color='blue'>Instrumental variables (IV)</font>: an alternative causal inference method that does not rely on the ignorability assumption</li>
+</ul>
+<p><img src="/stat/2021-08-16-course-notes-a-crash-course-on-causality-week-5-instrumental-variables_files/figure-html/unnamed-chunk-2-1.png" width="25%" /></p>
+<ul>
+<li><p><span class="math inline">\(Z\)</span> is an IV</p>
+<ul>
+<li>It affects treatment <span class="math inline">\(A\)</span>, but does not directly affect the outcome <span class="math inline">\(Y\)</span></li>
+<li>We can think of <span class="math inline">\(Z\)</span> as <font color='blue'>encouragement (of treatement)</font></li>
+</ul></li>
+</ul>
+</div>
+<div id="example-of-an-encouragement-design" class="section level3">
+<h3>Example of an encouragement design</h3>
+<ul>
+<li><span class="math inline">\(A\)</span>: smoking during pregnancy (yes/no)</li>
+<li><span class="math inline">\(Y\)</span>: birth weight</li>
+<li><p><span class="math inline">\(X\)</span>: mother’s age, weight, etc</p>
+<ul>
+<li><font color='red'>Concern: there could be unmeasured confounders</font></li>
+<li><font color='red'>Challenge: it is not ethical to randomly assign smoking</font></li>
+</ul></li>
+<li><p><span class="math inline">\(Z\)</span>: randomized to either received encouragement to stop smoking (<span class="math inline">\(Z=1\)</span>) or receive usual care (<span class="math inline">\(Z=0\)</span>)</p>
+<ul>
+<li><font color='blue'>Causal effect of encouragement</font>, also called <font color='blue'>intent-to-treat (ITT) effect</font>, may be of some interest
+<span class="math display">\[E\left(Y^{Z=1}\right)-E\left(Y^{Z=0}\right)\]</span></li>
+<li><font color='green'>Focus of IV methods is still causal effect of the treatment</font>
+<span class="math display">\[E\left(Y^{A=1}\right)-E\left(Y^{A=0}\right)\]</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="iv-is-randomized" class="section level3">
+<h3>IV is randomized</h3>
+<ul>
+<li><p>Like the previous smoking example,
+sometimes IV is randomly assigned as part of the study</p></li>
+<li><p>Other times IV is <strong>believed</strong> to be randomized in nature (<font color='blue'>natural experiment</font>). For example,</p>
+<ul>
+<li>Mendelian randomization (?)</li>
+<li>Quarter of birth</li>
+<li>Geographic distance to specialty care provider</li>
+</ul></li>
+</ul>
+</div>
+<div id="randomized-trials-with-noncompliance" class="section level2">
+<h2>Randomized trials with noncompliance</h2>
+<div id="randomized-trials-with-noncompliance-1" class="section level3">
+<h3>Randomized trials with noncompliance</h3>
+<ul>
+<li>Setup
+<ul>
+<li><span class="math inline">\(Z\)</span>: <strong>randomization</strong> to treatment (1 treatment, 0 control)</li>
+<li><span class="math inline">\(A\)</span>: treatment received, binary (1 treatment, 0 control)</li>
+<li><span class="math inline">\(Y\)</span>: outcome</li>
+</ul></li>
+<li>Due to noncompliance, not everyone assigned treatment will actually receive the treatment, and vice verse (<span class="math inline">\(A \neq Z\)</span>)
+<ul>
+<li>There can be confounding <span class="math inline">\(X\)</span>, like common causes affecting both treatment received <span class="math inline">\(A\)</span> and the outcome <span class="math inline">\(Y\)</span></li>
+<li>It may be reasonable to assume that <span class="math inline">\(Z\)</span> does not directly affect <span class="math inline">\(Y\)</span></li>
+</ul></li>
+</ul>
+<p><img src="/stat/2021-08-16-course-notes-a-crash-course-on-causality-week-5-instrumental-variables_files/figure-html/unnamed-chunk-3-1.png" width="25%" /></p>
+</div>
+<div id="causal-effect-of-assignment-on-receipt" class="section level3">
+<h3>Causal effect of assignment on receipt</h3>
+<ul>
+<li><p>Observed data: <span class="math inline">\((Z, A, Y)\)</span></p></li>
+<li><p>Each subject has two <font color='blue'>potential values of treatment</font></p>
+<ul>
+<li><span class="math inline">\(A^{Z=1} = A^1\)</span>: value of treatment if randomized to treatment</li>
+<li><span class="math inline">\(A^{Z=0} = A^0\)</span>: value of treatment if randomized to control</li>
+</ul></li>
+<li>Average causal effect of <font color='blue'>treatment assignment on treatment received</font>
+<span class="math display">\[E\left(A^1 - A^0\right)\]</span>
+<ul>
+<li>If perfect compliance, this would be <span class="math inline">\(1\)</span></li>
+<li>By randomization and consistency, this is estimable from the observed data
+<span class="math display">\[
+  E\left(A^1\right) = E(A \mid Z=1), \quad
+  E\left(A^0\right) = E(A \mid Z=0)
+  \]</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="causal-effect-of-assignment-on-outcome" class="section level3">
+<h3>Causal effect of assignment on outcome</h3>
+<ul>
+<li><p>Average causal effect of <font color='blue'>treatment assignment on the outcome</font>
+<span class="math display">\[E\left(Y^{Z=1} - Y^{Z=0}\right)\]</span></p>
+<ul>
+<li>This is intention-to-treat effect</li>
+<li>If perfect compliance, this would be equal to the causal effect of treatment received</li>
+<li>By randomization and consistency, this is estimable from the observed data
+<span class="math display">\[
+  E\left(Y^{Z=1}\right) = E(Y \mid Z=1), \quad
+  E\left(Y^{Z=0}\right) = E(Y \mid Z=0)
+  \]</span></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="compliance-classes" class="section level2">
+<h2>Compliance classes</h2>
+<div id="subpopulations-based-on-potential-treatment" class="section level3">
+<h3>Subpopulations based on potential treatment</h3>
+<table>
+<thead>
+<tr class="header">
+<th><span class="math inline">\(A^0\)</span></th>
+<th><span class="math inline">\(A^1\)</span></th>
+<th>Label</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>0</td>
+<td>Never-takers</td>
+</tr>
+<tr class="even">
+<td>0</td>
+<td>1</td>
+<td>Compliers</td>
+</tr>
+<tr class="odd">
+<td>1</td>
+<td>0</td>
+<td>Defiers</td>
+</tr>
+<tr class="even">
+<td>0</td>
+<td>0</td>
+<td>Always-takers</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>For never-takers and always-takers,
+<ul>
+<li>Encouragement does not work</li>
+<li>Due to no variation in treatment received, we cannot learn anything about the effect of treatment in these two subpopulations</li>
+</ul></li>
+<li>For compliers, treatment received is randomized</li>
+<li>For defiers, treatment received is also randomized, but in the opposite way</li>
+</ul>
+</div>
+<div id="local-average-treatment-effect" class="section level3">
+<h3>Local average treatment effect</h3>
+<ul>
+<li>We will focus on a local average treatment effect, i.e., the <font color='blue'>complier average causal effect (CACE)</font></li>
+</ul>
+<p><span class="math display">\[\begin{align*}
+&amp; E\left(Y^{Z=1} \mid A^0=0, A^1=1  \right)
+- E\left(Y^{Z=0} \mid A^0=0, A^1=1  \right)\\
+= &amp; E\left(Y^{Z=1} - Y^{Z=0} \mid \text{compliers} \right)\\
+= &amp; E\left(Y^{a=1} - Y^{a=0} \mid \text{compliers} \right)
+\end{align*}\]</span></p>
+<ul>
+<li>“Local”: this is a causal effect in a subpopulation</li>
+<li>No inference about defiers, always-takers, or never-takers</li>
+</ul>
+</div>
+</div>
+<div id="instrumental-variable-assumptions" class="section level2">
+<h2>Instrumental variable assumptions</h2>
+<div id="iv-assumption-1-exclusion-restriction" class="section level3">
+<h3>IV assumption 1: <font color='blue'>exclusion restriction</font></h3>
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(Z\)</span> is associated with the treatment <span class="math inline">\(A\)</span></li>
+</ol>
+<p><img src="/figures/crash_course_causality_week5_fig2.png" width="24%" style="display: block; margin: auto;" /></p>
+<ol start="2" style="list-style-type: decimal">
+<li><p><span class="math inline">\(Z\)</span> affects the outcome only through its effect on treatment</p>
+<p><img src="/figures/crash_course_causality_week5_fig1.png" width="37%" style="display: block; margin: auto;" /></p>
+<ul>
+<li><span class="math inline">\(Z\)</span> cannot directly, or indirectly though its effect on <span class="math inline">\(U\)</span>, affect <span class="math inline">\(Y\)</span></li>
+</ul></li>
+</ol>
+<p><img src="/figures/crash_course_causality_week5_fig3.png" width="29%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="is-the-exclusion-restriction-assumption-realistic" class="section level3">
+<h3>Is the exclusion restriction assumption realistic?</h3>
+<ul>
+<li><p>If <span class="math inline">\(Z\)</span> is a random treatment assignment, then the exclusion restriction assumption is met</p>
+<ul>
+<li>It should affect treatment received</li>
+<li>It should not affect the outcome or unmeasured confounders</li>
+</ul></li>
+<li><p>However, it the subjects or clinicians are not blinded, knowledge of what they are assigned to could affect <span class="math inline">\(Y\)</span> or <span class="math inline">\(U\)</span></p></li>
+<li><p><font color='red'>We need to examine the exclusion restriction assumption carefully for any given study</font></p></li>
+</ul>
+</div>
+<div id="iv-assumption-2-monotonicity" class="section level3">
+<h3>IV assumption 2: <font color='blue'>monotonicity</font></h3>
+<ul>
+<li><p><font color='blue'>Monotonicity assumption</font>: there are no defiers</p>
+<ul>
+<li>No one consistently does the opposite of what they are told</li>
+<li>Probability of treatment should increase with more encouragement</li>
+</ul></li>
+<li><p>With monotonicity,</p></li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th><span class="math inline">\(Z\)</span></th>
+<th><span class="math inline">\(A\)</span></th>
+<th><span class="math inline">\(A^0\)</span></th>
+<th><span class="math inline">\(A^1\)</span></th>
+<th>Class</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>?</td>
+<td>Never-takers or compliers</td>
+</tr>
+<tr class="even">
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td><font color='red'>1</font></td>
+<td>Always-takers <del>or defiers</del></td>
+</tr>
+<tr class="odd">
+<td>1</td>
+<td>0</td>
+<td><font color='red'>0</font></td>
+<td>0</td>
+<td>Never-takers <del>or defiers</del></td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>1</td>
+<td>?</td>
+<td>1</td>
+<td>Always-takers or compliers</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="estimate-causal-effects-with-instrumental-variables" class="section level1">
+<h1>Estimate Causal Effects with Instrumental Variables</h1>
+<div id="estimate-cace-1.-rewrite-the-itt-effect" class="section level3">
+<h3>Estimate CACE: 1. rewrite the ITT effect</h3>
+<ul>
+<li><p>Due to randomization, we can identify the ITT effect
+<span class="math display">\[
+E\left( Y^{z=1} - Y^{z=0} \right) = E(Y\mid Z=1) - E(Y\mid Z=0)
+\]</span></p></li>
+<li><p>Expand the first term in the above ITT effect
+<span class="math display">\[\begin{align*}
+E(Y\mid Z=1) = &amp;
+E(Y\mid Z=1, \text{always takers})P(\text{always takers}\mid Z=1)\\
+&amp; + E(Y\mid Z=1, \text{never takers})P(\text{never takers}\mid Z=1)\\
+&amp; + E(Y\mid Z=1, \text{compliers})P(\text{compliers}\mid Z=1)
+\end{align*}\]</span></p></li>
+<li>Note 1: among always takers and never takes, <span class="math inline">\(Z\)</span> does nothing
+<ul>
+<li><span class="math inline">\(E(Y\mid Z=1, \text{always takers}) = E(Y\mid \text{always takers}), \quad \text{etc.}\)</span></li>
+</ul></li>
+<li>Note 2: by randomization,
+<ul>
+<li><span class="math inline">\(P(\text{always takers}\mid Z=1) = P(\text{always takers}), \quad \text{etc.}\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="estimate-cace-1.-rewrite-the-itt-effect-cont." class="section level3">
+<h3>Estimate CACE: 1. rewrite the ITT effect, cont.</h3>
+<ul>
+<li><p>Therefore, the first term in the ITT effect is
+<span class="math display">\[\begin{align*}
+E(Y\mid Z=1)=&amp; E(Y\mid\text{always takers})P(\text{always takers})\\
+&amp; + E(Y\mid \text{never takers})P(\text{never takers})\\
+&amp; + E(Y\mid Z=1, \text{compliers})P(\text{compliers})
+\end{align*}\]</span></p></li>
+<li><p>Similarly, the second term is
+<span class="math display">\[\begin{align*}
+E(Y\mid Z=0)=&amp; E(Y\mid\text{always takers})P(\text{always takers})\\
+&amp; + E(Y\mid \text{never takers})P(\text{never takers})\\
+&amp; + E(Y\mid Z=0, \text{compliers})P(\text{compliers})
+\end{align*}\]</span></p></li>
+<li><p>Their difference is
+<span class="math display">\[\begin{align*}
+&amp; E(Y\mid Z=1) - E(Y\mid Z=0)\\
+= &amp; \left[E(Y\mid Z=1, \text{compliers})- E(Y\mid Z=0, \text{compliers})\right]P(\text{compliers})
+\end{align*}\]</span></p></li>
+</ul>
+</div>
+<div id="estimate-cace-2.-compute-proportion-of-compliers" class="section level3">
+<h3>Estimate CACE: 2. compute proportion of compliers</h3>
+<ul>
+<li><p>Thus, the relationship between CACE and ITT effect is
+<span class="math display">\[
+\text{CACE} = \frac{E(Y\mid Z=1) - E(Y\mid Z=0)}{P(\text{compliers})}
+\]</span></p></li>
+<li><p>To compute <span class="math inline">\(P(\text{compliers})\)</span>, note that</p>
+<ul>
+<li><span class="math inline">\(E(A\mid Z=1)\)</span>: proportion of always takers plus compliers</li>
+<li><span class="math inline">\(E(A\mid Z=0)\)</span>: proportion of always takers</li>
+</ul></li>
+<li><p>Thus the difference is
+<span class="math display">\[
+P(\text{compliers}) = E(A\mid Z=1) - E(A\mid Z=0)
+\]</span></p></li>
+</ul>
+</div>
+<div id="estimate-cace-final-formula" class="section level3">
+<h3>Estimate CACE: final formula</h3>
+<p><span class="math display">\[
+\text{CACE} = \frac{E(Y\mid Z=1) - E(Y\mid Z=0)}
+{E(A\mid Z=1) - E(A\mid Z=0)}
+\]</span></p>
+<ul>
+<li><p>Numerator: ITT, causal effect of treatment assignment on the outcome</p></li>
+<li>Denominator: causal effect of treatment assignment on the treatment received
+<ul>
+<li>Denominator is between 0 and 1. Thus, CACE <span class="math inline">\(\geq\)</span> ITT</li>
+<li>ITT is underestimate of CACE, because some people assigned to treatment did not take it</li>
+</ul></li>
+<li><p>If perfect compliance, CACE <span class="math inline">\(=\)</span> ITT</p></li>
+</ul>
+</div>
+<div id="ivs-in-observational-studies" class="section level2">
+<h2>IVs in observational studies</h2>
+<div id="ivs-in-observational-studies-1" class="section level3">
+<h3>IVs in observational studies</h3>
+<ul>
+<li><p>IVs can also be used in observational (non-randomized) studies</p>
+<ul>
+<li><span class="math inline">\(Z\)</span>: instrument</li>
+<li><span class="math inline">\(A\)</span>: treatment</li>
+<li><span class="math inline">\(Y\)</span>: outcome</li>
+<li><span class="math inline">\(X\)</span>: covariates</li>
+</ul></li>
+<li><span class="math inline">\(Z\)</span> can be thought of as encouragement
+<ul>
+<li>If binary, just encouragement yes or no</li>
+<li>If continuous, a ‘dose’ of encouragement</li>
+</ul></li>
+<li><p><span class="math inline">\(Z\)</span> can be thought of as randomizers in natural experiments</p>
+<ul>
+<li><font color='red'>The key challenge: think of a variable that affects <span class="math inline">\(Y\)</span> only through <span class="math inline">\(A\)</span></font></li>
+<li>Only the assumption <span class="math inline">\(Z\)</span> affecting <span class="math inline">\(A\)</span> can be checked with data</li>
+<li>The validity of the exclusion restriction assumption rely on subject matter knowledge</li>
+</ul></li>
+</ul>
+</div>
+<div id="natural-experiment-example-1-calendar-time-as-iv" class="section level3">
+<h3>Natural experiment example 1: calendar time as IV</h3>
+<ul>
+<li><p>Rationale: sometimes treatment preferences change over a short period of time</p></li>
+<li><p><span class="math inline">\(A\)</span>: drug A vs drug B</p></li>
+<li><p><span class="math inline">\(Z\)</span>: early time period (drug A is encouraged) vs late time period (drug B is encouraged)</p></li>
+<li><p><span class="math inline">\(Y\)</span>: BMI</p></li>
+</ul>
+</div>
+<div id="natural-experiment-example-2-distance-as-iv" class="section level3">
+<h3>Natural experiment example 2: distance as IV</h3>
+<ul>
+<li><p>Rationale: shorter distance to NICU is an encouragement</p></li>
+<li><p><span class="math inline">\(A\)</span>: delivery at high level NICU vs regular hospital</p></li>
+<li><p><span class="math inline">\(Z\)</span>: differential travel time from nearest high level NICU to nearest regular hospital</p></li>
+<li><p><span class="math inline">\(Y\)</span>: mortality</p></li>
+</ul>
+</div>
+<div id="more-examples-of-natural-experiments" class="section level3">
+<h3>More examples of natural experiments</h3>
+<ul>
+<li><p>Mendelian randomization: some genetic variant is associate with some behavior (e.g., alcohol use) but is assumed to not be associated with outcome of interest</p></li>
+<li><p>Provider preference: use treatment prescribed to previous patients as an IV for current patient</p></li>
+<li><p>Quarter of birth: to study causal effect of years in school on income</p></li>
+</ul>
+</div>
+</div>
+<div id="two-stage-least-squares" class="section level2">
+<h2>Two stage least squares</h2>
+<div id="ordinary-least-squares-ols-fails-if-there-is-confounding" class="section level3">
+<h3>Ordinary least squares (OLS) fails if there is confounding</h3>
+<ul>
+<li>In OLS, one important assumption is that the covariate <span class="math inline">\(A\)</span> is independent with residuals <span class="math inline">\(\epsilon\)</span></li>
+</ul>
+<p><span class="math display">\[
+Y_i = \beta_0 + A_i \beta_1 + \epsilon_i
+\]</span></p>
+<ul>
+<li><p>However, if there is confounding, <span class="math inline">\(A\)</span> and <span class="math inline">\(\epsilon\)</span> are correlated. So OLS fails.</p></li>
+<li><p><font color='green'>Two stage least squares can estimate causal effect in the instrumental variables (IV) setting</font></p></li>
+</ul>
+</div>
+<div id="two-stage-least-squares-2sls" class="section level3">
+<h3><font color='blue'>Two stage least squares (2SLS)</font></h3>
+<ul>
+<li>Stage 1: regress <span class="math inline">\(A\)</span> on <span class="math inline">\(Z\)</span>
+<span class="math display">\[
+A_i = \alpha_0 + Z_i \alpha_1 + e_i
+\]</span>
+<ul>
+<li>By randomization, <span class="math inline">\(Z\)</span> and <span class="math inline">\(e\)</span> are independent</li>
+</ul></li>
+<li>Obtain the predicted value of <span class="math inline">\(A\)</span> given <span class="math inline">\(Z\)</span> for each subject
+<span class="math display">\[
+  \hat{A}_i = \hat{\alpha}_0 + Z_i \hat{\alpha}_1
+  \]</span>
+<ul>
+<li><span class="math inline">\(\hat{A}\)</span> is projection of <span class="math inline">\(A\)</span> onto the space spanned by <span class="math inline">\(Z\)</span></li>
+</ul></li>
+<li>Stage 2: regress <span class="math inline">\(Y\)</span> on <span class="math inline">\(\hat{A}\)</span>
+<span class="math display">\[
+Y_i = \beta_0 + \hat{A}_i \beta_1 + \epsilon_i
+\]</span>
+<ul>
+<li>By exclusion restriction, <span class="math inline">\(Z\)</span> is independent of <span class="math inline">\(Y\)</span> given <span class="math inline">\(A\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="interpretation-of-beta_1-in-2sls-the-causal-effect" class="section level3">
+<h3>Interpretation of <span class="math inline">\(\beta_1\)</span> in 2SLS: the causal effect</h3>
+<ul>
+<li><p>Consider the case where both <span class="math inline">\(Z\)</span> and <span class="math inline">\(A\)</span> are binary
+<span class="math display">\[
+\beta_1 = E\left(Y \mid \hat{A}=1 \right) - E\left(Y \mid \hat{A}=0 \right)
+\]</span></p></li>
+<li><p>There are two values of <span class="math inline">\(\hat{A}\)</span> in the 2nd stage model, <span class="math inline">\(\hat{\alpha}_0\)</span> and <span class="math inline">\(\hat{\alpha}_0 + \hat{\alpha}_1\)</span></p>
+<ul>
+<li>When we go from <span class="math inline">\(Z=0\)</span> to <span class="math inline">\(Z=1\)</span>, what we observe is going from <span class="math inline">\(\hat{\alpha}_0\)</span> to <span class="math inline">\(\hat{\alpha}_0 + \hat{\alpha}_1\)</span></li>
+<li>We observe a mean difference of <span class="math inline">\(\hat{E}(Y\mid Z=1) - \hat{E}(Y\mid Z=0)\)</span> with a <span class="math inline">\(\hat{\alpha}_1\)</span> unit change in <span class="math inline">\(\hat{A}\)</span></li>
+</ul></li>
+<li><p>Thus, we should observe a mean difference of
+<span class="math inline">\(\frac{\hat{E}(Y\mid Z=1) - \hat{E}(Y\mid Z=0)}{\hat{\alpha}_1}\)</span>
+with <span class="math inline">\(1\)</span> unit change in <span class="math inline">\(\hat{A}\)</span></p></li>
+<li><p><font color='green'>The 2SLS estimator is a consistent estimator of the CACE</font>
+<span class="math display">\[
+\beta_1 = \text{CACE} = \frac{\hat{E}(Y\mid Z=1) - \hat{E}(Y\mid Z=0)}{\hat{E}(A\mid Z=1) - \hat{E}(A\mid Z=0)}
+\]</span></p></li>
+</ul>
+</div>
+<div id="more-general-2sls" class="section level3">
+<h3>More general 2SLS</h3>
+<ul>
+<li><p>2SLS can be used</p>
+<ul>
+<li>with covariates <span class="math inline">\(X\)</span>, and</li>
+<li>for non-binary data (e.g, a continuous instrument)</li>
+</ul></li>
+<li><p>Stage 1: regression <span class="math inline">\(A\)</span> on <span class="math inline">\(Z\)</span> and covariates <span class="math inline">\(X\)</span></p>
+<ul>
+<li>and obtain the fitted values <span class="math inline">\(\hat{A}\)</span></li>
+</ul></li>
+<li><p>Stage 2: regress <span class="math inline">\(Y\)</span> on <span class="math inline">\(\hat{A}\)</span> and <span class="math inline">\(X\)</span></p>
+<ul>
+<li>Coefficient of <span class="math inline">\(\hat{A}\)</span> is the causal effect</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="sensitivity-analysis-and-weak-instruments" class="section level2">
+<h2>Sensitivity analysis and weak instruments</h2>
+<div id="sensitivity-analysis" class="section level3">
+<h3>Sensitivity analysis</h3>
+<ul>
+<li><p><font color='blue'>Sensitivity analysis</font> method studies when each of the IV assumption (partly) fails</p>
+<ul>
+<li>Exclusion restriction: if <span class="math inline">\(Z\)</span> does affect <span class="math inline">\(Y\)</span> by an amount <span class="math inline">\(p\)</span>, would my conclusion change? Vary <span class="math inline">\(p\)</span></li>
+<li>Monotonically: if the proportion of defiers was <span class="math inline">\(\pi\)</span>, would my conclusion change?</li>
+</ul></li>
+</ul>
+</div>
+<div id="strength-of-ivs" class="section level3">
+<h3>Strength of IVs</h3>
+<ul>
+<li><p>Depend on how well an IV predicts treatment received, we can class it as a <font color='blue'>strong instrument</font> or a <font color='blue'>weak instrument</font></p></li>
+<li><p>For a weak instrument, encouragement barely increases the probability of treatment</p></li>
+<li><p>Measure the strength of an instrument: estimate the proportion of compliers
+<span class="math display">\[
+E(A \mid Z=1) - E(A \mid Z=0)
+\]</span></p>
+<ul>
+<li>Alternatively, we can just use the observed proportions of treated subjects for <span class="math inline">\(Z=1\)</span> and for <span class="math inline">\(Z=0\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="problems-of-weak-instruments" class="section level3">
+<h3>Problems of weak instruments</h3>
+<ul>
+<li><p>Suppose only 1% of the population are compliers</p></li>
+<li><p>Then only 1% of the samples have useful information about the treatment effect</p>
+<ul>
+<li>This leads to large variance estimates, i.e., estimate of causal effect is unstable</li>
+<li>The confidence intervals can be too wide to be useful</li>
+</ul></li>
+</ul>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li><p>Coursera class: “A Crash Course on Causality: Inferring Causal Effects from Observational Data”, by Jason A. Roy (University of Pennsylvania)</p>
+<ul>
+<li><a href="https://www.coursera.org/learn/crash-course-in-causality" class="uri">https://www.coursera.org/learn/crash-course-in-causality</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>

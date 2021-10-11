@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.88.1" />
+
+
+<title>Course Notes: A Crash Course on Causality -- Week 1: Intro to Causal Effects - King Fox And Butterfly</title>
+<meta property="og:title" content="Course Notes: A Crash Course on Causality -- Week 1: Intro to Causal Effects - King Fox And Butterfly">
+
+
+  <link href='http://liyingbo.com/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/yingbo_headshot.jpg"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/cooking/">Cooking</a></li>
+    
+    <li><a href="/stat/">Statistics</a></li>
+    
+    <li><a href="/life/">Life</a></li>
+    
+    <li><a href="/about/">About Me</a></li>
+    
+    <li><a href="/categories/">Categories</a></li>
+    
+    <li><a href="/tags/">Tags</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+
+    <h1 class="article-title">Course Notes: A Crash Course on Causality -- Week 1: Intro to Causal Effects</h1>
+
+    
+
+    <div class="article-content">
+      
+
+<div id="TOC">
+<ul>
+<li><a href="#notations-and-terminologies">Notations and Terminologies</a><ul>
+<li><a href="#potential-outcomes-and-conterfactuals">Potential outcomes and conterfactuals</a></li>
+</ul></li>
+<li><a href="#what-are-causal-effects">What are Causal Effects?</a><ul>
+<li><a href="#fundamental-problem-of-causal-inference">Fundamental problem of causal inference</a></li>
+</ul></li>
+<li><a href="#causal-assumptions">Causal Assumptions</a><ul>
+<li><a href="#stable-unit-treatment-value-assumption-sutva">Stable Unit Treatment Value Assumption (SUTVA)</a></li>
+<li><a href="#consistency">Consistency</a></li>
+<li><a href="#ignorability">Ignorability</a></li>
+<li><a href="#positivity">Positivity</a></li>
+</ul></li>
+<li><a href="#standardization-and-stratification">Standardization and Stratification</a></li>
+</ul>
+</div>
+
+<p><strong><em><font color='red'>For the pdf slides, click <a href="/pdf/070321_crash_course_Causality_week1.pdf">here</a></font></em></strong></p>
+<div id="notations-and-terminologies" class="section level1">
+<h1>Notations and Terminologies</h1>
+<div id="notations" class="section level3">
+<h3>Notations</h3>
+<ul>
+<li><p>We are interested in the causal effect of some treatment <span class="math inline">\(A\)</span> on some outcome <span class="math inline">\(Y\)</span></p></li>
+<li><p><font color='blue'>Treatment</font>: <span class="math inline">\(A\)</span>, binary</p>
+<ul>
+<li><p><span class="math inline">\(A=1\)</span> if receive treatment; and <span class="math inline">\(A=0\)</span> if receive control</p></li>
+<li><p>Example: <span class="math inline">\(A=1\)</span> if receive active drug; and <span class="math inline">\(A=0\)</span> if receive placebo</p></li>
+</ul></li>
+<li><p><font color='blue'>Outcome</font>: <span class="math inline">\(Y\)</span>, can be binary or continuous</p>
+<ul>
+<li>Example: <span class="math inline">\(Y=1\)</span> if dead; <span class="math inline">\(Y=0\)</span> otherwise</li>
+<li>Example: <span class="math inline">\(Y\)</span> can be time until death</li>
+</ul></li>
+<li><p>Pre-treatment covariates: <span class="math inline">\(X\)</span></p></li>
+</ul>
+</div>
+<div id="potential-outcomes-and-conterfactuals" class="section level2">
+<h2>Potential outcomes and conterfactuals</h2>
+<div id="potential-outcomes" class="section level3">
+<h3>Potential outcomes</h3>
+<ul>
+<li><p><font color='blue'>Potential outcome</font> <span class="math inline">\(Y^a\)</span> is the outcome we would see if treatment was set to <span class="math inline">\(A=a\)</span></p></li>
+<li><p>Each person has potential outcome <span class="math inline">\(Y^0, Y^1\)</span></p></li>
+</ul>
+</div>
+<div id="counterfactuals" class="section level3">
+<h3>Counterfactuals</h3>
+<ul>
+<li><p><font color='blue'>Conterfactual outcomes</font>: the outcomes would have been observed, had the treatment been different</p>
+<ul>
+<li><p>If my treatment is <span class="math inline">\(A=1\)</span>, then my counterfactual outcomes is <span class="math inline">\(Y^0\)</span></p></li>
+<li><p>If my treatment is <span class="math inline">\(A=0\)</span>, then my counterfactual outcomes is <span class="math inline">\(Y^1\)</span></p></li>
+</ul></li>
+<li><p>Connection between potential and conterfactuals outcomes</p>
+<ul>
+<li><strong>Before</strong> the treatment decision is made, any outcome is a potential outcome, <span class="math inline">\(Y^0\)</span> and <span class="math inline">\(Y^1\)</span></li>
+<li><strong>After</strong> the study, there is an observed outcome <span class="math inline">\(Y^A\)</span>, and counterfactual outcome <span class="math inline">\(Y^{1-A}\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="immutable-variables" class="section level3">
+<h3>Immutable variables</h3>
+<ul>
+<li><p>Variables that we cannot control (or change), such as race, gender, age, are <font color='blue'>immutable variables</font></p></li>
+<li><p>For immutable variables, causal effects are not well defined</p></li>
+<li><p>In this course, we focus on treatments that could be thought of as <strong>interventions</strong></p></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="what-are-causal-effects" class="section level1">
+<h1>What are Causal Effects?</h1>
+<div id="causal-effects" class="section level3">
+<h3>Causal effects</h3>
+<ul>
+<li><p>Definition: treatment <span class="math inline">\(A\)</span> has a <font color='blue'>causal effect</font> on the outcome <span class="math inline">\(Y\)</span>, if <span class="math inline">\(Y^1\)</span> differs from <span class="math inline">\(Y^0\)</span></p></li>
+<li>Example
+<ul>
+<li><span class="math inline">\(Y\)</span>: headache gone one hour from now (yes<span class="math inline">\(=1\)</span>, no<span class="math inline">\(=0\)</span>)</li>
+<li><span class="math inline">\(A\)</span>: take ibuprofen (<span class="math inline">\(A=1\)</span>) or not (<span class="math inline">\(A=0\)</span>)</li>
+</ul></li>
+</ul>
+</div>
+<div id="fundamental-problem-of-causal-inference" class="section level2">
+<h2>Fundamental problem of causal inference</h2>
+<div id="fundamental-problem-of-causal-inference-1" class="section level3">
+<h3>Fundamental problem of causal inference</h3>
+<ul>
+<li><p><font color='blue'>Fundamental problem of causal inference</font>:
+we can only observe one potential outcome for each person</p></li>
+<li><p>However, with certain assumptions, we can estimate <strong>population level</strong> (average) causal effects
+<span class="math inline">\(E(Y^1 - Y^0)\)</span></p>
+<ul>
+<li>Average value of <span class="math inline">\(Y\)</span> if everyone was treated with <span class="math inline">\(A=1\)</span> minus average value of <span class="math inline">\(Y\)</span> if everyone was treated with <span class="math inline">\(A=0\)</span></li>
+</ul></li>
+<li>Headache example:
+<ul>
+<li><font color='red'>Hopeless</font>: What would have happened to me had I not taken ibuprofen? (Unit level causal effect)</li>
+<li><font color='green'>Hopeful</font>: What would the rate of headache remission be if everyone took ibuprofen when they had a headache versus if no one did? (Population level causal effect)</li>
+</ul></li>
+</ul>
+</div>
+<div id="visualization-of-population-average-causal-effect" class="section level3">
+<h3>Visualization of population average causal effect</h3>
+<p><img src="/figures/crash_course_causality_week1_fig1.png" width="70%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="population-average-causal-effect-versus-conditioning-on-treatmentcontrol" class="section level3">
+<h3>Population average causal effect versus conditioning on treatment/control</h3>
+<p><span class="math display">\[
+E(Y^1 - Y^0) \neq E(Y\mid A=1) - E(Y\mid A=0)
+\]</span></p>
+<ul>
+<li><p>In the left hand side,
+<span class="math inline">\(E(Y^1)\)</span> is the mean of <span class="math inline">\(Y\)</span> if the whole population was treated with <span class="math inline">\(A=1\)</span></p></li>
+<li><p>In the right hand side,
+<span class="math inline">\(E(Y\mid A=1)\)</span> is restricting to the <strong>subpopulation</strong> of people who actually had <span class="math inline">\(A=1\)</span></p>
+<ul>
+<li>This subpopulation may differ from the whole population in important ways</li>
+<li>For example, people at higher risk for flu are more likely to choose to get a flu shot</li>
+</ul></li>
+<li><p><span class="math inline">\(E(Y\mid A=1) - E(Y\mid A=0)\)</span> is not a causal effect,
+because it is comparing two different populations of people</p></li>
+</ul>
+</div>
+<div id="visualization-of-real-world" class="section level3">
+<h3>Visualization of real world</h3>
+<p><img src="/figures/crash_course_causality_week1_fig2.png" width="70%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="other-causal-effects" class="section level3">
+<h3>Other causal effects</h3>
+<ul>
+<li><p><span class="math inline">\(E(Y^1 / Y^0)\)</span>: causal relative risk</p></li>
+<li><p><span class="math inline">\(E(Y^1 - Y^0 \mid A=1)\)</span>: causal effect of treatment on the treated</p></li>
+<li><p><span class="math inline">\(E(Y^1 - Y^0 \mid V=v)\)</span>: average causal effect in the subpopulation with covariate <span class="math inline">\(V=v\)</span></p></li>
+</ul>
+</div>
+<div id="visualization-of-causal-effect-of-treatment-on-the-treated" class="section level3">
+<h3>Visualization of causal effect of treatment on the treated</h3>
+<p><img src="/figures/crash_course_causality_week1_fig3.png" width="70%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="causal-assumptions" class="section level1">
+<h1>Causal Assumptions</h1>
+<div id="most-common-causal-assumptions" class="section level3">
+<h3>Most common causal assumptions</h3>
+<ul>
+<li><p>Stable Unit Treatment Value Assumption (SUTVA)</p></li>
+<li><p>Consistency</p></li>
+<li><p>Ignorability</p></li>
+<li><p>Positivity</p></li>
+</ul>
+</div>
+<div id="stable-unit-treatment-value-assumption-sutva" class="section level2">
+<h2>Stable Unit Treatment Value Assumption (SUTVA)</h2>
+<div id="stable-unit-treatment-value-assumption-sutva-1" class="section level3">
+<h3>Stable Unit Treatment Value Assumption (SUTVA)</h3>
+<ul>
+<li>SUTVA involves two assumptions</li>
+</ul>
+<ol style="list-style-type: decimal">
+<li><p>No interference</p>
+<ul>
+<li>Units do not interfere with each other</li>
+<li>Treatment assignement of one unit does not affect that outcome of another unit</li>
+<li>Spillover or contagion are also terms for interference</li>
+</ul></li>
+<li><p>One version of treatment</p></li>
+</ol>
+<ul>
+<li><font color='green'>SUTVA allows us to write potential outcome for a person in terms of only that person’s treatments</font></li>
+</ul>
+</div>
+</div>
+<div id="consistency" class="section level2">
+<h2>Consistency</h2>
+<div id="consistency-assumption" class="section level3">
+<h3>Consistency assumption</h3>
+<ul>
+<li><font color='blue'>Consistency assumption</font>: the potential outcome under treatment <span class="math inline">\(A=a\)</span>, <span class="math inline">\(Y^a\)</span>, is equal to the observed outcome if the actual treatment received is <span class="math inline">\(A=a\)</span></li>
+</ul>
+<p><span class="math display">\[
+Y=Y^a \text{ if } A=a, \text{ for all } a
+\]</span></p>
+</div>
+</div>
+<div id="ignorability" class="section level2">
+<h2>Ignorability</h2>
+<div id="ignorability-assumption" class="section level3">
+<h3>Ignorability assumption</h3>
+<ul>
+<li><p><font color='blue'>Ignorability assumption</font>:
+given pre-treatment covariates <span class="math inline">\(X\)</span>, treatment assignment is independent from the potential outcomes
+<span class="math display">\[
+Y^0, Y^1 \perp A \mid X
+\]</span></p></li>
+<li><p><strong>Among people with the same values of <span class="math inline">\(X\)</span>, we can think of treatment <span class="math inline">\(A\)</span> as being randomly assigned</strong></p></li>
+<li><p>Example: <span class="math inline">\(Y^0\)</span> and <span class="math inline">\(Y^1\)</span> are not independent from <span class="math inline">\(A\)</span> marginally, but within levels of <span class="math inline">\(X\)</span>, treatment might be randomly assigned</p>
+<ul>
+<li><span class="math inline">\(X\)</span>: age; can take values ‘younger’ or ‘older’</li>
+<li><span class="math inline">\(Y\)</span>: hip fracture</li>
+<li>Older people are more likely to get treatment <span class="math inline">\(A=1\)</span></li>
+<li>Older people are also more likely to have the outcome, regardless of treatment</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="positivity" class="section level2">
+<h2>Positivity</h2>
+<div id="positivity-assumption" class="section level3">
+<h3>Positivity assumption</h3>
+<ul>
+<li><p><font color='blue'>Positivity assumption</font>: for every set of values of <span class="math inline">\(X\)</span>, treatment assignment was not deterministic
+<span class="math display">\[
+P(A=a \mid X=x) &gt; 0, \text{ for all } a \text{ and } x
+\]</span></p></li>
+<li><p>If for some values of <span class="math inline">\(X\)</span>, treatment was deterministic, then we would have no observed values of <span class="math inline">\(Y\)</span> for one of the treatment groups for those values of <span class="math inline">\(X\)</span></p></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="standardization-and-stratification" class="section level1">
+<h1>Standardization and Stratification</h1>
+<div id="observed-data-and-potential-outcomes" class="section level3">
+<h3>Observed data and potential outcomes</h3>
+<ul>
+<li>Under all above assumptions, the observed data average outcome <span class="math inline">\(E(Y\mid A=a, X=x)\)</span> equals the potential outcomes <span class="math inline">\(E(Y^a \mid X=x)\)</span></li>
+</ul>
+<p><span class="math display">\[\begin{align*}
+E(Y\mid A=a, X=x) 
+&amp;= E(Y^a\mid A=a, X=x) \text{ by consistency}\\
+&amp;= E(Y^a\mid X=x) \text{ by ignorability}\\
+\end{align*}\]</span></p>
+<ul>
+<li>If we want a marginal causal effect, we can average over <span class="math inline">\(X\)</span>
+<span class="math display">\[
+E(Y^a) = \sum_x E(Y \mid A=a, X=x) P(X=x)
+\]</span></li>
+</ul>
+</div>
+<div id="standardization" class="section level3">
+<h3>Standardization</h3>
+<ul>
+<li><p><font color='blue'>Standardization</font> involves <font color='green'>stratifying</font> and then <font color='green'>averaging</font></p>
+<ul>
+<li>First obtain the mean treatment effect within each stratum
+<span class="math inline">\(E(Y \mid A=a, X=x)\)</span></li>
+<li>Then pool across stratum, weighing by the probability (size) of each stratum <span class="math inline">\(P(X=x)\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="standardization-example-two-diabetes-treatments" class="section level3">
+<h3>Standardization example: two diabetes treatments</h3>
+<ul>
+<li><p>Treatments: saxagliptin (new medicine) vs sitagliptin</p></li>
+<li><p>Outcome: major adverse cardiac event (MACE)</p></li>
+<li><p>Covariate: past use of oral antidiabetic (OAD) drug</p></li>
+<li><p><font color='red'>Challenge</font></p>
+<ul>
+<li>Saxa users were more likely to have past use of OAD drug</li>
+<li>Patients with past use of OAD drugs are at higher risk of MACE</li>
+</ul></li>
+<li><p><font color='green'>Stratify</font> parents in two subpopulations by whether having prior OAD use</p>
+<ul>
+<li>Within levels of the prior OAD use variable, treatment can be thought of as randomized (ignorability)</li>
+</ul></li>
+</ul>
+</div>
+<div id="example-continued-unstratified" class="section level3">
+<h3>Example continued: unstratified</h3>
+<table>
+<caption>Unstratified raw data</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th>MACE=yes</th>
+<th>MACE=no</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Saxa=yes</td>
+<td>350</td>
+<td>3650</td>
+<td>4000</td>
+</tr>
+<tr class="even">
+<td>Saxa=no</td>
+<td>500</td>
+<td>6500</td>
+<td>7000</td>
+</tr>
+<tr class="odd">
+<td>Total</td>
+<td>850</td>
+<td>10150</td>
+<td>11000</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math display">\[\begin{align*}
+&amp;P(\text{MACE} \mid \text{Saxa}=\text{yes}) 
+= 350/4000 = 0.088\\
+&amp;P(\text{MACE} \mid \text{Saxa}=\text{no}) 
+= 500/7000 = 0.071
+\end{align*}\]</span></p>
+</div>
+<div id="example-continued-subpopulation-without-prior-oad-use" class="section level3">
+<h3>Example continued: subpopulation without prior OAD use</h3>
+<table>
+<caption>Prior OAD use = no</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th>MACE=yes</th>
+<th>MACE=no</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Saxa=yes</td>
+<td>50</td>
+<td>950</td>
+<td>1000</td>
+</tr>
+<tr class="even">
+<td>Saxa=no</td>
+<td>200</td>
+<td>3800</td>
+<td>4000</td>
+</tr>
+<tr class="odd">
+<td>Total</td>
+<td>250</td>
+<td>4750</td>
+<td>5000</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math display">\[\begin{align*}
+&amp;P(\text{MACE} \mid \text{Saxa}=\text{yes}) 
+= 50/1000 = 0.05\\
+&amp;P(\text{MACE} \mid \text{Saxa}=\text{no}) 
+= 200/4000 = 0.05
+\end{align*}\]</span></p>
+</div>
+<div id="example-continued-subpopulation-with-prior-oad-use" class="section level3">
+<h3>Example continued: subpopulation with prior OAD use</h3>
+<table>
+<caption>Prior OAD use = yes</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th>MACE=yes</th>
+<th>MACE=no</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Saxa=yes</td>
+<td>300</td>
+<td>2700</td>
+<td>3000</td>
+</tr>
+<tr class="even">
+<td>Saxa=no</td>
+<td>300</td>
+<td>2700</td>
+<td>3000</td>
+</tr>
+<tr class="odd">
+<td>Total</td>
+<td>600</td>
+<td>5400</td>
+<td>6000</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math display">\[\begin{align*}
+&amp;P(\text{MACE} \mid \text{Saxa}=\text{yes}) 
+= 300/3000 = 0.10\\
+&amp;P(\text{MACE} \mid \text{Saxa}=\text{no}) 
+= 300/3000 = 0.10
+\end{align*}\]</span></p>
+</div>
+<div id="example-continued-mean-potential-outcome-for-saxa" class="section level3">
+<h3>Example continued: mean potential outcome for Saxa</h3>
+<p><span class="math display">\[\begin{align*}
+&amp; E(Y^{\text{saxa}})\\
+= ~&amp; E(Y\mid A=\text{saxa}, X = \text{prior OAD use yes})
+  P(\text{prior OAD use yes})\\
+  &amp; + 
+  E(Y\mid A=\text{saxa}, X = \text{prior OAD use no})
+  P(\text{prior OAD use no})\\
+= &amp; (300/3000) (6000/11000) + (50/1000) (5000/11000) \\
+= &amp; 0.077
+\end{align*}\]</span></p>
+<ul>
+<li><p>Similarly, <span class="math inline">\(E(Y^{\text{sita}}) = 0.077\)</span></p></li>
+<li><p>Hence, the treatment Saxa or not has no causal effects on the MACE outcome</p></li>
+</ul>
+</div>
+<div id="problems-with-standardization" class="section level3">
+<h3><font color='red'>Problems with standardization</font></h3>
+<ul>
+<li><p>There will be many <span class="math inline">\(X\)</span> variables needed to achieve ignorability</p></li>
+<li><p>Stratification would lead to many <font color='red'>empy cells</font></p></li>
+<li><p><font color='green'>Alternative to standardization</font>: matching inverse probability of treatment weighting (IPTW), etc</p></li>
+</ul>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li><p>Coursera class: “A Crash Course on Causality: Inferring Causal Effects from Observational Data”, by Jason A. Roy (University of Pennsylvania)</p>
+<ul>
+<li><a href="https://www.coursera.org/learn/crash-course-in-causality" class="uri">https://www.coursera.org/learn/crash-course-in-causality</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+    </div>
+  </article>
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//kfab.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-116913878-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+  </body>
+</html>
+

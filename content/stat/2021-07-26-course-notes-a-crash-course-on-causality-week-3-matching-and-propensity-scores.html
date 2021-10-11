@@ -1,0 +1,489 @@
+---
+title: 'Course Notes: A Crash Course on Causality -- Week 3: Matching and Propensity
+  Scores'
+author: ''
+date: '2021-07-26'
+slug: course-notes-a-crash-course-on-causality-week-3-matching-and-propensity-scores
+categories:
+  - Lecture notes
+tags:
+  - Causal Inference
+  - Slides
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 2
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#matching">Matching</a><ul>
+<li><a href="#experiments-vs-observational-studies">Experiments vs observational studies</a></li>
+<li><a href="#overview-of-matching">Overview of matching</a></li>
+<li><a href="#nearest-neighbor-matching">Nearest neighbor matching</a></li>
+<li><a href="#optimal-matching">Optimal matching</a></li>
+<li><a href="#assessing-matching-balance">Assessing matching balance</a></li>
+<li><a href="#analyze-data-after-matching">Analyze data after matching</a></li>
+</ul></li>
+<li><a href="#propensity-score">Propensity Score</a><ul>
+<li><a href="#propensity-score-matching">Propensity score matching</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p><strong><em><font color='red'>For the pdf slides, click <a href="/pdf/070921_crash_course_Causality_week3.pdf">here</a></font></em></strong></p>
+<div id="matching" class="section level1">
+<h1>Matching</h1>
+<div id="experiments-vs-observational-studies" class="section level2">
+<h2>Experiments vs observational studies</h2>
+<div id="randomized-trials" class="section level3">
+<h3>Randomized trials</h3>
+<p><img src="/stat/2021-07-26-course-notes-a-crash-course-on-causality-week-3-matching-and-propensity-scores_files/figure-html/unnamed-chunk-1-1.png" width="20%" /></p>
+<ul>
+<li><p>In experiments, treatment <span class="math inline">\(A\)</span> is determined by a coin toss;
+so there are no arrows from <span class="math inline">\(X\)</span> to <span class="math inline">\(A\)</span>, i.e., no backdoor paths</p></li>
+<li><p><font color='blue'>Covariate balance</font>: distribution of pre-treatment variables <span class="math inline">\(X\)</span> are the same in both treatment groups</p></li>
+</ul>
+<p><img src="/figures/crash_course_causality_week3_fig1.png" width="50%" style="display: block; margin: auto;" /></p>
+<ul>
+<li>Hence, if there is difference in the outcome, it is not because of <span class="math inline">\(X\)</span></li>
+</ul>
+</div>
+<div id="observational-studies" class="section level3">
+<h3>Observational studies</h3>
+<ul>
+<li><p>In observational studies, the distribution of <span class="math inline">\(X\)</span> may differ
+between treatment groups</p></li>
+<li><p>For example, older people may be more likely to get treatment <span class="math inline">\(A=1\)</span>:</p></li>
+</ul>
+<p><img src="/figures/crash_course_causality_week3_fig2.png" width="50%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="overview-of-matching" class="section level2">
+<h2>Overview of matching</h2>
+<div id="matching-1" class="section level3">
+<h3>Matching</h3>
+<ul>
+<li><p><font color='blue'>Matching</font>: a method that attempts to make an observational study more like a randomized trial</p></li>
+<li><p><strong>Main idea of matching</strong>: match individuals in the treated group <span class="math inline">\((A=1)\)</span> to individuals in the control group <span class="math inline">\((A=0)\)</span> on the covariates <span class="math inline">\(X\)</span></p>
+<ul>
+<li>Usually, the sample size of the treated group is smaller than the control group, so after matching, we will use all cases in the treated group, but only a fraction of the cases in the control group</li>
+</ul></li>
+<li><p>In the example where older people are more likely to get <span class="math inline">\(A=1\)</span></p>
+<ul>
+<li>At younger (older) ages, there are more people with <span class="math inline">\(A=0\)</span> (<span class="math inline">\(A=1\)</span>)</li>
+<li><p>In a randomized trial, for any particular age, there should be about the same number of treated and untreated people</p></li>
+<li><p>This balance can be achieved by matching treated people to control people of the same age</p></li>
+</ul></li>
+</ul>
+</div>
+<div id="advantages-of-matching" class="section level3">
+<h3>Advantages of matching</h3>
+<ul>
+<li><p>Controlling for confounders is achieved at the design phase, i.e., without looking at the outcome</p></li>
+<li><p>Matching will reveal <font color='red'>lack of overlap</font> in covariate distribution</p>
+<ul>
+<li>Positivity assumption will hold in the population that can be matched</li>
+</ul></li>
+<li><p><font color='green'>We can treated a matched dataset as if from a randomized trial</font></p></li>
+<li><p>Outcome analysis is simple</p></li>
+</ul>
+</div>
+<div id="match-on-a-single-covariate" class="section level3">
+<h3>Match on a single covariate</h3>
+<ul>
+<li><p>Suppose red patients are more likely to be treated than blue ones</p></li>
+<li><p>Before matching</p></li>
+</ul>
+<p><img src="/figures/crash_course_causality_week3_fig3.png" width="50%" style="display: block; margin: auto;" /></p>
+<ul>
+<li>After matching</li>
+</ul>
+<p><img src="/figures/crash_course_causality_week3_fig4.png" width="50%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="match-on-many-covariates" class="section level3">
+<h3>Match on many covariates</h3>
+<ul>
+<li><p>We will not be able to exactly match on the full set of covariates</p></li>
+<li><p>In randomized trials, treated and control subjects are not perfect matches either; the distribution of covariates is <font color='green'>balanced</font> between groups (stochastic balance)</p></li>
+<li><p>Matching closely on covariates can achieve stochastic balance</p></li>
+</ul>
+</div>
+<div id="example-of-matching-on-two-covariates-sex-and-age" class="section level3">
+<h3>Example of matching on two covariates: sex and age</h3>
+<ul>
+<li>Before matching</li>
+</ul>
+<p><img src="/figures/crash_course_causality_week3_fig5.png" width="50%" style="display: block; margin: auto;" /></p>
+<ul>
+<li>After matching</li>
+</ul>
+<p><img src="/figures/crash_course_causality_week3_fig6.png" width="50%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="target-population-of-matching-the-treated" class="section level3">
+<h3>Target population of matching: the treated</h3>
+<ul>
+<li><p>By matching, we are making the distribution of covariates in the control population look like that in the treated population</p></li>
+<li><p>So we will analysis causal effect of treatment on the treated</p></li>
+</ul>
+<p><img src="/figures/crash_course_causality_week3_fig7.png" width="50%" style="display: block; margin: auto;" /></p>
+<ul>
+<li>There are matching methods that can be used to target a different population (beyond scope of this course)</li>
+</ul>
+</div>
+<div id="fine-balance" class="section level3">
+<h3>Fine balance</h3>
+<ul>
+<li><p>Sometimes it is hard to find great matches, so we are willing to accept some non-ideal matches, <strong>if treated and control groups have the same distribution of covariates (fine balance)</strong></p></li>
+<li><p>For the matches below, average age and percent female are the same in both groups, although neither match is great</p>
+<ul>
+<li>Match 1: treated, male, age 40 and control, female, age 45</li>
+<li>Match 2: treated, female, age 45 and control, male, age 40</li>
+</ul></li>
+</ul>
+</div>
+<div id="number-of-matches" class="section level3">
+<h3>Number of matches</h3>
+<ul>
+<li><p>One to one (pair matching): match one control to every treated subject</p></li>
+<li><p>Many to one: match <span class="math inline">\(K\)</span> (a fixed number) controls to every treated subject; e.g., 5 to 1 matching</p></li>
+<li><p>Variable: sometime match 1, sometimes more than 1 (if multiple good matches available), control to treated subjects</p></li>
+</ul>
+</div>
+<div id="metrics-used-in-matching" class="section level3">
+<h3>Metrics used in matching</h3>
+<ul>
+<li><p><font color='blue'>Mahalanobis distance</font> between two vectors:
+<span class="math display">\[
+D(\mathbf{X}_i, \mathbf{X}_j) = 
+\sqrt{(\mathbf{X}_i - \mathbf{X}_j)^T \mathbf{S}^{-1}(\mathbf{X}_i - \mathbf{X}_j)}, \quad
+\mathbf{S} = cov(\mathbf{X})
+\]</span></p>
+<ul>
+<li>We use covariance to scale so that the M distance is invariant of unit change</li>
+</ul></li>
+</ul>
+<p><img src="/figures/crash_course_causality_week3_fig8.png" width="65%" style="display: block; margin: auto;" /></p>
+<ul>
+<li><p>Robust Mahalanobis distance: robust to outliers</p>
+<ul>
+<li>Replace each covariate value with its rank</li>
+<li>Constant diagonal on covariance matrix</li>
+<li>Calculate the usual M distance on the ranks</li>
+</ul></li>
+</ul>
+</div>
+<div id="types-of-matching" class="section level3">
+<h3>Types of matching</h3>
+<ul>
+<li>Greedy (nearest neighbor) matching
+<ul>
+<li>Not ideal, but computationally fast</li>
+</ul></li>
+<li>Optimal matching
+<ul>
+<li>Better, but computationally demanding</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="nearest-neighbor-matching" class="section level2">
+<h2>Nearest neighbor matching</h2>
+<div id="setup" class="section level3">
+<h3>Setup</h3>
+<ul>
+<li><p>We have selected a set of pre-treatment covariates <span class="math inline">\(X\)</span> that satisfy the ignorability assumption</p></li>
+<li><p>We have calculated a distance <span class="math inline">\(d_{i,j}\)</span> between each treated subject <span class="math inline">\(i\)</span> and each control subject <span class="math inline">\(j\)</span></p></li>
+<li><p>We have more control subjects than the treated subjects</p></li>
+<li><p>We will focus on pair matching (one-to-one)</p></li>
+</ul>
+</div>
+<div id="nearest-neighbor-matching-greedy" class="section level3">
+<h3>Nearest neighbor matching (greedy)</h3>
+<ol style="list-style-type: decimal">
+<li><p>Randomly order list of treated subjects and control subjects</p></li>
+<li><p>Start with the first treated subject, match to the control with the smallest distance</p></li>
+<li><p>Remove the matched control from the list of available matches</p></li>
+<li><p>Move on to the next treated subject. Repeat until all treated subjects are matched</p></li>
+</ol>
+<ul>
+<li><p><font color='red'>Not invariant to order initial order of list</font></p></li>
+<li><p><font color='red'>Not optimal: always taking the smallest distance match does not minimize total distance</font></p></li>
+<li><p>R package: MatchIt, <a href="https://cran.r-project.org/web/packages/MatchIt/MatchIt.pdf" class="uri">https://cran.r-project.org/web/packages/MatchIt/MatchIt.pdf</a></p></li>
+</ul>
+</div>
+<div id="many-to-one-matching" class="section level3">
+<h3>Many-to-one matching</h3>
+<ul>
+<li><p>For <span class="math inline">\(K\)</span>:1 matching: after everyone has 1 match, go through the list again and find 2nd matches. Repeat until <span class="math inline">\(K\)</span> matches</p></li>
+<li><p>Pair matching (one-to-one) vs many-to-one matching: a bias-variance tradeoff</p>
+<ul>
+<li><p>Pair matching: closer matches, faster computing time</p></li>
+<li><p>Many-to-one matching: larger sample size</p></li>
+</ul></li>
+</ul>
+</div>
+<div id="caliper" class="section level3">
+<h3>Caliper</h3>
+<ul>
+<li><p>We may exclude a treated subject if there is no good matches for it</p></li>
+<li><p><font color='blue'>Caliper</font>: maximum acceptable distance</p>
+<ul>
+<li>Only match a treated subject if the best match has distance less than the caliper</li>
+</ul></li>
+<li><p><font color='green'>If no matches within caliper, it is a sign of violation of the positivity assumption. So we should exclude these subjects</font></p></li>
+<li><p><font color='red'>Drawback: population harder to define</font></p></li>
+</ul>
+</div>
+</div>
+<div id="optimal-matching" class="section level2">
+<h2>Optimal matching</h2>
+<div id="optimal-matching-1" class="section level3">
+<h3>Optimal matching</h3>
+<ul>
+<li><p>Optimal matching: minimized global distance measure, e.g., total distance</p></li>
+<li><p>Computational feasibility of optimal matching: depends on the size of the problem</p>
+<ul>
+<li><p>Number of treatment-control pairing: product of number of treatment and number of control</p></li>
+<li><p>1 million treatment-control pairings is feasible on most computers (not quick, though)</p></li>
+<li><p>1 billion pairings is not feasible</p></li>
+</ul></li>
+<li><p>R packages: optmatch, rcbalance</p></li>
+</ul>
+</div>
+</div>
+<div id="assessing-matching-balance" class="section level2">
+<h2>Assessing matching balance</h2>
+<div id="assessing-matching-balance-1" class="section level3">
+<h3>Assessing matching balance</h3>
+<ul>
+<li>Check covariate balance: compute <font color='blue'>standardized difference</font> to see if each covariate has similar means between treatment and control
+<span class="math display">\[
+smd = \frac{\bar{X}_{\text{treatment}} - \bar{X}_{\text{control}}}{\sqrt{\frac{s^2_{\text{treatment}} + s^2_{\text{control}}}{2}}}
+\]</span>
+<ul>
+<li>Does not depend on sample size</li>
+<li>Often, absolute value of smd is reported</li>
+<li>We calculate smd for each variable we match on</li>
+<li>This analysis does not involve the outcome variable</li>
+</ul></li>
+<li><p>Rule of thumb:</p>
+<ul>
+<li><span class="math inline">\(|smd| &lt; 0.1\)</span>: adequate balance</li>
+<li><span class="math inline">\(|smd| \in [0.1, 0.2]\)</span>: not too alarming</li>
+<li><span class="math inline">\(|smd| &gt; 0.2\)</span>: serious imbalance</li>
+</ul></li>
+</ul>
+</div>
+<div id="example-right-heat-characterization-rhc-data" class="section level3">
+<h3>Example: right heat characterization (RHC) data</h3>
+<ul>
+<li><font color='blue'>Table 1</font>: compares pre-matching and post-matching balance</li>
+</ul>
+<p><img src="/figures/crash_course_causality_week3_fig9.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="example-continued-rhc-data" class="section level3">
+<h3>Example continued: RHC data</h3>
+<ul>
+<li>SMD plot: visualizes Table 1</li>
+</ul>
+<p><img src="/figures/crash_course_causality_week3_fig10.png" width="50%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="analyze-data-after-matching" class="section level2">
+<h2>Analyze data after matching</h2>
+<div id="after-matching-proceed-with-outcome-analysis" class="section level3">
+<h3>After matching, proceed with outcome analysis</h3>
+<ul>
+<li><p>Test for a treatment effect</p></li>
+<li><p>Estimate a treatment effect and confidence interval</p></li>
+<li><p>Methods should take matching into account</p></li>
+</ul>
+</div>
+<div id="randomization-test" class="section level3">
+<h3><font color='blue'>Randomization test</font></h3>
+<ul>
+<li><p>Also known as <font color='blue'>permutation tests</font> or <font color='blue'>exact tests</font></p></li>
+<li><p>Main ideas of randomization test</p>
+<ul>
+<li><p>Compute test statistic from observed data, assuming null hypothesis of no treatment effect is true</p></li>
+<li><p>Randomly <strong>permute treatment assignment</strong> within pairs and recompute test statistic</p></li>
+<li><p>Repeat many times and see how unusual observed statistic is</p></li>
+</ul></li>
+</ul>
+</div>
+<div id="a-binary-outcome-example" class="section level3">
+<h3>A binary outcome example</h3>
+<ul>
+<li><p>Test statistic: the total number of events in the treated group</p>
+<ul>
+<li>Test stat <span class="math inline">\(T=6\)</span> in the observed data</li>
+</ul></li>
+</ul>
+<p><img src="/figures/crash_course_causality_week3_fig12.png" width="40%" style="display: block; margin: auto;" /></p>
+<ul>
+<li>In the observed data, discordant pairs (in red) are the only ones can change during treatment permutation</li>
+</ul>
+</div>
+<div id="permutation-test-for-binary-outcome-equivalent-to-a-ncnemar-test" class="section level3">
+<h3>Permutation test for binary outcome: equivalent to a NcNemar test</h3>
+<p><img src="/figures/crash_course_causality_week3_fig11.png" width="65%" style="display: block; margin: auto;" /></p>
+<p><img src="/figures/crash_course_causality_week3_fig13.png" width="75%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ncnemar-test-whether-row-and-column-marginal-frequencies-are-the-same-for-paired-binary-data" class="section level3">
+<h3>NcNemar test: whether row and column marginal frequencies are the same, for paired binary data</h3>
+<ul>
+<li>Paired binary data, represented in a 2 by 2 contingency table</li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>Test 2 positive</th>
+<th>Test 2 negative</th>
+<th>Row total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Test 1 positive</td>
+<td><span class="math inline">\(a\)</span></td>
+<td><span class="math inline">\(b\)</span></td>
+<td><span class="math inline">\(a+b\)</span></td>
+</tr>
+<tr class="even">
+<td>Test 1 negative</td>
+<td><span class="math inline">\(c\)</span></td>
+<td><span class="math inline">\(d\)</span></td>
+<td><span class="math inline">\(c+d\)</span></td>
+</tr>
+<tr class="odd">
+<td>Column total</td>
+<td><span class="math inline">\(a+c\)</span></td>
+<td><span class="math inline">\(b+d\)</span></td>
+<td><span class="math inline">\(N\)</span></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p>Hypotheses: whether <span class="math inline">\(p_a + p_b = p_a + p_c\)</span>, or equivalently,
+<span class="math display">\[
+H_0: p_b = p_c, \quad H_1: p_b \neq p_c
+\]</span></p></li>
+<li><p>Test statistic
+<span class="math display">\[
+\frac{(b-c)^2}{b+c} \stackrel{\text{under } H_0}{\sim} \chi^2_{df=1}
+\]</span></p></li>
+<li><p>Source: <a href="https://en.wikipedia.org/wiki/McNemar%27s_test" class="uri">https://en.wikipedia.org/wiki/McNemar%27s_test</a></p></li>
+</ul>
+</div>
+<div id="permutation-test-for-continuous-outcome-equivalent-to-a-paired-t-test" class="section level3">
+<h3>Permutation test for continuous outcome: equivalent to a paired t-test</h3>
+<ul>
+<li>Test statistic: difference in sample means</li>
+</ul>
+<p><img src="/figures/crash_course_causality_week3_fig14.png" width="65%" style="display: block; margin: auto;" /></p>
+<p><img src="/figures/crash_course_causality_week3_fig15.png" width="75%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="other-outcome-models" class="section level3">
+<h3>Other outcome models</h3>
+<ul>
+<li><p>Conditional logistic regression</p>
+<ul>
+<li>Matched binary outcome data</li>
+</ul></li>
+<li><p>Generalized estimating equations (GEE)</p>
+<ul>
+<li>Match ID variable used to specify clusters</li>
+<li>For binary outcomes, can estimate a causal risk difference, causal risk ratio, or causal odds ratio (depending on link function)</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="propensity-score" class="section level1">
+<h1>Propensity Score</h1>
+<div id="propensity-score-1" class="section level3">
+<h3>Propensity score</h3>
+<ul>
+<li><p><font color='blue'>Propensity score</font>: probability of receiving treatment, given covariates <span class="math inline">\(X\)</span>
+<span class="math display">\[
+\pi_i = P(A_i = 1 \mid X_i)
+\]</span></p></li>
+<li><p>Propensity score is a <font color='green'>balancing score</font>
+<span class="math display">\[
+P(X = x \mid \pi(X) = p, A = 1) = P(X = x \mid \pi(X) = p, A = 0)
+\]</span></p>
+<ul>
+<li>Suppose two subjects have the same value of propensity score, but different covariate values <span class="math inline">\(X\)</span></li>
+<li>This means that both subjects’ <span class="math inline">\(X\)</span> is just as likely to be found in the treatment group</li>
+<li>So if we restrict to a subpopulation of subjects who have the same value of the propensity score, there should be balance in the treatment vs control groups</li>
+</ul></li>
+<li><p><font color='green'>We can match on propensity score to achieve balance</font></p></li>
+</ul>
+</div>
+<div id="logistic-regression-to-estimate-propensity-score" class="section level3">
+<h3>Logistic regression to estimate propensity score</h3>
+<ul>
+<li><p>In a randomized trial, the propensity score is known <span class="math display">\[P(A=1\mid X) = P(A=0\mid X) = 0.5\]</span></p></li>
+<li><p>In an observational study, we need to estimate the propensity score <span class="math inline">\(P(A=1\mid X)\)</span></p>
+<ol style="list-style-type: decimal">
+<li>Fit a logistic regression: outcome <span class="math inline">\(A\)</span>, covariates <span class="math inline">\(X\)</span></li>
+<li>Get the predicted probability (fitted value) for each subject as the estimated propensity score</li>
+</ol></li>
+</ul>
+</div>
+<div id="propensity-score-matching" class="section level2">
+<h2>Propensity score matching</h2>
+<div id="before-propensity-score-matching-check-for-overlap" class="section level3">
+<h3>Before propensity score matching: check for overlap</h3>
+<ul>
+<li><p>Propensity score matching is simple; it’s matching on one variable</p></li>
+<li><p>After the propensity is estimated, but before matching, it is useful to look for overlap</p>
+<ul>
+<li>This is to check positivity assumption</li>
+</ul></li>
+<li><p>Example of good overlap</p></li>
+</ul>
+<p><img src="/figures/crash_course_causality_week3_fig16.png" width="55%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="trim-tails-if-there-is-a-lack-of-overlap" class="section level3">
+<h3>Trim tails if there is a lack of overlap</h3>
+<ul>
+<li>Example of bad overlap</li>
+</ul>
+<p><img src="/figures/crash_course_causality_week3_fig17.png" width="55%" style="display: block; margin: auto;" /></p>
+<ul>
+<li><p>Trim tails: remove subjects who have extreme values of propensity score</p>
+<ul>
+<li>Remove control subjects whose propensity score is less than the minimum in the treatment group</li>
+<li>Remove treated subjects whose propensity score is greater than the maximum in the control group</li>
+</ul></li>
+</ul>
+</div>
+<div id="propensity-score-matching-1" class="section level3">
+<h3>Propensity score matching</h3>
+<ul>
+<li><p>Compute a distrance between the propensity score for each treated subject with every control</p></li>
+<li><p>Use nearest neighbor or optimal matching</p></li>
+<li><p>In practice, logit of the propensity score is often used, rather than the propensity score itself</p></li>
+<li><p>A caliper can be used to avoid bad matches</p></li>
+<li>After matching: outcome analysis
+<ul>
+<li>Randomization tests</li>
+<li>Conditional logistic regression, GEE, etc</li>
+</ul></li>
+</ul>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li><p>Coursera class: “A Crash Course on Causality: Inferring Causal Effects from Observational Data”, by Jason A. Roy (University of Pennsylvania)</p>
+<ul>
+<li><a href="https://www.coursera.org/learn/crash-course-in-causality" class="uri">https://www.coursera.org/learn/crash-course-in-causality</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>

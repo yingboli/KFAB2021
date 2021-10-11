@@ -3,15 +3,42 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>http://liyingbo.com/categories/</loc>
-    <lastmod>2021-05-30T00:00:00+00:00</lastmod>
+    <lastmod>2021-08-16T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://liyingbo.com/cooking/</loc>
-    <lastmod>2021-05-30T00:00:00+00:00</lastmod>
+    <loc>http://liyingbo.com/tags/causal-inference/</loc>
+    <lastmod>2021-08-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/stat/2021/08/16/course-notes-a-crash-course-on-causality-week-5-instrumental-variables/</loc>
+    <lastmod>2021-08-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/</loc>
-    <lastmod>2021-05-30T00:00:00+00:00</lastmod>
+    <lastmod>2021-08-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/categories/lecture-notes/</loc>
+    <lastmod>2021-08-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/stat/</loc>
+    <lastmod>2021-08-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/tags/slides/</loc>
+    <lastmod>2021-08-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/tags/</loc>
+    <lastmod>2021-08-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/stat/2021/07/29/course-notes-a-crash-course-on-causality-week-4-inverse-probability-of-treatment-weighting-iptw/</loc>
+    <lastmod>2021-07-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/stat/2021/07/26/course-notes-a-crash-course-on-causality-week-3-matching-and-propensity-scores/</loc>
+    <lastmod>2021-07-26T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/stat/2021/07/09/course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags/</loc>
+    <lastmod>2021-07-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/stat/2021/07/05/course-notes-a-crash-course-on-causality-week-1-intro-to-causal-effects/</loc>
+    <lastmod>2021-07-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/cooking/</loc>
     <lastmod>2021-05-30T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/tags/%E7%8E%89%E7%B1%B3-corn/</loc>
@@ -35,13 +62,7 @@
     <loc>http://liyingbo.com/stat/2021/05/18/book-notes-neural-network-methods-for-natural-language-processing-part-3-specialized-architectures-ch14-16-rnns/</loc>
     <lastmod>2021-05-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://liyingbo.com/stat/</loc>
-    <lastmod>2021-05-18T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>http://liyingbo.com/tags/natural-language-processing/</loc>
-    <lastmod>2021-05-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://liyingbo.com/tags/slides/</loc>
     <lastmod>2021-05-18T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/stat/2021/05/17/book-notes-neural-network-methods-for-natural-language-processing-part-3-specialized-architectures-ch13-cnn/</loc>
@@ -604,9 +625,6 @@
   </url><url>
     <loc>http://liyingbo.com/cooking/2018/04/08/homemade-chili-oil/</loc>
     <lastmod>2018-04-08T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://liyingbo.com/categories/lecture-notes/</loc>
-    <lastmod>2018-04-03T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/stat/2018/04/03/my-first-post-about-statistics/</loc>
     <lastmod>2018-04-03T00:00:00+00:00</lastmod>

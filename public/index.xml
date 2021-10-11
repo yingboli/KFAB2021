@@ -6,7 +6,61 @@
     <description>Recent content on King Fox And Butterfly</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 30 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://liyingbo.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 16 Aug 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://liyingbo.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Course Notes: A Crash Course on Causality -- Week 5: Instrumental Variables</title>
+      <link>http://liyingbo.com/stat/2021/08/16/course-notes-a-crash-course-on-causality-week-5-instrumental-variables/</link>
+      <pubDate>Mon, 16 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2021/08/16/course-notes-a-crash-course-on-causality-week-5-instrumental-variables/</guid>
+      <description>Introduction to Instrumental Variables Randomized trials with noncompliance Compliance classes Instrumental variable assumptions  Estimate Causal Effects with Instrumental Variables IVs in observational studies Two stage least squares Sensitivity analysis and weak instruments    For the pdf slides, click here
+Introduction to Instrumental Variables Unmeasured confounding  Suppose there are unobserved variables \(U\) that affect both \(A\) and \(Y\), then \(U\) is an unmeasured confounding   This violates ignorability assumption</description>
+    </item>
+    
+    <item>
+      <title>Course Notes: A Crash Course on Causality -- Week 4: Inverse Probability of Treatment Weighting (IPTW)</title>
+      <link>http://liyingbo.com/stat/2021/07/29/course-notes-a-crash-course-on-causality-week-4-inverse-probability-of-treatment-weighting-iptw/</link>
+      <pubDate>Thu, 29 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2021/07/29/course-notes-a-crash-course-on-causality-week-4-inverse-probability-of-treatment-weighting-iptw/</guid>
+      <description>Inverse Probability of Treatment Weighting Marginal Structural Models Assessing covariate balance with weights Problems and remedies for large weights    For the pdf slides, click here
+Inverse Probability of Treatment Weighting Motivating example  Suppose there is a single confounder \(X\), with propensity scores \[ P(A=1\mid X=1) = 0.1, \quad P(A=1\mid X=0) = 0.8 \]   In propensity score matching, for subjects with \(X=1\), 1 out of 9 controls will be matched to the treated</description>
+    </item>
+    
+    <item>
+      <title>Course Notes: A Crash Course on Causality -- Week 3: Matching and Propensity Scores</title>
+      <link>http://liyingbo.com/stat/2021/07/26/course-notes-a-crash-course-on-causality-week-3-matching-and-propensity-scores/</link>
+      <pubDate>Mon, 26 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2021/07/26/course-notes-a-crash-course-on-causality-week-3-matching-and-propensity-scores/</guid>
+      <description>Matching Experiments vs observational studies Overview of matching Nearest neighbor matching Optimal matching Assessing matching balance Analyze data after matching  Propensity Score Propensity score matching    For the pdf slides, click here
+Matching Experiments vs observational studies Randomized trials  In experiments, treatment \(A\) is determined by a coin toss; so there are no arrows from \(X\) to \(A\), i.e., no backdoor paths
+ Covariate balance: distribution of pre-treatment variables \(X\) are the same in both treatment groups</description>
+    </item>
+    
+    <item>
+      <title>Course Notes: A Crash Course on Causality -- Week 2: Confounding and Directed Acyclic Graphs (DAGs)</title>
+      <link>http://liyingbo.com/stat/2021/07/09/course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags/</link>
+      <pubDate>Fri, 09 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2021/07/09/course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags/</guid>
+      <description>Confounding Causal Graphs Terminologies of Directed Acyclic Graphs (DAGs) Relationship between DAGs and probability distributions Types of paths, blocking, and colliders d-separation Frontdoor and backdoor paths Backdoor path criterion    For the pdf slides, click here
+Confounding Confounding  Confounders: variables that affect both the treatment and the outcome
+ If we assign treatment based on a coin flip, since the coin flip doesn’t affect the outcome, it’s not a confounder</description>
+    </item>
+    
+    <item>
+      <title>Course Notes: A Crash Course on Causality -- Week 1: Intro to Causal Effects</title>
+      <link>http://liyingbo.com/stat/2021/07/05/course-notes-a-crash-course-on-causality-week-1-intro-to-causal-effects/</link>
+      <pubDate>Mon, 05 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2021/07/05/course-notes-a-crash-course-on-causality-week-1-intro-to-causal-effects/</guid>
+      <description>Notations and Terminologies Potential outcomes and conterfactuals  What are Causal Effects? Fundamental problem of causal inference  Causal Assumptions Stable Unit Treatment Value Assumption (SUTVA) Consistency Ignorability Positivity  Standardization and Stratification   For the pdf slides, click here
+Notations and Terminologies Notations  We are interested in the causal effect of some treatment \(A\) on some outcome \(Y\)
+ Treatment: \(A\), binary
+ \(A=1\) if receive treatment; and \(A=0\) if receive control</description>
+    </item>
+    
     <item>
       <title>玉米烙 Corn Fritters</title>
       <link>http://liyingbo.com/cooking/2021/05/30/corn-fritters/</link>

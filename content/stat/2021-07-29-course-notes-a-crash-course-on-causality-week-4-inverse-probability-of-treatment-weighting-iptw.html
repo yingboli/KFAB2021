@@ -1,0 +1,305 @@
+---
+title: 'Course Notes: A Crash Course on Causality -- Week 4: Inverse Probability of
+  Treatment Weighting (IPTW)'
+author: ''
+date: '2021-07-29'
+slug: course-notes-a-crash-course-on-causality-week-4-inverse-probability-of-treatment-weighting-iptw
+categories:
+  - Lecture notes
+tags:
+  - Causal Inference
+  - Slides
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 2
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#inverse-probability-of-treatment-weighting">Inverse Probability of Treatment Weighting</a></li>
+<li><a href="#marginal-structural-models">Marginal Structural Models</a><ul>
+<li><a href="#assessing-covariate-balance-with-weights">Assessing covariate balance with weights</a></li>
+<li><a href="#problems-and-remedies-for-large-weights">Problems and remedies for large weights</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p><strong><em><font color='red'>For the pdf slides, click <a href="/pdf/072121_crash_course_Causality_week4.pdf">here</a></font></em></strong></p>
+<div id="inverse-probability-of-treatment-weighting" class="section level1">
+<h1>Inverse Probability of Treatment Weighting</h1>
+<div id="motivating-example" class="section level3">
+<h3>Motivating example</h3>
+<ul>
+<li>Suppose there is a single confounder <span class="math inline">\(X\)</span>, with propensity scores
+<span class="math display">\[
+P(A=1\mid X=1) = 0.1, \quad P(A=1\mid X=0) = 0.8
+\]</span></li>
+</ul>
+<p><img src="/figures/crash_course_causality_week4_fig1.png" width="55%" style="display: block; margin: auto;" /></p>
+<ul>
+<li><p>In propensity score matching, for subjects with <span class="math inline">\(X=1\)</span>, 1 out of 9 controls will be matched to the treated</p>
+<ul>
+<li><p>Thus, 1 person in the treated group counts the same as 9 people from the control group</p></li>
+<li><p>So rather than matching, we could use all data, but down-weight each control subject to be just 1/9 of the treated subject</p></li>
+</ul></li>
+</ul>
+</div>
+<div id="inverse-probability-of-treatment-weighting-iptw" class="section level3">
+<h3><font color='blue'>Inverse probability of treatment weighting (IPTW)</font></h3>
+<ul>
+<li><p>IPTW weights: inverse of the probability of treatment received</p>
+<ul>
+<li>For treated subjects, weight by <span class="math inline">\(1/P(A=1\mid X)\)</span></li>
+<li>For control subjects, weight by <span class="math inline">\(1/P(A=0\mid X)\)</span></li>
+</ul></li>
+<li><p>In the previous example</p>
+<ul>
+<li><p>For <span class="math inline">\(X=1\)</span>, the weight for a treated subject is <span class="math inline">\(1/0.1 = 10\)</span>, and the weight for a control subject is <span class="math inline">\(1/0.9 = \frac{10}{9}\)</span></p></li>
+<li><p>For <span class="math inline">\(X=0\)</span>, the weight for a treated subject is <span class="math inline">\(1/0.8 = \frac{5}{4}\)</span>, and the weight for a control subject is <span class="math inline">\(1/0.2 = 5\)</span></p></li>
+</ul></li>
+<li><p>Motivation: in survey sampling, it is common to oversample some subpopulation, and then use Horvitz-Thompson estimator to estimate population means</p></li>
+</ul>
+</div>
+<div id="pseudo-population" class="section level3">
+<h3>Pseudo population</h3>
+<ul>
+<li><p>IPTW creates a <font color='blue'>pseudo-population</font> where treatment assignment no longer depend on <span class="math inline">\(X\)</span></p>
+<ul>
+<li>So there is no confounding in the pseudo-population</li>
+</ul></li>
+</ul>
+<p><img src="/figures/crash_course_causality_week4_fig2.png" width="70%" style="display: block; margin: auto;" /></p>
+<ul>
+<li><p>In the original population, some people were more likely to get treated based on their <span class="math inline">\(X\)</span>’s</p></li>
+<li><p>In the pseudo-population, everyone is equally likely to get treated, regardless of their <span class="math inline">\(X\)</span>’s</p></li>
+</ul>
+</div>
+<div id="estimation-with-iptw" class="section level3">
+<h3>Estimation with IPTW</h3>
+<ul>
+<li><p>We can estimate <span class="math inline">\(E(Y^1)\)</span> as below
+<span class="math display">\[
+\frac{\sum_{i=1}^n \frac{1}{\pi_i} A_i Y_i}
+{\sum_{i=1}^n \frac{1}{\pi_i} A_i }
+\]</span></p>
+<ul>
+<li>where <span class="math inline">\(\pi_i = P(A_i=1|X_i)\)</span> is the propensity score</li>
+<li>The numerator is the sum of <span class="math inline">\(Y\)</span>’s in treated pseudo-population</li>
+<li>The denominator is the number of subjects in treated pseudo-population</li>
+</ul></li>
+<li><p>We can estimate <span class="math inline">\(E(Y^0)\)</span> as below
+<span class="math display">\[
+\frac{\sum_{i=1}^n \frac{1}{1-\pi_i} (1-A_i) Y_i}
+{\sum_{i=1}^n \frac{1}{1-\pi_i} (1-A_i) }
+\]</span></p></li>
+<li><p>Average treatment effect: <span class="math inline">\(E(Y^1) - E(Y^0)\)</span></p></li>
+</ul>
+</div>
+</div>
+<div id="marginal-structural-models" class="section level1">
+<h1>Marginal Structural Models</h1>
+<div id="marginal-structural-models-1" class="section level3">
+<h3>Marginal structural models</h3>
+<ul>
+<li><p><font color='blue'>Marginal structural models (MSM)</font>: a model for the mean of the potential outcomes</p></li>
+<li><p><strong>Marginal</strong>: not conditional on the confounders (population average)</p></li>
+<li><p><strong>Structural</strong>: for potential outcomes, not observed outcomes</p></li>
+</ul>
+</div>
+<div id="linear-msm-and-logistic-msm" class="section level3">
+<h3>Linear MSM and logistic MSM</h3>
+<ul>
+<li><p>Linear MSM
+<span class="math display">\[
+E(Y^a) = \psi_0 + \psi_1 a, \quad  a = 0, 1
+\]</span></p>
+<ul>
+<li><span class="math inline">\(E(Y^0) = \psi_0\)</span>, <span class="math inline">\(E(Y^0) = \psi_0 + \psi_1\)</span></li>
+<li>So the <strong>average causal effect</strong>
+<span class="math display">\[E(Y^1) - E(Y^0) = \psi_1\]</span></li>
+</ul></li>
+<li><p>Logistic MSM
+<span class="math display">\[
+logit\{E(Y^a)\} = \psi_0 + \psi_1 a, \quad  a = 0, 1
+\]</span></p>
+<ul>
+<li>So the <strong>causal odds ratio</strong>
+<span class="math display">\[
+  \frac{\frac{P(Y^1=1)}{1-P(Y^1=1)}}{\frac{P(Y^0=1)}{1-P(Y^0=1)}} = \psi_1
+  \]</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="msm-with-effect-modification" class="section level3">
+<h3>MSM with effect modification</h3>
+<ul>
+<li><p>Suppose <span class="math inline">\(V\)</span> is a variable that modifies the effect of <span class="math inline">\(A\)</span></p></li>
+<li><p>A linear MSM with effect modification
+<span class="math display">\[
+E(Y^a \mid V) = \psi_0 + \psi_1 a + \psi_3V + \psi_4 a V, \quad  a = 0, 1 
+\]</span></p>
+<ul>
+<li>So the average causal effect
+<span class="math display">\[E(Y^1) - E(Y^0) = \psi_1 + \psi_4 V\]</span></li>
+</ul></li>
+<li>General MSM
+<span class="math display">\[
+g\{E(Y^a \mid V)\} = h(a, V; \psi)
+\]</span>
+<ul>
+<li><span class="math inline">\(g()\)</span>: link function</li>
+<li><span class="math inline">\(h()\)</span>: a function specifying parametric from of <span class="math inline">\(a\)</span> and <span class="math inline">\(V\)</span> (typically additive, linear)</li>
+</ul></li>
+</ul>
+</div>
+<div id="msm-estimation-using-pseudo-population" class="section level3">
+<h3>MSM estimation using pseudo-population</h3>
+<ul>
+<li><p>Because of <font color='red'>confounding</font>, MSM
+<span class="math display">\[
+g\{E(Y^a \mid V)\} = \psi_0 + \psi_1 a
+\]</span>
+is difference from GLM (generalized linear model)
+<span class="math display">\[
+g\{E(Y_i \mid A_i)\} = \psi_0 + \psi_1 A_i
+\]</span></p></li>
+<li><p><font color='green'>Pseudo-population (obtained from IPTW) is free of confounding</font></p>
+<ul>
+<li><strong>We therefore estimate MSM by solving GLM with IPTW</strong></li>
+</ul></li>
+</ul>
+</div>
+<div id="msm-estimation-steps" class="section level3">
+<h3>MSM estimation steps</h3>
+<ol style="list-style-type: decimal">
+<li><p>Estimate propensity score, using logistic regression</p></li>
+<li><p>Create weights</p>
+<ul>
+<li>Inverse of propensity score for treated subjects</li>
+<li>Inverse of one minus propensity score for control subjects</li>
+</ul></li>
+<li><p>Specify the MSM of interest</p></li>
+<li><p>Use software to fit a weighted generalized linear model</p></li>
+<li><p>Use asymptotic (sandwich) variance estimator</p>
+<ul>
+<li>This accounts for fact that pseudo-population might be larger than sample size</li>
+</ul></li>
+</ol>
+</div>
+<div id="bootstrap" class="section level3">
+<h3>Bootstrap</h3>
+<ul>
+<li><p>We may also use bootstrap to estimate standard error</p></li>
+<li><p>Bootstrap steps</p>
+<ol style="list-style-type: decimal">
+<li><p>Randomly sample with replacement from the original sample</p></li>
+<li><p>Estimate parameters</p></li>
+<li><p>Repeat steps 1 and 2 many times</p></li>
+<li><p>Use the standard deviation of the bootstrap estimates as an estimate of the standard error</p></li>
+</ol></li>
+</ul>
+</div>
+<div id="assessing-covariate-balance-with-weights" class="section level2">
+<h2>Assessing covariate balance with weights</h2>
+<div id="covariate-balance-check-with-standardized-differences" class="section level3">
+<h3>Covariate balance check with standardized differences</h3>
+<ul>
+<li><p>Covariate balance: can be checked on the weighted sample using <strong>standardized difference</strong>
+<span class="math display">\[
+smd = \frac{\bar{X}_{\text{treatment}} - \bar{X}_{\text{control}}}{\sqrt{\frac{s^2_{\text{treatment}} + s^2_{\text{control}}}{2}}}
+\]</span></p>
+<ul>
+<li>Weighted means <span class="math inline">\(\bar{X}_{\text{treatment}}\)</span>, <span class="math inline">\(\bar{X}_{\text{control}}\)</span></li>
+<li>Weighted variances <span class="math inline">\(s^2_{\text{treatment}}\)</span>, <span class="math inline">\(s^2_{\text{control}}\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="balance-check-tools" class="section level3">
+<h3>Balance check tools</h3>
+<ul>
+<li>Table 1</li>
+</ul>
+<p><img src="/figures/crash_course_causality_week4_fig3.png" width="100%" style="display: block; margin: auto;" /></p>
+<ul>
+<li>SMD plot</li>
+</ul>
+</div>
+<div id="if-imbalance-after-weighting" class="section level3">
+<h3>If imbalance after weighting</h3>
+<ul>
+<li><p>Refine propensity score model</p>
+<ul>
+<li>Interactions</li>
+<li>Non-linearity</li>
+</ul></li>
+<li><p>Then reaccess balance</p></li>
+</ul>
+</div>
+</div>
+<div id="problems-and-remedies-for-large-weights" class="section level2">
+<h2>Problems and remedies for large weights</h2>
+<div id="larger-weights-lead-to-more-noise" class="section level3">
+<h3>Larger weights lead to more noise</h3>
+<ul>
+<li><p>For an object with a large weight, its outcome data can <font color='red'>greatly affect parameter estimation</font></p></li>
+<li><p>An object with large weight can also <font color='red'>affect standard error estimation</font>, via bootstrap, depending on whether the object is selected or not</p></li>
+<li><p>An extremely large weights means the probability of that treatment is very small, thus <font color='red'>a potential violation of the positivity assumption</font></p></li>
+</ul>
+</div>
+<div id="check-weights-via-plots-and-summary-statistics" class="section level3">
+<h3>Check weights via plots and summary statistics</h3>
+<ul>
+<li>Investigate very large weights:
+identify the subjects with large weights and find what’s unusual about them</li>
+</ul>
+<p><img src="/figures/crash_course_causality_week4_fig4.png" width="95%" style="display: block; margin: auto;" /></p>
+<p><img src="/figures/crash_course_causality_week4_fig5.png" width="65%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="option-1-trimming-the-tails" class="section level3">
+<h3>Option 1: trimming the tails</h3>
+<ul>
+<li><p>Large weights: occur in the tails of the propensity score distribution</p></li>
+<li><p>Trim the tails to eliminate some extreme weights</p>
+<ul>
+<li>Remove treated subjects whose propensity scores are above the 98th percentile from the distribution among controls</li>
+<li>Remove control subjects whose propensity scores are below the 2nd percentile from the distribution among treated</li>
+</ul></li>
+<li><p><font color='red'>Note: trimming the tails changes the population</font></p></li>
+</ul>
+</div>
+<div id="option-2-truncating-the-weights" class="section level3">
+<h3>Option 2: truncating the weights</h3>
+<ul>
+<li><p>Another option to deal with large weights is truncation</p></li>
+<li><p>Weight truncation steps</p>
+<ol style="list-style-type: decimal">
+<li>Determine a maximum allowable weight</li>
+</ol>
+<ul>
+<li>Can be a specific value (e.g., 100)</li>
+<li>Can based on a percentile (e.g., 99th)</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>If a weight is greater than the maximum allowable, set it to the maximum allowable value</li>
+</ol></li>
+<li>Bias-variance trade-off
+<ul>
+<li>Truncation: bias, but smaller variance</li>
+<li>No truncation: unbiased, larger variance</li>
+</ul></li>
+<li><p><font color='green'>Truncating extremely large weights can result in estimators with lower MSE</font></p></li>
+</ul>
+</div>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li><p>Coursera class: “A Crash Course on Causality: Inferring Causal Effects from Observational Data”, by Jason A. Roy (University of Pennsylvania)</p>
+<ul>
+<li><a href="https://www.coursera.org/learn/crash-course-in-causality" class="uri">https://www.coursera.org/learn/crash-course-in-causality</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
