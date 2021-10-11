@@ -56,11 +56,11 @@ title: My Notes on Statistics and Machine Learning Books, Courses, and Papers
 
 ### A Crash Course on Causality, by Roy, on [Coursera](https://www.coursera.org/learn/crash-course-in-causality)
 
-* [Week 1: Intro to Causal Effects]() [(pdf)]()
-* [Week 2: Confounding and Directed Acyclic Graphs]() [(pdf)]()
-* [Week 3: Matching and Propensity Scores]() [(pdf)]()
-* [Week 4: Inverse Probability of Treatment Weighting]() [(pdf)]()
-* [Week 5: Instrumental Variables]() [(pdf)]()
+* [Week 1: Intro to Causal Effects](https://liyingbo.com/stat/2021/07/05/course-notes-a-crash-course-on-causality-week-1-intro-to-causal-effects/) [(pdf)](https://liyingbo.com/pdf/070321_crash_course_Causality_week1.pdf)
+* [Week 2: Confounding and Directed Acyclic Graphs](https://liyingbo.com/stat/2021/07/09/course-notes-a-crash-course-on-causality-week-2-confounding-and-directed-acyclic-graphs-dags/) [(pdf)](https://liyingbo.com/pdf/070521_crash_course_Causality_week2.pdf)
+* [Week 3: Matching and Propensity Scores](https://liyingbo.com/stat/2021/07/26/course-notes-a-crash-course-on-causality-week-3-matching-and-propensity-scores/) [(pdf)](https://liyingbo.com/pdf/070921_crash_course_Causality_week3.pdf)
+* [Week 4: Inverse Probability of Treatment Weighting](https://liyingbo.com/stat/2021/07/29/course-notes-a-crash-course-on-causality-week-4-inverse-probability-of-treatment-weighting-iptw/) [(pdf)](https://liyingbo.com/pdf/072121_crash_course_Causality_week4.pdf)
+* [Week 5: Instrumental Variables](https://liyingbo.com/stat/2021/08/16/course-notes-a-crash-course-on-causality-week-5-instrumental-variables/) [(pdf)](https://liyingbo.com/pdf/080221_crash_course_Causality_week5.pdf)
 
 # Paper notes
 
