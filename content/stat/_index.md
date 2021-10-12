@@ -66,3 +66,14 @@ title: My Notes on Statistics and Machine Learning Books, Courses, and Papers
 
 * [Generalized R Squared](https://liyingbo.com/stat/2020/10/05/paper-notes-generalized-r-squared/) [(pdf)](https://liyingbo.com/pdf/100420_generalized_R2.pdf)
 * [Proper Scoring Rules](https://liyingbo.com/stat/2020/10/12/paper-notes-proper-scoring-rules-and-cost-weighted-loss-functions-for-binary-classification/) [(pdf)](https://liyingbo.com/pdf/101120_proper_scoring_rules.pdf)
+
+# My Teaching Slides
+
+* This [Github repo](https://github.com/yingboli/MyTeachingSlides) contains the slides of the courses I used to teach, including
+
+    - Introduction to Bayesian Statistics (grad)
+    - Introduction to Statistical Learning (undergrad & grad)
+    - Statistics 101 (undergrad)
+    - Probability (undergrad)
+
+
