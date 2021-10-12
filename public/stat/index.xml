@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>My Notes on Statistics and Machine Learning Books, Courses, and Papers on King Fox And Butterfly</title>
+    <title>My Notes on Statistics and Machine Learning Books, Courses, Papers, and More on King Fox And Butterfly</title>
     <link>http://liyingbo.com/stat/</link>
-    <description>Recent content in My Notes on Statistics and Machine Learning Books, Courses, and Papers on King Fox And Butterfly</description>
+    <description>Recent content in My Notes on Statistics and Machine Learning Books, Courses, Papers, and More on King Fox And Butterfly</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 16 Aug 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://liyingbo.com/stat/index.xml" rel="self" type="application/rss+xml" />
@@ -281,6 +281,15 @@ When data is not stationary  Implication of not stationary: sample ACF or sample
       <guid>http://liyingbo.com/stat/2020/03/20/book-notes-intro-to-time-series-and-forecasting-ch5-modeling-and-forecasting-with-arma-processes/</guid>
       <description>Yule-Walker Estimation Maximum Likelihood Estimation Order Selection Diagnostic Checking   For the pdf slides, click here
 Parameter estimation for ARMA\((p, q)\)  When the orders \(p, q\) are known, estimate the parameters \[ \boldsymbol\phi = (\phi_1, \ldots, \phi_p), \quad \boldsymbol\theta = (\theta_1, \ldots, \theta_q), \quad \sigma^2 \]  There are \(p+q+1\) parameters in total  Preliminary estimations  Yule-Walker and Burg’s algorithm: good for AR\((p)\) Innovation algorithm: good for MA\((q)\) Hannan-Rissanen algorithm: good for ARMA\((p, q)\)  More efficient estimation: MLE</description>
+    </item>
+    
+    <item>
+      <title>My Old Notes on Python</title>
+      <link>http://liyingbo.com/stat/2019/02/22/my-old-notes-on-python/</link>
+      <pubDate>Fri, 22 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2019/02/22/my-old-notes-on-python/</guid>
+      <description> Part 1: Python Basics Part 2: Numpy Part 3: Pandas Part 4: Advanced programming  </description>
     </item>
     
     <item>

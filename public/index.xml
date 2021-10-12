@@ -834,6 +834,15 @@ Parameter estimation for ARMA\((p, q)\)  When the orders \(p, q\) are known, est
     </item>
     
     <item>
+      <title>My Old Notes on Python</title>
+      <link>http://liyingbo.com/stat/2019/02/22/my-old-notes-on-python/</link>
+      <pubDate>Fri, 22 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2019/02/22/my-old-notes-on-python/</guid>
+      <description> Part 1: Python Basics Part 2: Numpy Part 3: Pandas Part 4: Advanced programming  </description>
+    </item>
+    
+    <item>
       <title>Book Notes: Introduction to Time Series and Forecasting --  Ch3 ARMA Models</title>
       <link>http://liyingbo.com/stat/2019/01/26/book-notes-introduction-to-time-series-and-forecasting-ch3-arma-models/</link>
       <pubDate>Sat, 26 Jan 2019 00:00:00 +0000</pubDate>
