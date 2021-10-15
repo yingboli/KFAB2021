@@ -3,15 +3,33 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>http://liyingbo.com/categories/</loc>
-    <lastmod>2021-08-16T00:00:00+00:00</lastmod>
+    <lastmod>2021-10-14T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/cooking/</loc>
+    <lastmod>2021-10-14T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/tags/daikon-%E7%99%BD%E8%90%9D%E5%8D%9C/</loc>
+    <lastmod>2021-10-14T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/</loc>
+    <lastmod>2021-10-14T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/tags/radish-%E6%A8%B1%E6%A1%83%E8%90%9D%E5%8D%9C/</loc>
+    <lastmod>2021-10-14T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/tags/</loc>
+    <lastmod>2021-10-14T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/categories/%E8%94%AC%E8%8F%9C-vegetable/</loc>
+    <lastmod>2021-10-14T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/cooking/2021/10/14/crispy-stweet-daikon/</loc>
+    <lastmod>2021-10-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/tags/causal-inference/</loc>
     <lastmod>2021-08-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/stat/2021/08/16/course-notes-a-crash-course-on-causality-week-5-instrumental-variables/</loc>
-    <lastmod>2021-08-16T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://liyingbo.com/</loc>
     <lastmod>2021-08-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/categories/lecture-notes/</loc>
@@ -21,9 +39,6 @@
     <lastmod>2021-08-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/tags/slides/</loc>
-    <lastmod>2021-08-16T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://liyingbo.com/tags/</loc>
     <lastmod>2021-08-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/stat/2021/07/29/course-notes-a-crash-course-on-causality-week-4-inverse-probability-of-treatment-weighting-iptw/</loc>
@@ -38,16 +53,10 @@
     <loc>http://liyingbo.com/stat/2021/07/05/course-notes-a-crash-course-on-causality-week-1-intro-to-causal-effects/</loc>
     <lastmod>2021-07-05T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://liyingbo.com/cooking/</loc>
-    <lastmod>2021-05-30T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>http://liyingbo.com/tags/%E7%8E%89%E7%B1%B3-corn/</loc>
     <lastmod>2021-05-30T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/cooking/2021/05/30/corn-fritters/</loc>
-    <lastmod>2021-05-30T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://liyingbo.com/categories/%E8%94%AC%E8%8F%9C-vegetable/</loc>
     <lastmod>2021-05-30T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/tags/%E9%9D%92%E8%B1%86-peas/</loc>
