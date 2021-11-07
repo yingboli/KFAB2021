@@ -20,7 +20,7 @@ tags:
 
 我忘了称萝卜的重量，大概是半磅到3/4磅之间吧，酱料有些多，所以估计能做1磅萝卜没有问题。
 
-|酸甜脆萝卜材料          |Crispy Stweet Daikon Ingredients            |
+|烤樱桃萝卜材料          |Roasted Radish Ingredients            |
 |------------------------|-------------------------|
 |樱桃萝卜 1 磅           |Radish, 1 lb      |
 |黄油 1.5大匙                |Butter 1.5 tbsp     |
