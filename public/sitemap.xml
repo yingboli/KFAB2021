@@ -3,16 +3,31 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>http://liyingbo.com/categories/</loc>
-    <lastmod>2021-11-06T00:00:00+00:00</lastmod>
+    <lastmod>2022-01-01T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/cooking/</loc>
-    <lastmod>2021-11-06T00:00:00+00:00</lastmod>
+    <lastmod>2022-01-01T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/</loc>
-    <lastmod>2021-11-06T00:00:00+00:00</lastmod>
+    <lastmod>2022-01-01T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/tags/</loc>
-    <lastmod>2021-11-06T00:00:00+00:00</lastmod>
+    <lastmod>2022-01-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/tags/%E5%B7%A7%E5%85%8B%E5%8A%9Bchocolate/</loc>
+    <lastmod>2022-01-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/categories/%E7%83%98%E7%84%99-baking/</loc>
+    <lastmod>2022-01-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/tags/%E7%BA%AF%E7%B4%A0-vegan/</loc>
+    <lastmod>2022-01-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/cooking/2022/01/01/vegan-chocolate-cupcakes/</loc>
+    <lastmod>2022-01-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/tags/%E8%9B%8B%E7%B3%95-cakes/</loc>
+    <lastmod>2022-01-01T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/tags/%E5%9B%9B%E5%AD%A3%E8%B1%86-green-beans/</loc>
     <lastmod>2021-11-06T00:00:00+00:00</lastmod>
@@ -125,9 +140,6 @@
     <loc>http://liyingbo.com/cooking/2021/04/24/tomato-salad/</loc>
     <lastmod>2021-04-24T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://liyingbo.com/categories/%E7%83%98%E7%84%99-baking/</loc>
-    <lastmod>2021-04-14T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>http://liyingbo.com/tags/%E7%8E%9B%E8%8A%AC-muffins/</loc>
     <lastmod>2021-04-14T00:00:00+00:00</lastmod>
   </url><url>
@@ -135,9 +147,6 @@
     <lastmod>2021-04-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/cooking/2021/04/14/muffins/</loc>
-    <lastmod>2021-04-14T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://liyingbo.com/tags/%E8%9B%8B%E7%B3%95-cakes/</loc>
     <lastmod>2021-04-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/tags/%E8%92%9C-garlic/</loc>
