@@ -153,7 +153,7 @@ we can use a relatively large $k$, but control the model's smoothness by adding 
   
 ### Simplify the penalized likelihood
 
-* For the test function basis, $\beta_j = f(x_j^*)$
+* For the tent function basis, $\beta_j = f(x_j^*)$
 
 * Therefore, the penalty can be expressed as a quadratic form 
 \[

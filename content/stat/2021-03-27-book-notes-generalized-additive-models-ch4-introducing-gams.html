@@ -156,7 +156,7 @@ we can use a relatively large <span class="math inline">\(k\)</span>, but contro
 <div id="simplify-the-penalized-likelihood" class="section level3">
 <h3>Simplify the penalized likelihood</h3>
 <ul>
-<li><p>For the test function basis, <span class="math inline">\(\beta_j = f(x_j^*)\)</span></p></li>
+<li><p>For the tent function basis, <span class="math inline">\(\beta_j = f(x_j^*)\)</span></p></li>
 <li><p>Therefore, the penalty can be expressed as a quadratic form
 <span class="math display">\[
 \sum_{j=2}^{k-1} (\beta_{j-1} - 2 \beta_j + \beta_{j+1})^2
@@ -455,7 +455,7 @@ ct1 &lt;- gam(Volume ~ s(Height) + s(Girth),
 ## 
 ## Approximate significance of smooth terms:
 ##             edf Ref.df      F  p-value    
-## s(Height) 1.000  1.000  31.32 3.92e-06 ***
+## s(Height) 1.000  1.000  31.32 7.07e-06 ***
 ## s(Girth)  2.422  3.044 219.28  &lt; 2e-16 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
