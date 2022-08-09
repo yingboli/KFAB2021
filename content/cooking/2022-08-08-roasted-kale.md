@@ -24,7 +24,7 @@ tags:
 
 |烤羽衣甘蓝材料          | Roasted Kale Ingredients            |
 |------------------------|-------------------------|
-|羽衣甘蓝 1 磅           |Kale, 1 lb      |
+|羽衣甘蓝 1磅           |Kale, 1 lb      |
 |植物油 2大匙                |Vegetable oil 2 tbsp     |
 |盐 1/4小匙             |Salt 1/4 tsp      |
 |蒜末 2小匙            |Garlic, minced, 2 tsp |  
