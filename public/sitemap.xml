@@ -3,16 +3,34 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>http://liyingbo.com/categories/</loc>
-    <lastmod>2022-08-08T00:00:00+00:00</lastmod>
+    <lastmod>2022-11-21T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/cooking/</loc>
-    <lastmod>2022-08-08T00:00:00+00:00</lastmod>
+    <lastmod>2022-11-21T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/</loc>
-    <lastmod>2022-08-08T00:00:00+00:00</lastmod>
+    <lastmod>2022-11-21T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/tags/</loc>
-    <lastmod>2022-08-08T00:00:00+00:00</lastmod>
+    <lastmod>2022-11-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/tags/%E5%B8%83%E6%9C%97%E5%B0%BC-brownie/</loc>
+    <lastmod>2022-11-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/tags/%E6%8A%B9%E8%8C%B6-matcha/</loc>
+    <lastmod>2022-11-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/cooking/2022/11/21/matcha-almond-brownie/</loc>
+    <lastmod>2022-11-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/tags/%E6%9D%8F%E4%BB%81-almond/</loc>
+    <lastmod>2022-11-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/categories/%E7%94%9C%E7%82%B9-dessert/</loc>
+    <lastmod>2022-11-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/tags/%E8%9B%8B%E7%B3%95-cakes/</loc>
+    <lastmod>2022-11-21T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/cooking/2022/08/08/braised-asparagus/</loc>
     <lastmod>2022-08-08T00:00:00+00:00</lastmod>
@@ -39,12 +57,6 @@
     <lastmod>2022-02-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/tags/%E7%89%9B%E5%A5%B6-milk/</loc>
-    <lastmod>2022-02-26T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://liyingbo.com/categories/%E7%94%9C%E7%82%B9-dessert/</loc>
-    <lastmod>2022-02-26T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://liyingbo.com/tags/%E8%9B%8B%E7%B3%95-cakes/</loc>
     <lastmod>2022-02-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/categories/%E9%A5%AE%E6%96%99-drink/</loc>
@@ -383,9 +395,6 @@
     <loc>http://liyingbo.com/cooking/2020/08/12/teriyaki-trumpet-mushroom/</loc>
     <lastmod>2020-08-12T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://liyingbo.com/tags/%E6%8A%B9%E8%8C%B6-matcha/</loc>
-    <lastmod>2020-08-09T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>http://liyingbo.com/cooking/2020/08/09/matcha-tiramisu/</loc>
     <lastmod>2020-08-09T00:00:00+00:00</lastmod>
   </url><url>
@@ -432,9 +441,6 @@
     <lastmod>2020-06-13T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/tags/%E5%9D%9A%E6%9E%9C-nuts/</loc>
-    <lastmod>2020-05-29T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://liyingbo.com/tags/%E6%9D%8F%E4%BB%81-almond/</loc>
     <lastmod>2020-05-29T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/tags/%E8%85%B0%E6%9E%9C-cashew/</loc>
