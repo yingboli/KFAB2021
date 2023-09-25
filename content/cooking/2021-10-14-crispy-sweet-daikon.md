@@ -1,5 +1,5 @@
 ---
-title: 酸甜脆萝卜 Crispy Stweet Daikon
+title: 酸甜脆萝卜 Crispy Sweet Daikon
 author: ''
 date: '2021-10-14'
 slug: crispy-stweet-daikon
