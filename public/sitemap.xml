@@ -3,21 +3,30 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>http://liyingbo.com/categories/</loc>
-    <lastmod>2023-09-19T00:00:00+00:00</lastmod>
+    <lastmod>2024-12-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/cooking/</loc>
-    <lastmod>2023-09-19T00:00:00+00:00</lastmod>
+    <lastmod>2024-12-26T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/</loc>
+    <lastmod>2024-12-26T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/tags/</loc>
+    <lastmod>2024-12-26T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/cooking/2024/12/26/christmas-sugar-cookies/</loc>
+    <lastmod>2024-12-26T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/categories/%E7%94%9C%E7%82%B9-dessert/</loc>
+    <lastmod>2024-12-26T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/tags/%E9%A5%BC%E5%B9%B2-cookies/</loc>
+    <lastmod>2024-12-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/tags/daikon-%E7%99%BD%E8%90%9D%E5%8D%9C/</loc>
     <lastmod>2023-09-19T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://liyingbo.com/</loc>
-    <lastmod>2023-09-19T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>http://liyingbo.com/categories/sous-vide/</loc>
-    <lastmod>2023-09-19T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://liyingbo.com/tags/</loc>
     <lastmod>2023-09-19T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/tags/%E4%BD%8E%E6%B8%A9%E7%83%B9%E8%B0%83-sous-vide/</loc>
@@ -48,9 +57,6 @@
     <lastmod>2022-11-21T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/tags/%E6%9D%8F%E4%BB%81-almond/</loc>
-    <lastmod>2022-11-21T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://liyingbo.com/categories/%E7%94%9C%E7%82%B9-dessert/</loc>
     <lastmod>2022-11-21T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/tags/%E8%9B%8B%E7%B3%95-cakes/</loc>
@@ -465,9 +471,6 @@
     <lastmod>2020-05-29T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/tags/%E8%85%B0%E6%9E%9C-cashew/</loc>
-    <lastmod>2020-05-29T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://liyingbo.com/tags/%E9%A5%BC%E5%B9%B2-cookies/</loc>
     <lastmod>2020-05-29T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/cooking/2020/05/29/spiced-nuts/</loc>
