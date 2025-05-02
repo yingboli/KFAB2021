@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Deep Learning, Tabular Deep Learning on King Fox And Butterfly</title>
+    <link>http://liyingbo.com/tags/deep-learning-tabular-deep-learning/</link>
+    <description>Recent content in Deep Learning, Tabular Deep Learning on King Fox And Butterfly</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 04 Feb 2025 00:00:00 +0000</lastBuildDate><atom:link href="http://liyingbo.com/tags/deep-learning-tabular-deep-learning/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Tabular Deep Learning</title>
+      <link>http://liyingbo.com/stat/2025/02/04/tabular-neural-networks/</link>
+      <pubDate>Tue, 04 Feb 2025 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2025/02/04/tabular-neural-networks/</guid>
+      <description>Empirical Comparisms between Neural Networks (NN) and Gradient Boosted Decision Trees (GBDT) Tabular Deep Learning  Neural Networks (Non Transformer-Based)  Transformer-Based GBDT Inspired Preprocessing References   It has almost been 10 years since modern implementations of Gradient Boosted Decision Trees (GBDT), such as XGBoost [REF], LightGBM [REF], and CatBoost [REF], have become the industry standard machine learning methods for predictive modeling (classification and regression), thanks to their superior predictive accuracy and computation efficiency.</description>
+    </item>
+    
+  </channel>
+</rss>

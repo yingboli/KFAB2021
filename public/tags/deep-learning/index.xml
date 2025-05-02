@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Deep Learning on King Fox And Butterfly</title>
+    <link>http://liyingbo.com/tags/deep-learning/</link>
+    <description>Recent content in Deep Learning on King Fox And Butterfly</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 04 Feb 2025 00:00:00 +0000</lastBuildDate><atom:link href="http://liyingbo.com/tags/deep-learning/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Tabular Neural Networks</title>
+      <link>http://liyingbo.com/stat/2025/02/04/tabular-neural-networks/</link>
+      <pubDate>Tue, 04 Feb 2025 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2025/02/04/tabular-neural-networks/</guid>
+      <description> Why NN cannot outperform GBDT?  Neural Networks (non Transformers) ResNet   Transformers    Preprocessing Binning features  Embeddings for numerical features   Emsembles TabM   GBDT Inspired NODE   References  </description>
+    </item>
+    
+  </channel>
+</rss>

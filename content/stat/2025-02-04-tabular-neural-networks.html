@@ -1,0 +1,235 @@
+---
+title: Tabular Deep Learning
+author: Yingbo Li
+date: '2025-02-04'
+slug: tabular-neural-networks
+categories:
+  - Deep Learning
+tags:
+  - Deep Learning, Tabular Deep Learning
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 2
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#empirical-comparisms-between-neural-networks-nn-and-gradient-boosted-decision-trees-gbdt" id="toc-empirical-comparisms-between-neural-networks-nn-and-gradient-boosted-decision-trees-gbdt">Empirical Comparisms between Neural Networks (NN) and Gradient Boosted Decision Trees (GBDT)</a></li>
+<li><a href="#tabular-deep-learning" id="toc-tabular-deep-learning">Tabular Deep Learning</a>
+<ul>
+<li><a href="#neural-networks-non-transformer-based" id="toc-neural-networks-non-transformer-based">Neural Networks (Non Transformer-Based)</a></li>
+</ul></li>
+<li><a href="#transformer-based" id="toc-transformer-based">Transformer-Based</a></li>
+<li><a href="#gbdt-inspired" id="toc-gbdt-inspired">GBDT Inspired</a></li>
+<li><a href="#preprocessing" id="toc-preprocessing">Preprocessing</a></li>
+<li><a href="#references" id="toc-references">References</a></li>
+</ul>
+</div>
+
+<p>It has almost been 10 years since modern implementations of Gradient Boosted
+Decision Trees (GBDT), such as XGBoost [REF], LightGBM [REF], and CatBoost [REF],
+have become the industry standard machine learning methods for predictive
+modeling (classification and regression), thanks to their superior predictive
+accuracy and computation efficiency. On the other hand, with the rapid
+development of deep learning,
+many attempts have been made to create novel Tabular Deep Learning methods
+that can yield comparable performance with GBDT or even outperform them.
+In addition, there are also multiple empirical works that collecting new benchmark datasets and compare the performance of GBDT and NN on them.</p>
+<p>In this post, we will give a high-level overview on some of the popular Tabular Deep Learning methods.
+Here, we will focus on the methods that aim to solve classification or regression problems on traditional tabular data where conditional independence applies, rather than sequential tabular data, where multiple rows are associated with the same ID/person/customer.</p>
+<div id="empirical-comparisms-between-neural-networks-nn-and-gradient-boosted-decision-trees-gbdt" class="section level1">
+<h1>Empirical Comparisms between Neural Networks (NN) and Gradient Boosted Decision Trees (GBDT)</h1>
+<div id="grinsztajn-et-al.-2022" class="section level3">
+<h3><a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/0378c7692da36807bdec87ab043cdadc-Paper-Datasets_and_Benchmarks.pdf">Grinsztajn et al. 2022</a></h3>
+<div id="proposed-a-benchmark-data-of-45-datasets" class="section level4">
+<h4>Proposed a benchmark data of 45 datasets</h4>
+<ul>
+<li>No image data</li>
+<li>Not high-dimensional: d/n &lt; 0.1, and d &lt; 500</li>
+<li>Not too small: d &gt;= 4 and n &gt;=3000</li>
+<li>Not too easy</li>
+<li>Largest sample size: 50,000</li>
+</ul>
+</div>
+<div id="empirical-studies" class="section level4">
+<h4>Empirical studies</h4>
+<ul>
+<li>Hyperparameter tuning: random search with 400 trials each.</li>
+<li>Only compared 7 methods in total, 4 NN models: MLP, ResNet, FT Transformer, and SAINT, with 3 tree-based models: XGBoost, GradientBoostingTree (scikit-learn implmenetation of GBDT), and random forest.</li>
+</ul>
+<img src="/figures/tabular_deep_learning/Grinsztajn_etal_2022_fig1.png" alt="drawing" width="700" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6>
+Figure source: Grinsztajn et al. 2022
+</h6>
+</div>
+<div id="conclusions" class="section level4">
+<h4>Conclusions</h4>
+<ul>
+<li>Tree based models outperforms NNs in both accuracy and computation speed</li>
+<li>Among NN models: transformer based methods (FT Transformer and SAINT) outperform non-transformer-based ones (MLP and ResNet).</li>
+<li>MLP and ResNet performs similarly, my guess is that the datasets/problems don’t need deep networks</li>
+<li>Categorical features are only handled by one-hot encoding but not embedding. The performance gaps between NN and GBDT become even larger with categorical features.</li>
+</ul>
+</div>
+<div id="why-gbdt-is-better" class="section level4">
+<h4>Why GBDT is better</h4>
+<ul>
+<li>NN solutions are overly smoothed, so it struggles to learn irregular patterns.
+<ul>
+<li><p>“Neural networks are biased toward low-frequency functions”, which decision trees, which can learn piece-wise constant functions, are good at estimating high-frequency functions.</p></li>
+<li><p>The embeddings in <a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/9e9f0ffc3d836836ca96cbf8fe14b105-Paper-Conference.pdf">Gorishniy et al. 2022</a> may help learning high-frequency functions.</p></li>
+<li><p>The figure below shows that as the problem become smoother (from left to right), the performance gaps between GBDT and NN become smaller, and eventually NN methods can even outperform GBDT.</p></li>
+</ul></li>
+</ul>
+<img src="/figures/tabular_deep_learning/Grinsztajn_etal_2022_figure2.png" alt="drawing" width="700" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6>
+Figure source: Grinsztajn et al. 2022
+</h6>
+<ul>
+<li>GBDT suffers less than NN in the presence of redundant features.
+<ul>
+<li>The paper removes uninformative features based on random forest’s feature importance, and show that the performance gaps between models decreases as more features are removed. I personally don’t totally agree with this statement, since eventually the accuracy of all models drop to zero, where there are no gaps.</li>
+</ul></li>
+<li>MLP is rotation invariant and this hurts its performance
+<ul>
+<li>Note that due to the initial pointwise operation, the FT tokens [TODO, explain this!] of FT-transformer is not rotation invariant.</li>
+<li><a href="https://www.cs.cmu.edu/~gpekhime/Projects/CSC2515/Refs/Regression/icml04-l1l2.pdf">Ng 2004</a> suggests that rotation invariance methods “has a worst-case sample complexity that grows at least linearly in the number of irrelevant features”</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="mcelfresh-et-al.-2023" class="section level3">
+<h3><a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/f06d5ebd4ff40b40dd97e30cee632123-Paper-Datasets_and_Benchmarks.pdf">McElfresh et al. 2023</a></h3>
+<div id="datasets" class="section level4">
+<h4>Datasets</h4>
+<ul>
+<li><p>Compared 19 algorithms, each up to 30 hyperparameter settings, across 176 datasets</p>
+<ul>
+<li>A wide range of sample sizes: from 32 to 1M</li>
+</ul></li>
+<li><p>Realized the 36 hardest datasets, called TabZilla: <a href="https://github.com/naszilla/tabzilla">github</a></p></li>
+<li><p>Compared 19 algorithms</p>
+<ul>
+<li>3 GBDTs: CatBoost &gt; XGBoost &gt; LightGBM</li>
+<li>11 NN: TabPFN &gt; ResNet <span class="math inline">\(\approx\)</span> NODE <span class="math inline">\(\approx\)</span> SAINT <span class="math inline">\(\approx\)</span> FT-Transformer</li>
+<li>5 baselines: random forest &gt; SVM &gt; decision tree &gt; linear model &gt; KNN</li>
+</ul></li>
+</ul>
+</div>
+<div id="comparison-conclusions-a-strong-baseline-or-a-well-tuned-gbdt-will-usually-suffice." class="section level4">
+<h4>Comparison conclusions: A strong baseline or a well-tuned GBDT will usually suffice.</h4>
+<ul>
+<li><p>Surprisingly, for a lot of datasets, NN and GBDT perform similarly well.</p></li>
+<li><p>Importantce of hyperparameter tuning: light hyperparameter tuning on CatBoost or ResNet
+increases performance more than choosing among GBDTs and NNs.</p></li>
+<li><p>Remarkable exception: TabPFN outperform all other methods when small datasets (sample size &lt; 3000, or just trained on a random sample of 3000 data points)</p></li>
+</ul>
+<img src="/figures/tabular_deep_learning/McElfresh_etal_2023_table1.png" alt="drawing" width="700" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6>
+Figure source: McElfresh et al. 2023
+</h6>
+<ul>
+<li>In Table 1, the results on 98 datasets where most algorithms don’t have memory issue
+are shown. We can see that no single approach dominates.
+<ul>
+<li>Almost every method has rank 1 (best) for some datasets</li>
+<li>The top method, CatBoost, only has an average rank of 5.5</li>
+</ul></li>
+</ul>
+<img src="/figures/tabular_deep_learning/McElfresh_etal_2023_table2.png" alt="drawing" width="700" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6>
+Figure source: McElfresh et al. 2023
+</h6>
+<ul>
+<li>Table 2 suggests that TabPFN performs the best among small datasets (n &lt; 1250).
+It also has the fastest runtime.</li>
+</ul>
+</div>
+<div id="difference-between-gbdt-vs-nn" class="section level4">
+<h4>Difference between GBDT vs NN</h4>
+<ul>
+<li><p>GBDT handles skewed or heavy-tailed features and other data irregularities better</p></li>
+<li><p>GDBT tends to perform better on larger datasets</p></li>
+</ul>
+</div>
+</div>
+<div id="ye-et-al.-2024" class="section level3">
+<h3><a href="https://arxiv.org/pdf/2407.00956v1">Ye et al. 2024</a></h3>
+</div>
+</div>
+<div id="tabular-deep-learning" class="section level1">
+<h1>Tabular Deep Learning</h1>
+<div id="neural-networks-non-transformer-based" class="section level2">
+<h2>Neural Networks (Non Transformer-Based)</h2>
+<div id="resnet" class="section level3">
+<h3>ResNet</h3>
+<p><a href="https://proceedings.neurips.cc/paper_files/paper/2021/file/9d86d83f925f2149e9edb0ac3b49229c-Paper.pdf">Gorishniy et al. 2021</a></p>
+</div>
+<div id="tabm" class="section level3">
+<h3>TabM</h3>
+<p><a href="https://arxiv.org/pdf/2410.24210?">Gorishniy et al. 2024</a></p>
+<p>BatchEnsembles (<a href="https://arxiv.org/pdf/2002.06715">Wen et al. 2020</a>)</p>
+</div>
+<div id="tabr" class="section level3">
+<h3>TabR</h3>
+<p><a href="https://openreview.net/pdf?id=rhgIgTSSxW">Gorishniy et al. 2024</a></p>
+</div>
+</div>
+</div>
+<div id="transformer-based" class="section level1">
+<h1>Transformer-Based</h1>
+<div id="ft-transformer" class="section level3">
+<h3>FT-Transformer</h3>
+<p><a href="https://proceedings.neurips.cc/paper_files/paper/2021/file/9d86d83f925f2149e9edb0ac3b49229c-Paper.pdf">Gorishniy et al. 2021</a></p>
+</div>
+<div id="tabpfn" class="section level3">
+<h3>TabPFN</h3>
+<p><a href="https://arxiv.org/pdf/2207.01848">Hollmann et al. 2023</a></p>
+</div>
+<div id="tabular-data-is-attention-all-you-need" class="section level3">
+<h3>Tabular Data: Is Attention All You Need?</h3>
+<p><a href="https://arxiv.org/pdf/2402.03970">Zabërgja et al. 2024</a></p>
+</div>
+</div>
+<div id="gbdt-inspired" class="section level1">
+<h1>GBDT Inspired</h1>
+<div id="node" class="section level3">
+<h3>NODE</h3>
+</div>
+</div>
+<div id="preprocessing" class="section level1">
+<h1>Preprocessing</h1>
+<div id="current-practice" class="section level3">
+<h3>Current practice</h3>
+<ul>
+<li><p>Gaussianizing: For NN models, <a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/0378c7692da36807bdec87ab043cdadc-Paper-Datasets_and_Benchmarks.pdf">Grinsztajn et al. 2022</a> transform (numerical) features to normal using Scikit-learn’s <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.QuantileTransformer.html"><code>QuantileTransformer</code></a>.</p></li>
+<li><p>For models that doesn’t handle categorical features natively, <a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/0378c7692da36807bdec87ab043cdadc-Paper-Datasets_and_Benchmarks.pdf">Grinsztajn et al. 2022</a> use one-hot encoding (but not embeddings yet?)</p></li>
+</ul>
+</div>
+<div id="binning-features" class="section level3">
+<h3>Binning features</h3>
+<p><a href="https://proceedings.neurips.cc/paper_files/paper/2021/file/9d86d83f925f2149e9edb0ac3b49229c-Paper.pdf">Gorishniy et al. 2021</a></p>
+</div>
+<div id="embeddings-for-numerical-features" class="section level3">
+<h3>Embeddings for numerical features</h3>
+<p><a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/9e9f0ffc3d836836ca96cbf8fe14b105-Paper-Conference.pdf">Gorishniy et al. 2022</a></p>
+</div>
+</div>
+<div id="references" class="section level1">
+<h1>References</h1>
+<ul>
+<li><p>Grinsztajn, Oyallon, &amp; Varoquaux <a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/0378c7692da36807bdec87ab043cdadc-Paper-Datasets_and_Benchmarks.pdf">“Why do tree-based models still outperform deep learning on typical tabular data?”</a> ICML 2022 <a href="https://github.com/LeoGrin/tabular-benchmark">(Github)</a></p></li>
+<li><p>Ng, <a href="https://www.cs.cmu.edu/~gpekhime/Projects/CSC2515/Refs/Regression/icml04-l1l2.pdf">“Feature selection, L 1 vs. L 2 regularization, and rotational invariance.”</a> ICML 2004</p></li>
+<li><p>McElfresh et al. <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/f06d5ebd4ff40b40dd97e30cee632123-Paper-Datasets_and_Benchmarks.pdf">“When do neural nets outperform boosted trees on tabular data?”</a> NeurIPS 2023</p></li>
+<li><p>Ye et al. “A Closer Look at Deep Learning on Tabular Data.”(<a href="https://arxiv.org/pdf/2407.00956v1" class="uri">https://arxiv.org/pdf/2407.00956v1</a>) arXiv 2407.00956 (2024)</p></li>
+<li><p>Gorishniy et al. <a href="https://proceedings.neurips.cc/paper_files/paper/2021/file/9d86d83f925f2149e9edb0ac3b49229c-Paper.pdf">“Revisiting deep learning models for tabular data.”</a> NeurIPS 2021</p></li>
+<li><p>Gorishniy et al. <a href="https://arxiv.org/pdf/2410.24210?">“TabM: Advancing Tabular Deep Learning with Parameter-Efficient Ensembling”</a> arXiv 2410.24210 (2024)</p></li>
+<li><p>Wen, Tran, &amp; Ba (2020). <a href="https://arxiv.org/pdf/2002.06715">“Batchensemble: an alternative approach to efficient ensemble and lifelong learning.”</a> ICLR 2020</p></li>
+<li><p>Gorishniy et al <a href="https://openreview.net/pdf?id=rhgIgTSSxW">“TabR: Tabular Deep Learning Meets Nearest Neighbors.”</a> ICLR 2024</p></li>
+<li><p>Hollmann et al. <a href="https://arxiv.org/pdf/2207.01848">“Tabpfn: A transformer that solves small tabular classification problems in a second.”</a> ICLR 2023</p></li>
+<li><p>Zabërgja, Kadra, &amp; Grabocka <a href="https://arxiv.org/pdf/2402.03970">“Tabular Data: Is Attention All You Need?”</a> :2402.03970 (2024)</p></li>
+<li><p>Gorishniy, Rubachev, &amp; Babenko <a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/9e9f0ffc3d836836ca96cbf8fe14b105-Paper-Conference.pdf">“On embeddings for numerical features in tabular deep learning.”</a> NeurIPS 2022</p></li>
+</ul>
+</div>
