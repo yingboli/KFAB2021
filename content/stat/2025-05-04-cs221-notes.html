@@ -1,0 +1,60 @@
+---
+title: CS221 Notes
+author: Yingbo Li
+date: '2025-05-04'
+slug: cs221-notes
+categories:
+  - Lecture notes
+tags:
+  - AI
+---
+
+
+
+<div id="week-3.-search" class="section level1">
+<h1>Week 3. Search</h1>
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+</div>
+<div id="tree-search" class="section level2">
+<h2>Tree Search</h2>
+<div id="defining-a-search-problem" class="section level3">
+<h3>Defining a search problem</h3>
+<ul>
+<li><span class="math inline">\(s_\text{start}\)</span>: stating state.</li>
+<li>Actions<span class="math inline">\((s)\)</span>: possible actions</li>
+<li>Cost<span class="math inline">\((s, a)\)</span>: action cost</li>
+<li>Succ<span class="math inline">\((s, a)\)</span>: the successor state</li>
+<li>IsEnd<span class="math inline">\((s)\)</span>: reached end state?</li>
+</ul>
+</div>
+<div id="a-search-tree" class="section level3">
+<h3>A search tree</h3>
+<ul>
+<li><p>Node: a state</p></li>
+<li><p>Edge: an (action, cost) pair</p></li>
+<li><p>Root: starting state</p></li>
+<li><p>Leaf nodes: end states</p></li>
+<li><p>Each root-to-leaf path represents a possible action sequence, and the sum of the costs of the edges is the cost of that path</p></li>
+<li><p><strong>Objective</strong>: find a minimal cost path to the end state</p></li>
+</ul>
+</div>
+<div id="coding-a-search-problem" class="section level3">
+<h3>Coding a search problem</h3>
+<ul>
+<li>A class with the following methods:
+<ul>
+<li><code>stateState() -&gt; State</code></li>
+<li><code>isEnd(State) -&gt; bool</code></li>
+<li><code>succAndCost(State) -&gt; List[Tuple[str, State, float]]</code> returns a list of <code>(action, state, cost)</code> tuples.</li>
+</ul></li>
+</ul>
+</div>
+<div id="tree-search-algorithms" class="section level3">
+<h3>Tree Search Algorithms</h3>
+</div>
+</div>
+<div id="graph-search" class="section level2">
+<h2>Graph Search</h2>
+</div>
+</div>

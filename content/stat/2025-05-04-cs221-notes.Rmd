@@ -1,0 +1,53 @@
+---
+title: CS221 Notes
+author: Yingbo Li
+date: '2025-05-04'
+slug: cs221-notes
+categories:
+  - Lecture notes
+tags:
+  - AI
+---
+
+# Week 3. Search
+
+## Overview
+
+
+
+## Tree Search
+
+### Defining a search problem
+
+
+* $s_\text{start}$: stating state. 
+* Actions$(s)$: possible actions
+* Cost$(s, a)$: action cost
+* Succ$(s, a)$: the successor state
+* IsEnd$(s)$: reached end state? 
+
+
+### A search tree
+
+* Node: a state
+* Edge: an (action, cost) pair
+* Root: starting state
+* Leaf nodes: end states
+
+* Each root-to-leaf path represents a possible action sequence, and the sum of the costs of the edges is the cost of that path
+
+* **Objective**: find a minimal cost path to the end state
+
+
+### Coding a search problem
+* A class with the following methods:
+    - `stateState() -> State`
+    - `isEnd(State) -> bool`
+    - `succAndCost(State) -> List[Tuple[str, State, float]]` returns a list of `(action, state, cost)` tuples.
+    
+
+### Tree Search Algorithms
+
+
+
+## Graph Search
