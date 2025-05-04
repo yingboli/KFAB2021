@@ -1,0 +1,55 @@
+---
+title: 'Spatial Statistics: Basics of Point-Referenced Data Models'
+author: Yingbo Li
+date: '2025-05-02'
+slug: spatial-statistics-basics-of-point-referenced-data-models
+categories:
+  - Book notes
+tags: []
+---
+
+
+
+<div id="notations" class="section level1">
+<h1>Notations</h1>
+<ul>
+<li><p>A stochastic process <span class="math inline">\(\{Y(\mathbf{s}): \mathbf{s} \in D\}\)</span>, where <span class="math inline">\(D\)</span> is a fixed subset of <span class="math inline">\(r\)</span>-dimensional Euclidean space.</p>
+<ul>
+<li>For spatial problems, <span class="math inline">\(r=2\)</span> or 3 (if with sea level)</li>
+</ul></li>
+<li><p>The data contains measurements at a finite set of locations <span class="math inline">\(\{\mathbf{s}_1, \ldots, \mathbf{s}_n\}\)</span></p></li>
+<li><p>Goal</p>
+<ul>
+<li>Inference about the spatial process <span class="math inline">\(Y(\mathbf{s})\)</span></li>
+<li>Prediction at new locations</li>
+</ul></li>
+</ul>
+</div>
+<div id="key-concepts" class="section level1">
+<h1>Key concepts</h1>
+<div id="stationarity" class="section level2">
+<h2>Stationarity</h2>
+<ul>
+<li><p><strong>Strict stationarity</strong>: for any <span class="math inline">\(\mathbf{h} \in \mathbb{R}^r\)</span>, the distribution of <span class="math inline">\(\left(Y(\mathbf{s}_1), \ldots, Y(\mathbf{s}_n)\right)\)</span> is the same as <span class="math inline">\(\left(Y(\mathbf{s}_1 + \mathbf{h}), \ldots, Y(\mathbf{s}_n + \mathbf{h})\right)\)</span></p></li>
+<li><p><strong>Weak stationarity</strong>, also called second-order stationary:</p>
+<ul>
+<li><p>Constant mean: <span class="math inline">\(E\left[Y(\mathbf{s})\right] = \mu\)</span></p></li>
+<li><p>For any <span class="math inline">\(\mathbf{h} \in \mathbb{R}^r\)</span>,
+<span class="math display">\[
+  Cov\left(Y(\mathbf{s}), Y(\mathbf{s} + \mathbf{h}) \right) = C(\mathbf{h})
+  \]</span></p></li>
+<li><p>The covariance function <span class="math inline">\(C(\mathbf{h})\)</span> is called the <strong>covariogram</strong>.</p></li>
+</ul></li>
+<li><p><strong>Intrinsic stationarity</strong>: we assume constant mean, we can define
+<span class="math display">\[
+E\left[Y(\mathbf{s} + \mathbf{h}) - Y(\mathbf{s})\right]^2 =
+Var\left[Y(\mathbf{s} + \mathbf{h}) - Y(\mathbf{s})\right] = 2\gamma(\mathbf{h}),
+\]</span>
+which only depends on <span class="math inline">\(\mathbf{h}\)</span> but not on <span class="math inline">\(\mathbf{s}\)</span>.</p>
+<ul>
+<li>The function <span class="math inline">\(2\gamma(\mathbf{h})\)</span> is called the <strong>variogram</strong>.</li>
+<li>The function <span class="math inline">\(\gamma(\mathbf{h})\)</span> is called the <strong>semivariogram</strong>.</li>
+</ul></li>
+</ul>
+</div>
+</div>

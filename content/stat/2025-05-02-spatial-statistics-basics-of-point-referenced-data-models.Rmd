@@ -1,0 +1,60 @@
+---
+title: 'Spatial Statistics: Basics of Point-Referenced Data Models'
+author: Yingbo Li
+date: '2025-05-02'
+slug: spatial-statistics-basics-of-point-referenced-data-models
+categories:
+  - Book notes
+tags: []
+---
+
+# Notations
+
+* A stochastic process $\{Y(\mathbf{s}): \mathbf{s} \in D\}$, where $D$ is a fixed subset of $r$-dimensional Euclidean space.
+    - For spatial problems, $r=2$ or 3 (if with sea level)
+
+* The data contains measurements at a finite set of locations $\{\mathbf{s}_1, \ldots, \mathbf{s}_n\}$
+
+* Goal
+    - Inference about the spatial process $Y(\mathbf{s})$
+    - Prediction at new locations
+    
+# Key concepts
+
+## Stationarity
+
+* **Strict stationarity**: for any $\mathbf{h} \in \mathbb{R}^r$, the distribution of $\left(Y(\mathbf{s}_1), \ldots, Y(\mathbf{s}_n)\right)$ is the same as $\left(Y(\mathbf{s}_1 + \mathbf{h}), \ldots, Y(\mathbf{s}_n + \mathbf{h})\right)$
+
+* **Weak stationarity**, also called second-order stationary: 
+    - Constant mean: $E\left[Y(\mathbf{s})\right] = \mu$
+    - For any $\mathbf{h} \in \mathbb{R}^r$, 
+    \[
+    Cov\left(Y(\mathbf{s}), Y(\mathbf{s} + \mathbf{h}) \right) = C(\mathbf{h})
+    \]
+
+    - The covariance function $C(\mathbf{h})$ is called the **covariogram**.
+    
+* **Intrinsic stationarity**: we assume constant mean, we can define
+\[
+E\left[Y(\mathbf{s} + \mathbf{h}) - Y(\mathbf{s})\right]^2 = 
+Var\left[Y(\mathbf{s} + \mathbf{h}) - Y(\mathbf{s})\right] = 2\gamma(\mathbf{h}),
+\]
+which only depends on $\mathbf{h}$ but not on $\mathbf{s}$.
+
+    - The function $2\gamma(\mathbf{h})$ is called the **variogram**.
+    - The function $\gamma(\mathbf{h})$ is called the **semivariogram**.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
