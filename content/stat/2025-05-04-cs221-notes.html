@@ -1,5 +1,5 @@
 ---
-title: CS221 Notes
+title: CS221 Artificial Intelligence, Notes on States (Week 3-5)
 author: Yingbo Li
 date: '2025-05-04'
 slug: cs221-notes
@@ -7,42 +7,102 @@ categories:
   - Lecture notes
 tags:
   - AI
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 3
 ---
 
 
+<div id="TOC">
+<ul>
+<li><a href="#week-3.-search" id="toc-week-3.-search">Week 3. Search</a>
+<ul>
+<li><a href="#tree-search" id="toc-tree-search">Tree Search</a>
+<ul>
+<li><a href="#model-a-search-problem" id="toc-model-a-search-problem">Model a search problem</a></li>
+<li><a href="#tree-search-algorithms" id="toc-tree-search-algorithms">Tree search algorithms</a></li>
+</ul></li>
+<li><a href="#dynamic-programming" id="toc-dynamic-programming">Dynamic Programming</a></li>
+<li><a href="#graph-search" id="toc-graph-search">Graph Search</a>
+<ul>
+<li><a href="#uniform-cost-search-ucs" id="toc-uniform-cost-search-ucs">Uniform cost search (UCS)</a></li>
+<li><a href="#a" id="toc-a">A*</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#week-4.-markove-decision-processes" id="toc-week-4.-markove-decision-processes">Week 4. Markove Decision Processes</a>
+<ul>
+<li><a href="#markove-decision-processes-offline" id="toc-markove-decision-processes-offline">Markove Decision Processes (offline)</a>
+<ul>
+<li><a href="#model-an-mdp" id="toc-model-an-mdp">Model an MDP</a></li>
+<li><a href="#policy-evaluation-on-policy" id="toc-policy-evaluation-on-policy">Policy Evaluation (on-policy)</a></li>
+<li><a href="#value-iteration-off-policy" id="toc-value-iteration-off-policy">Value Iteration (off-policy)</a></li>
+</ul></li>
+<li><a href="#reinforcement-learning-online" id="toc-reinforcement-learning-online">Reinforcement Learning (online)</a>
+<ul>
+<li><a href="#model-based-methods-off-policy" id="toc-model-based-methods-off-policy">Model-based methods (off-policy)</a></li>
+<li><a href="#model-free-monte-carlo-on-policy" id="toc-model-free-monte-carlo-on-policy">Model-free Monte Carlo (on-policy)</a></li>
+<li><a href="#sarsa-on-policy" id="toc-sarsa-on-policy">SARSA (on-policy)</a></li>
+<li><a href="#q-learning-off-policy" id="toc-q-learning-off-policy">Q-learning (off-policy)</a></li>
+<li><a href="#epsilon-greedy" id="toc-epsilon-greedy">Epsilon-greedy</a></li>
+<li><a href="#function-appxomation" id="toc-function-appxomation">Function appxomation</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#week-5.-games" id="toc-week-5.-games">Week 5. Games</a>
+<ul>
+<li><a href="#modeling-games" id="toc-modeling-games">Modeling Games</a></li>
+<li><a href="#game-algorithms" id="toc-game-algorithms">Game Algorithms</a>
+<ul>
+<li><a href="#game-evaluation" id="toc-game-evaluation">Game evaluation</a></li>
+<li><a href="#expectimax" id="toc-expectimax">Expectimax</a></li>
+<li><a href="#minimax" id="toc-minimax">Minimax</a></li>
+<li><a href="#expectiminimax" id="toc-expectiminimax">Expectiminimax</a></li>
+<li><a href="#evaluation-functions" id="toc-evaluation-functions">Evaluation functions</a></li>
+<li><a href="#alpha-beta-pruning" id="toc-alpha-beta-pruning">Alpha-Beta pruning</a></li>
+</ul></li>
+<li><a href="#more-topics" id="toc-more-topics">More Topics</a>
+<ul>
+<li><a href="#simultaneous-games" id="toc-simultaneous-games">Simultaneous games</a></li>
+<li><a href="#non-zero-sum-games" id="toc-non-zero-sum-games">Non-zero-sum games</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
 
 <div id="week-3.-search" class="section level1">
 <h1>Week 3. Search</h1>
-<div id="overview" class="section level2">
-<h2>Overview</h2>
-</div>
+<img src="/figures/cs221/week3_search_overview.png" alt="drawing" width="700" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6>
+Figure source: <a href="https://stanford-cs221.github.io/spring2025/">Stanford CS221 spring 2025</a>, Problem Workout 3 Slides
+</h6>
+<ul>
+<li><p>Note: DP is not necessarily a tree search algorithm.
+It’s a technique used to solve problems efficiently by breaking them down into smaller sub-problems. It can be applied to both tree search and graph search.</p></li>
+<li><p>A good reference: <a href="https://stanford.edu/~shervine/teaching/cs-221/cheatsheet-states-models">state-based models cheetsheet</a></p></li>
+</ul>
 <div id="tree-search" class="section level2">
 <h2>Tree Search</h2>
-<div id="defining-a-search-problem" class="section level3">
-<h3>Defining a search problem</h3>
+<div id="model-a-search-problem" class="section level3">
+<h3>Model a search problem</h3>
+<ul>
+<li><p>Defining a search problem</p>
 <ul>
 <li><span class="math inline">\(s_\text{start}\)</span>: stating state.</li>
 <li>Actions<span class="math inline">\((s)\)</span>: possible actions</li>
 <li>Cost<span class="math inline">\((s, a)\)</span>: action cost</li>
 <li>Succ<span class="math inline">\((s, a)\)</span>: the successor state</li>
 <li>IsEnd<span class="math inline">\((s)\)</span>: reached end state?</li>
-</ul>
-</div>
-<div id="a-search-tree" class="section level3">
-<h3>A search tree</h3>
+</ul></li>
+<li><p>A search tree</p>
 <ul>
-<li><p>Node: a state</p></li>
-<li><p>Edge: an (action, cost) pair</p></li>
-<li><p>Root: starting state</p></li>
-<li><p>Leaf nodes: end states</p></li>
+<li>Node: a state</li>
+<li>Edge: an (action, cost) pair</li>
+<li>Root: starting state</li>
+<li>Leaf nodes: end states</li>
+</ul></li>
 <li><p>Each root-to-leaf path represents a possible action sequence, and the sum of the costs of the edges is the cost of that path</p></li>
-<li><p><strong>Objective</strong>: find a minimal cost path to the end state</p></li>
-</ul>
-</div>
-<div id="coding-a-search-problem" class="section level3">
-<h3>Coding a search problem</h3>
-<ul>
-<li>A class with the following methods:
+<li><p><em>Objective</em>: find a minimal cost path to the end state</p></li>
+<li><p>Coding a search problem: a class with the following methods:</p>
 <ul>
 <li><code>stateState() -&gt; State</code></li>
 <li><code>isEnd(State) -&gt; bool</code></li>
@@ -51,10 +111,566 @@ tags:
 </ul>
 </div>
 <div id="tree-search-algorithms" class="section level3">
-<h3>Tree Search Algorithms</h3>
+<h3>Tree search algorithms</h3>
+<ul>
+<li><span class="math inline">\(b\)</span>: actions per state, <span class="math inline">\(D\)</span> maximum depth, <span class="math inline">\(d\)</span> depth of the solution path</li>
+</ul>
+<table>
+<colgroup>
+<col width="20%" />
+<col width="14%" />
+<col width="35%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Algorithm</th>
+<th>Idea</th>
+<th>Action costs</th>
+<th>Space</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Backtracking search</td>
+<td></td>
+<td>Any cost</td>
+<td><span class="math inline">\(O(D)\)</span></td>
+<td><span class="math inline">\(O(b^D)\)</span></td>
+</tr>
+<tr class="even">
+<td>Depth-first search</td>
+<td>Backtracking + stop when find the first end state</td>
+<td>All costs <span class="math inline">\(c\)</span> = 0</td>
+<td><span class="math inline">\(O(D)\)</span></td>
+<td><span class="math inline">\(O(b^D)\)</span></td>
+</tr>
+<tr class="odd">
+<td>Breadth-first search</td>
+<td>Explore in order of increasing depth</td>
+<td>Constant cost <span class="math inline">\(c\geq 0\)</span></td>
+<td><span class="math inline">\(O(b^d)\)</span></td>
+<td><span class="math inline">\(O(b^d)\)</span></td>
+</tr>
+<tr class="even">
+<td>DFS with iterative deepening</td>
+<td>Call DFS for maximum depths 1, 2, <span class="math inline">\(\ldots\)</span></td>
+<td>Constant cost <span class="math inline">\(c\geq 0\)</span></td>
+<td><span class="math inline">\(O(b)\)</span></td>
+<td><span class="math inline">\(O(b^d)\)</span></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Always exponential time</li>
+<li>Avoid exponential spaces with DFS-ID</li>
+</ul>
 </div>
+</div>
+<div id="dynamic-programming" class="section level2">
+<h2>Dynamic Programming</h2>
+<ul>
+<li><p>Dynamic programming (DP)</p>
+<ul>
+<li>A backtracking search algorithm with memorization (i.e. partial results are saved)</li>
+<li>May avoid the exponential running time of tree search</li>
+<li>Assumption: acyclic graph, so there is always a clear order in which to compute all the future (or past) costs.</li>
+</ul></li>
+<li><p>For any given state <span class="math inline">\(s\)</span>, the DP future cost is
+<span class="math display">\[
+\text{FutureCost}(s) =
+\begin{cases}
+0 &amp; \text{ if IsEnd}(s)\\
+\min_{a \in \text{Actions}(s)} \left[\text{Cost}(s, a) + \text{FutureCost}(\text{Succ}(s, a)) \right] &amp; \text{ otherwise}
+\end{cases}
+\]</span></p></li>
+<li><p>Note that for DP, we can analogously define <span class="math inline">\(\text{PastCost}(s)\)</span>.</p></li>
+<li><p>A state is a summary of all the past actions sufficient to choose future actions optimally.</p></li>
+</ul>
 </div>
 <div id="graph-search" class="section level2">
 <h2>Graph Search</h2>
+<ul>
+<li><span class="math inline">\(N\)</span> total states, <span class="math inline">\(n\)</span> of which are closer than end state</li>
+</ul>
+<table style="width:100%;">
+<colgroup>
+<col width="18%" />
+<col width="12%" />
+<col width="31%" />
+<col width="18%" />
+<col width="18%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Algorithm</th>
+<th>Cycles?</th>
+<th>Idea</th>
+<th>Action costs</th>
+<th>Time/space</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Dynamic programming</td>
+<td>No</td>
+<td>Save partial results</td>
+<td>Any</td>
+<td><span class="math inline">\(O(N)\)</span></td>
+</tr>
+<tr class="even">
+<td>Uniform cost search</td>
+<td>Yes</td>
+<td>Enumerates states in order of increasing past cost</td>
+<td><span class="math inline">\(\text{Cost}(s, a) \geq 0\)</span></td>
+<td><span class="math inline">\(O(n\log n)\)</span></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Exponential savings compared with tree search!</li>
+<li>Graph search: can have cycles</li>
+</ul>
+<div id="uniform-cost-search-ucs" class="section level3">
+<h3>Uniform cost search (UCS)</h3>
+<img src="/figures/cs221/week3_search_ucs.png" alt="drawing" width="400" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6>
+Figure source: <a href="https://stanford-cs221.github.io/spring2025/">Stanford CS221 spring 2025</a>, lecture slides week 3
+</h6>
+<ul>
+<li><p>Types of states</p>
+<ul>
+<li>Explored: optimal path found; will not update cost to these states in the future</li>
+<li>Frontier: states we’ve seen, but still can update the cost of how to get there cheaper (i.e., priority queue)</li>
+<li>Unexplored: states we haven’t seen</li>
+</ul></li>
+<li><p><strong>Uniform cost search (UCS)</strong> algorithm</p>
+<ul>
+<li>Add <span class="math inline">\(s_{\text{start}}\)</span> to <em>frontier</em></li>
+<li>Repeat until fronteir is empty:
+<ul>
+<li>Remove <span class="math inline">\(s\)</span> with smallest priority (minimum cost to <span class="math inline">\(s\)</span> among visited paths) <span class="math inline">\(p\)</span> from frontier</li>
+<li>If <span class="math inline">\(\text{IsEnd}(s)\)</span>: return solution</li>
+<li>Add <span class="math inline">\(s\)</span> to <em>explored</em></li>
+<li>For each action <span class="math inline">\(a \in \text{Actions(s)}\)</span>:
+<ul>
+<li>Get successor <span class="math inline">\(s&#39; \leftarrow \text{Succ}(s, a)\)</span></li>
+<li>If <span class="math inline">\(s&#39;\)</span> is already in explored: continue</li>
+<li>Update <em>frontier</em> with <span class="math inline">\(s&#39;\)</span> and priority with <span class="math inline">\(p + \text{Cost}(s, a)\)</span> (if it’s cheaper)</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>Properties of UCS</p>
+<ul>
+<li><p>Correctness: When a state <span class="math inline">\(s\)</span> is popped from the frontier and moved to explored, its priority is PastCost<span class="math inline">\((s)\)</span>, the minimum cost to <span class="math inline">\(s\)</span>.</p></li>
+<li><p>USC potentially explores fewer states, but requires move overhead to maintain the priority queue</p></li>
+</ul></li>
+</ul>
+</div>
+<div id="a" class="section level3">
+<h3>A*</h3>
+<ul>
+<li><p><strong>A</strong>* algorithm:
+Run UCS with modified edge costs
+<span class="math display">\[
+\text{Cost}&#39;(s, a) = \text{Cost}(s, a) + h(\text{Succ}(s, a)) - h(s)
+\]</span></p>
+<ul>
+<li>USC: explore states in order of PastCost<span class="math inline">\((s)\)</span></li>
+<li>A*: explore states in order of PastCost<span class="math inline">\((s) + h(s)\)</span></li>
+<li><span class="math inline">\(h(s)\)</span> is a heuristic that estimates FutureCost<span class="math inline">\((s)\)</span></li>
+</ul></li>
+<li><p><strong>Heuristic <span class="math inline">\(h\)</span></strong></p>
+<ul>
+<li><p>Consistency:</p>
+<ul>
+<li>Triangle inequality: <span class="math inline">\(\text{Cost}&#39;(s, a) = \text{Cost}(s, a) + h(\text{Succ}(s, a)) - h(s)  \geq 0\)</span>, and</li>
+<li><span class="math inline">\(h(s_\text{end}) = 0\)</span></li>
+</ul>
+<p><img src="/figures/cs221/week3_search_a*_triangle_inequality.png" alt="drawing" width="550" style="display: block; margin-left: auto; margin-right: auto;"/></p>
+<h6>
+<p>Figure source: <a href="https://stanford-cs221.github.io/spring2025/">Stanford CS221 spring 2025</a>, lecture slides week 3</p>
+</h6></li>
+<li><p>Admissibility:
+<span class="math display">\[h(s) \leq \text{FutureCost}(s)\]</span></p></li>
+<li><p>If <span class="math inline">\(h(s)\)</span> is consistent, then it is admissible.</p></li>
+</ul></li>
+<li><p>A* properties</p>
+<ul>
+<li>Correctness: if <span class="math inline">\(h\)</span> is consistent, then A* returns the minimum cost path</li>
+<li>Efficiency: A* explores all states <span class="math inline">\(s\)</span> satisfying
+<span class="math display">\[\text{PastCost}(s) \leq \text{PastCost}(s_\text{end}) - h(s)\]</span>
+<ul>
+<li>If <span class="math inline">\(h(s)=0\)</span>, then A* is the same as UCS</li>
+<li>If <span class="math inline">\(h(s)=\text{FutureCost}(s)\)</span>, then A* only explores nodes on a minimum cost path</li>
+<li>Usually somewhere in between</li>
+</ul></li>
+</ul></li>
+<li><p>Create <span class="math inline">\(h(s)\)</span> via relaxation</p>
+<ul>
+<li>Remove constraints</li>
+<li>Reduce edge costs (from <span class="math inline">\(\infty\)</span> to some finite cost)</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="week-4.-markove-decision-processes" class="section level1">
+<h1>Week 4. Markove Decision Processes</h1>
+<ul>
+<li>Uncertainty in the search process
+<ul>
+<li>Performing action <span class="math inline">\(a\)</span> from a state <span class="math inline">\(s\)</span> can lead to several states <span class="math inline">\(s&#39;_1, s&#39;_2, \ldots\)</span> in a probabilistic manner.</li>
+<li>The probability and reward of each <span class="math inline">\((s, a, s&#39;)\)</span> pair may be known or unknown.
+<ul>
+<li>If known: policy evaluation, value iteration</li>
+<li>If unknown, reinforcement learning</li>
+</ul></li>
+</ul></li>
+</ul>
+<div id="markove-decision-processes-offline" class="section level2">
+<h2>Markove Decision Processes (offline)</h2>
+<div id="model-an-mdp" class="section level3">
+<h3>Model an MDP</h3>
+<ul>
+<li><strong>Markove decision process</strong> definition:
+<ul>
+<li>States: the set of states</li>
+<li><span class="math inline">\(s_\text{start}\)</span>: stating state.</li>
+<li>Actions<span class="math inline">\((s)\)</span>: possible actions</li>
+<li><span class="math inline">\(T(s, a, s&#39;)\)</span>: transition probability of <span class="math inline">\(s&#39;\)</span> if take action <span class="math inline">\(a\)</span> in state <span class="math inline">\(s\)</span></li>
+<li>Reward<span class="math inline">\((s, a, s&#39;)\)</span>: reward for the transition <span class="math inline">\((s, a, s&#39;)\)</span></li>
+<li>IsEnd<span class="math inline">\((s)\)</span>: reached end state?</li>
+<li><span class="math inline">\(\gamma \in (0, 1]\)</span>: discount factor</li>
+</ul></li>
+<li>A <strong>policy</strong> <span class="math inline">\(\pi\)</span>: a mapping from each state <span class="math inline">\(s \in \text{States}\)</span> to an action <span class="math inline">\(a \in \text{Actions}(s)\)</span></li>
+</ul>
+</div>
+<div id="policy-evaluation-on-policy" class="section level3">
+<h3>Policy Evaluation (on-policy)</h3>
+<ul>
+<li><p><strong>Utility</strong> of a policy is the discounted sum of the rewards on the path</p>
+<ul>
+<li>Since the policy yields a random path, its utility is a random variable</li>
+</ul></li>
+<li><p>For a policy, its path is <span class="math inline">\(s_0, a_1 r_1 s_1, a_2r_2s_2, \ldots\)</span> (action, reward, new state) tuple, then the <strong>utility with discount <span class="math inline">\(\gamma\)</span></strong> is
+<span class="math display">\[
+u_1 = r_1 + \gamma r_2 + \gamma^2 r_3 + \ldots
+\]</span></p></li>
+<li><p><span class="math inline">\(V_\pi(s)\)</span>: the expected utility (called <strong>value</strong>) of a policy <span class="math inline">\(\pi\)</span> from state <span class="math inline">\(s\)</span></p></li>
+<li><p><span class="math inline">\(Q_\pi(s, a)\)</span>: <strong>Q-value</strong>, the expected utility of taking action <span class="math inline">\(a\)</span> from state <span class="math inline">\(s\)</span>, and then following policy <span class="math inline">\(\pi\)</span></p></li>
+<li><p>Connections between <span class="math inline">\(V_\pi(s)\)</span> and <span class="math inline">\(Q_\pi(s, a)\)</span>:</p></li>
+</ul>
+<p><span class="math display">\[
+V_\pi(s) = \begin{cases}
+0 &amp; \text{ if IsEnd}(s)\\
+Q_\pi(s, \pi(s)) &amp; \text{ otherwise}
+\end{cases}
+\]</span></p>
+<p><span class="math display">\[
+Q_\pi(s, a) = \sum_{s&#39;} T(s, a, s&#39;)\left[\text{Reward}(s, a, s&#39;) + \gamma V_\pi(s)\right]
+\]</span></p>
+<ul>
+<li><p>Iterative algorithm for policy evaluation</p>
+<ul>
+<li>Initialize <span class="math inline">\(V_\pi^{(0)}(s) = 0\)</span> for all <span class="math inline">\(s\)</span></li>
+<li>For iteration <span class="math inline">\(t = 1, \ldots, t_\text{PE}\)</span>:
+<ul>
+<li>For each state <span class="math inline">\(s\)</span>,
+<span class="math display">\[V_\pi^{(t)}(s) = \sum_{s&#39;} T\left(s, \pi(s), s&#39;\right)\left[\text{Reward}\left(s, \pi(s), s&#39;\right) + \gamma V_\pi^{(t-1)}(s)\right]\]</span></li>
+</ul></li>
+</ul></li>
+<li><p>Choice of <span class="math inline">\(t_\text{PE}\)</span>: stop when values don’t change much
+<span class="math display">\[
+\max_{s} \left|V_\pi^{(t)}(s) -  V_\pi^{(t-1)}(s)\right| \leq \epsilon
+\]</span></p></li>
+<li><p>MDP time complexity is <span class="math inline">\(O(t_\text{PE} S S&#39;)\)</span>, where <span class="math inline">\(S\)</span> is the number of states and <span class="math inline">\(S&#39;\)</span> is the number of <span class="math inline">\(s&#39;\)</span> with <span class="math inline">\(T(s, a, s&#39;) \geq 0\)</span></p></li>
+</ul>
+</div>
+<div id="value-iteration-off-policy" class="section level3">
+<h3>Value Iteration (off-policy)</h3>
+<ul>
+<li><p><strong>Optimal value</strong> <span class="math inline">\(V_\text{opt}(s)\)</span>: maximum value attained by any policy</p></li>
+<li><p><strong>Optimal Q-value</strong> <span class="math inline">\(Q_\text{opt}(s, a)\)</span></p></li>
+</ul>
+<p><span class="math display">\[
+Q_\text{opt}(s, a) = \sum_{s&#39;} T(s, a, s&#39;) \left[\text{Reward}(s, a, s&#39;) + \gamma V_{opt}(s&#39;) \right]
+\]</span></p>
+<p><span class="math display">\[
+V_\text{opt}(s) = \begin{cases}
+0 &amp; \text{ if IsEnd}(s)\\
+\max_{a\in \text{Actions}(s)} Q_\text{opt}(s, a) &amp; \text{ otherwise}
+\end{cases}
+\]</span></p>
+<ul>
+<li><strong>Value iteration</strong> algorithm:
+<ul>
+<li>Initialize <span class="math inline">\(V_\text{opt}^{(0)}(s) = 0\)</span> for all <span class="math inline">\(s\)</span></li>
+<li>For iteration <span class="math inline">\(t = 1, \ldots, t_\text{VI}\)</span>:
+<ul>
+<li>For each state <span class="math inline">\(s\)</span>,
+<span class="math display">\[V_\text{opt}^{(t)}(s) = \max_{a\in \text{Actions}(s)} \sum_{s&#39;} T\left(s, a, s&#39;\right)\left[\text{Reward}\left(s, a, s&#39;\right) + \gamma V_\text{opt}^{(t-1)}(s)\right]\]</span></li>
+</ul></li>
+</ul></li>
+<li>VI time complexity is <span class="math inline">\(O(t_\text{VI} S A S&#39;)\)</span>, where <span class="math inline">\(S\)</span> is the number of states, <span class="math inline">\(A\)</span> is the number of actions, and <span class="math inline">\(S&#39;\)</span> is the number of <span class="math inline">\(s&#39;\)</span> with <span class="math inline">\(T(s, a, s&#39;) \geq 0\)</span></li>
+</ul>
+</div>
+</div>
+<div id="reinforcement-learning-online" class="section level2">
+<h2>Reinforcement Learning (online)</h2>
+<img src="/figures/cs221/week4_RL_framework.png" alt="drawing" width="500" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6>
+Figure source: <a href="https://stanford-cs221.github.io/spring2025/">Stanford CS221 spring 2025</a>, lecture slides week 4
+</h6>
+<ul>
+<li>Summary of reinforcement learning algorithms</li>
+</ul>
+<table>
+<colgroup>
+<col width="48%" />
+<col width="24%" />
+<col width="26%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Algorithm</th>
+<th>Estimating</th>
+<th>Based on</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Model-based Monte Carlo</td>
+<td><span class="math inline">\(\hat{T}, \hat{R}\)</span></td>
+<td><span class="math inline">\(s_0, a_1, r_1, s_1, \ldots\)</span></td>
+</tr>
+<tr class="even">
+<td>Model-free Monte Carlo</td>
+<td><span class="math inline">\(\hat{Q}_\pi\)</span></td>
+<td><span class="math inline">\(u\)</span></td>
+</tr>
+<tr class="odd">
+<td>SARSA</td>
+<td><span class="math inline">\(\hat{Q}_\pi\)</span></td>
+<td><span class="math inline">\(r + \hat{Q}_\pi\)</span></td>
+</tr>
+<tr class="even">
+<td>Q-learning</td>
+<td><span class="math inline">\(\hat{Q}_\text{opt}\)</span></td>
+<td><span class="math inline">\(r + \hat{Q}_\text{opt}\)</span></td>
+</tr>
+</tbody>
+</table>
+<div id="model-based-methods-off-policy" class="section level3">
+<h3>Model-based methods (off-policy)</h3>
+<p><span class="math display">\[
+\hat{Q}_\text{opt}(s, a) = \sum_{s&#39;} \hat{T}(s, a, s&#39;) \left[\widehat{\text{Reward}}(s, a, s&#39;) + \gamma \hat{V}_{opt}(s&#39;) \right]
+\]</span></p>
+<ul>
+<li>Based on data <span class="math inline">\(s_0; a_1, r_1, s_1; a_2, r_2, s_2; \ldots ; a_n, r_n, s_n\)</span>, estimate the transition probabilities and rewards of the MDP</li>
+</ul>
+<p><span class="math display">\[\begin{align*}
+\hat{T}(s, a, s&#39;) &amp; =
+\frac{\# \text{times } (s, a, s&#39;) \text{ occurs}}
+{\# \text{times } (s, a) \text{ occurs}} \\
+\widehat{\text{Reward}}(s, a, s&#39;) &amp; = r \text{ in } (s, a, r, s&#39;)
+\end{align*}\]</span></p>
+<ul>
+<li>If <span class="math inline">\(\pi\)</span> is a non-deterministic policy which allows us to explore each (state, action) pair infinitely often, then the estimates of the transitions and rewards will converge.
+<ul>
+<li>Thus, the estimates <span class="math inline">\(\hat{T}\)</span> and <span class="math inline">\(\widehat{\text{Reward}}\)</span> are not necessarily policy dependent. So model-based methods are off-policy estimations.</li>
+</ul></li>
+</ul>
+</div>
+<div id="model-free-monte-carlo-on-policy" class="section level3">
+<h3>Model-free Monte Carlo (on-policy)</h3>
+<ul>
+<li><p>The main idea is to estimate the Q-values directly</p></li>
+<li><p>Original formula
+<span class="math display">\[
+\hat{Q}_\pi (s, a) = \text{average of } u_t \text{ where } s_{t-1} = s, a_t = a
+\]</span></p></li>
+<li><p>Equivalent formulation: for each <span class="math inline">\((s, a, u)\)</span>, let
+<span class="math display">\[\begin{align*}
+\eta &amp; = \frac{1}{1 + \#\text{updates to }(s, a)}\\
+\hat{Q}_\pi(s, a) &amp; \leftarrow (1-\eta) \underbrace{\hat{Q}_\pi (s, a)}_{\text{prediction}}  + \eta \underbrace{u}_{\text{data}}\\
+&amp; = \hat{Q}_\pi (s, a) - \eta\left(\hat{Q}_\pi (s, a) - u\right)
+\end{align*}\]</span></p>
+<ul>
+<li>Implied objective: least squares
+<span class="math display">\[\left(\hat{Q}_\pi (s, a) - u \right)^2\]</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="sarsa-on-policy" class="section level3">
+<h3>SARSA (on-policy)</h3>
+<ul>
+<li><strong>SARSA</strong> algorithm</li>
+</ul>
+<p>On each <span class="math inline">\((s, a, r, s&#39;, a&#39;)\)</span>:
+<span class="math display">\[
+\hat{Q}_\pi(s, a)  \leftarrow (1-\eta) \hat{Q}_\pi(s, a)  + \eta \left[\underbrace{r}_{\text{data}} + \gamma \underbrace{\hat{Q}_\pi(s&#39;, a&#39;)}_{\text{estimate}}\right]
+\]</span></p>
+<ul>
+<li>SARSA uses estimates <span class="math inline">\(\hat{Q}_\pi(s&#39;, a&#39;)\)</span> instead of just raw data <span class="math inline">\(u\)</span></li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th>Model-free Monte Carlo</th>
+<th>SARSA</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(u\)</span></td>
+<td><span class="math inline">\(r + \hat{Q}_\pi(s&#39;, a&#39;)\)</span></td>
+</tr>
+<tr class="even">
+<td>based on one path</td>
+<td>based on estimate</td>
+</tr>
+<tr class="odd">
+<td>unbiased</td>
+<td>biased</td>
+</tr>
+<tr class="even">
+<td>large variance</td>
+<td>small variance</td>
+</tr>
+<tr class="odd">
+<td>wait until end of update</td>
+<td>can update immediately</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="q-learning-off-policy" class="section level3">
+<h3>Q-learning (off-policy)</h3>
+<p>On each <span class="math inline">\((s, a, r, s&#39;)\)</span>:
+<span class="math display">\[\begin{align*}
+\hat{Q}_\text{opt}(s, a) &amp; \leftarrow (1-\eta) \underbrace{\hat{Q}_\text{opt}(s, a)}_{\text{prediction}} + \eta \underbrace{\left[r + \gamma \hat{V}_\text{opt}(s&#39;)\right]}_{\text{target}}\\
+\hat{V}_\text{opt}(s&#39;) &amp;= \max_{a&#39; \in \text{Actions}(s&#39;)} \hat{Q}_\text{opt}(s&#39;, a&#39;)
+\end{align*}\]</span></p>
+</div>
+<div id="epsilon-greedy" class="section level3">
+<h3>Epsilon-greedy</h3>
+<ul>
+<li><p>Reinforcement learning algorithm template</p>
+<ul>
+<li>For <span class="math inline">\(t = 1, 2, 3, \ldots\)</span>
+<ul>
+<li>Choose action <span class="math inline">\(a_t = \pi_\text{act}(s_{t-1})\)</span></li>
+<li>Receive reward <span class="math inline">\(r_t\)</span> and observe new state <span class="math inline">\(s_t\)</span></li>
+<li>Update parameters</li>
+</ul></li>
+</ul></li>
+<li><p>What exploration policy <span class="math inline">\(\pi_\text{act}\)</span> to use? Need to balance <strong>exploration</strong> and <strong>exploitation</strong>.</p></li>
+<li><p><strong>Epsilon-greedy</strong> policy
+<span class="math display">\[
+\pi_\text{act}(s) = \begin{cases}
+\arg\max_{a \in \text{Actions}(s)} \hat{Q}_\text{opt}(s, a) &amp; \text{ probability } 1- \epsilon\\
+\text{random from Actions}(s) &amp;  \text{ probability }  \epsilon
+\end{cases}
+\]</span></p></li>
+</ul>
+</div>
+<div id="function-appxomation" class="section level3">
+<h3>Function appxomation</h3>
+<ul>
+<li>Large state spaces is hard to explore.For better generalization to handle unseen states/actions, we can use <strong>function approximation</strong>, to define
+<ul>
+<li>features <span class="math inline">\(\phi(s, a)\)</span>, and</li>
+<li>weights <span class="math inline">\(\mathbf{w}\)</span>, such that
+<span class="math display">\[\hat{Q}_\text{opt}(s, a; \mathbf{w}) = \mathbf{w} \cdot \phi(s, a)\]</span></li>
+</ul></li>
+<li><strong>Q-learning with function approximation</strong>: on each $(s, a, r, s’),</li>
+</ul>
+<p><span class="math display">\[
+\mathbf{w} \leftarrow \mathbf{w} - \eta\left[
+\underbrace{\hat{Q}_\text{opt}(s, a; \mathbf{w})}_{\text{prediction}}
+- \underbrace{\left(r + \gamma \hat{V}_\text{opt}(s&#39;) \right)}_{\text{target}}
+\right] \phi(s, a)
+\]</span></p>
+</div>
+</div>
+</div>
+<div id="week-5.-games" class="section level1">
+<h1>Week 5. Games</h1>
+<div id="modeling-games" class="section level2">
+<h2>Modeling Games</h2>
+<ul>
+<li><p>Game tree</p>
+<ul>
+<li>Each node is a decision point for a player</li>
+<li>Each root-to-leaf path is a possible outcome of the game</li>
+</ul></li>
+<li><p><strong>Two-player zero-sum game</strong>:</p>
+<ul>
+<li><span class="math inline">\(s_\text{start}\)</span></li>
+<li>Actions<span class="math inline">\((s)\)</span></li>
+<li>Succ<span class="math inline">\((s, a)\)</span></li>
+<li>IsEnd<span class="math inline">\((s)\)</span></li>
+<li>Utility<span class="math inline">\((s)\)</span>: agent’s utility for end state <span class="math inline">\(s\)</span></li>
+<li>Player<span class="math inline">\((s) \in \text{Players}\)</span>: player who controls state s</li>
+<li>Players <span class="math inline">\(= \{\text{agent}, \text{opp} \}\)</span></li>
+<li>Zero-sum: utility of the agent is negative the utility of the opponent</li>
+</ul></li>
+<li><p>Property of games</p>
+<ul>
+<li>All the utility is at the end state
+<ul>
+<li>For a game about win/lose at the end (e.g., chess), Utility<span class="math inline">\((s)\)</span> is <span class="math inline">\(\infty\)</span> (if agent wins), <span class="math inline">\(-\infty\)</span> (if opponent wins), or <span class="math inline">\(0\)</span> (if draw).</li>
+</ul></li>
+<li>Different players in control at different state</li>
+</ul></li>
+<li><p>Policies (for player <span class="math inline">\(p\)</span> in state <span class="math inline">\(s\)</span>)</p>
+<ul>
+<li>Deterministic policy: <span class="math inline">\(\pi_p(s) \in \text{Actions}(s)\)</span></li>
+<li>Stochastic policy: <span class="math inline">\(\pi_p(s, a) \in [0, 1]\)</span>, a probability</li>
+</ul></li>
+</ul>
+</div>
+<div id="game-algorithms" class="section level2">
+<h2>Game Algorithms</h2>
+<div id="game-evaluation" class="section level3">
+<h3>Game evaluation</h3>
+<ul>
+<li>Use recurrence for policy evaluation to estimate value of the game:</li>
+</ul>
+<p><span class="math display">\[
+V_\text{eval}(s) =
+\begin{cases}
+\text{Utility}(s) &amp; \text{ IsEnd}(s)\\
+\sum_{a\in\text{Actions}(s)} \pi_\text{agent}(s, a) V_\text{eval}(\text{Succ}(s, a))
+\end{cases}
+\]</span></p>
+</div>
+<div id="expectimax" class="section level3">
+<h3>Expectimax</h3>
+</div>
+<div id="minimax" class="section level3">
+<h3>Minimax</h3>
+</div>
+<div id="expectiminimax" class="section level3">
+<h3>Expectiminimax</h3>
+</div>
+<div id="evaluation-functions" class="section level3">
+<h3>Evaluation functions</h3>
+</div>
+<div id="alpha-beta-pruning" class="section level3">
+<h3>Alpha-Beta pruning</h3>
+</div>
+</div>
+<div id="more-topics" class="section level2">
+<h2>More Topics</h2>
+<div id="simultaneous-games" class="section level3">
+<h3>Simultaneous games</h3>
+</div>
+<div id="non-zero-sum-games" class="section level3">
+<h3>Non-zero-sum games</h3>
+</div>
 </div>
 </div>
