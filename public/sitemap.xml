@@ -2,26 +2,26 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>http://liyingbo.com/tags/ai/</loc>
+    <lastmod>2025-05-04T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>http://liyingbo.com/categories/</loc>
-    <lastmod>2025-02-04T00:00:00+00:00</lastmod>
+    <lastmod>2025-05-04T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://liyingbo.com/categories/deep-learning/</loc>
-    <lastmod>2025-02-04T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://liyingbo.com/tags/deep-learning-tabular-deep-learning/</loc>
-    <lastmod>2025-02-04T00:00:00+00:00</lastmod>
+    <loc>http://liyingbo.com/stat/2025/05/04/cs221-notes/</loc>
+    <lastmod>2025-05-04T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/</loc>
-    <lastmod>2025-02-04T00:00:00+00:00</lastmod>
+    <lastmod>2025-05-04T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://liyingbo.com/categories/lecture-notes/</loc>
+    <lastmod>2025-05-04T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/stat/</loc>
-    <lastmod>2025-02-04T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://liyingbo.com/stat/2025/02/04/tabular-neural-networks/</loc>
-    <lastmod>2025-02-04T00:00:00+00:00</lastmod>
+    <lastmod>2025-05-04T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/tags/</loc>
-    <lastmod>2025-02-04T00:00:00+00:00</lastmod>
+    <lastmod>2025-05-04T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/cooking/</loc>
     <lastmod>2025-01-01T00:00:00+00:00</lastmod>
@@ -141,9 +141,6 @@
     <lastmod>2021-08-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/stat/2021/08/16/course-notes-a-crash-course-on-causality-week-5-instrumental-variables/</loc>
-    <lastmod>2021-08-16T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://liyingbo.com/categories/lecture-notes/</loc>
     <lastmod>2021-08-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://liyingbo.com/tags/slides/</loc>
