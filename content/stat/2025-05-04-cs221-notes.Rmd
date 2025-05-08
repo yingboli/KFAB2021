@@ -61,7 +61,7 @@ It's a technique used to solve problems efficiently by breaking them down into s
 | Backtracking search |  | Any cost | $O(D)$ | $O(b^D)$ | 
 | Depth-first search | Backtracking + stop when find the first end state     | All costs $c$ = 0 | $O(D)$ | $O(b^D)$ | 
 | Breadth-first search   | Explore in order of increasing depth | Constant cost $c\geq 0$    | $O(b^d)$ | $O(b^d)$|
-|DFS with iterative deepening | Call DFS for maximum depths 1, 2, $\ldots$ | Constant cost $c\geq 0$   | $O(b)$ | $O(b^d)$|
+|DFS with iterative deepening | Call DFS for maximum depths 1, 2, $\ldots$ | Constant cost $c\geq 0$   | $O(d)$ | $O(b^d)$|
 
 * Always exponential time
 * Avoid exponential spaces with DFS-ID
@@ -169,15 +169,15 @@ Run UCS with modified edge costs
     - Remove constraints
     - Reduce edge costs (from $\infty$ to some finite cost)
     
-# Week 4. Markove Decision Processes
+# Week 4. Markov Decision Processes
 
 * Uncertainty in the search process
     - Performing action $a$ from a state $s$ can lead to several states $s'_1, s'_2, \ldots$ in a probabilistic manner.
     - The probability and reward of each $(s, a, s')$ pair may be known or unknown.
         - If known: policy evaluation, value iteration
-        - If unknown, reinforcement learning
+        - If unknown: reinforcement learning
     
-## Markove Decision Processes (offline)
+## Markov Decision Processes (offline)
 
 ### Model an MDP
 
@@ -216,14 +216,14 @@ Q_\pi(s, \pi(s)) & \text{ otherwise}
 \]
 
 \[
-Q_\pi(s, a) = \sum_{s'} T(s, a, s')\left[\text{Reward}(s, a, s') + \gamma V_\pi(s)\right]
+Q_\pi(s, a) = \sum_{s'} T(s, a, s')\left[\text{Reward}(s, a, s') + \gamma V_\pi(s')\right]
 \]
 
 * Iterative algorithm for policy evaluation
     - Initialize $V_\pi^{(0)}(s) = 0$ for all $s$
     - For iteration $t = 1, \ldots, t_\text{PE}$:
         - For each state $s$,
-        \[V_\pi^{(t)}(s) = \sum_{s'} T\left(s, \pi(s), s'\right)\left[\text{Reward}\left(s, \pi(s), s'\right) + \gamma V_\pi^{(t-1)}(s)\right]\]
+        \[V_\pi^{(t)}(s) = \sum_{s'} T\left(s, \pi(s), s'\right)\left[\text{Reward}\left(s, \pi(s), s'\right) + \gamma V_\pi^{(t-1)}(s')\right]\]
 
 *  Choice of $t_\text{PE}$: stop when values don't change much
     \[
@@ -372,7 +372,7 @@ On each $(s, a, r, s')$:
     - weights $\mathbf{w}$, such that
     \[\hat{Q}_\text{opt}(s, a; \mathbf{w}) = \mathbf{w} \cdot \phi(s, a)\]
     
-* **Q-learning with function approximation**: on each $(s, a, r, s'),
+* **Q-learning with function approximation**: on each $(s, a, r, s')$,
 
 \[
 \mathbf{w} \leftarrow \mathbf{w} - \eta\left[ 
@@ -387,9 +387,18 @@ On each $(s, a, r, s')$:
 
 ## Modeling Games
 
+* A simple example game
+<img src="/figures/cs221/week5_game1.png" alt="drawing" width="450" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6> Figure source: [Stanford CS221 spring 2025](https://stanford-cs221.github.io/spring2025/), lecture slides week 5  </h6> 
+
 *  Game tree
     - Each node is a decision point for a player
     - Each root-to-leaf path is a possible outcome of the game
+    - Nodes to indicate certain policy: use $\bigtriangleup$ for maximum node (agent maximize his utility) and $\bigtriangledown$ for minimum node (opponent minimizes agent's utility)
+    
+<img src="/figures/cs221/week5_game_tree.png" alt="drawing" width="450" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6> Figure source: [Stanford CS221 spring 2025](https://stanford-cs221.github.io/spring2025/), lecture slides week 5  </h6> 
+   
 
 
 * **Two-player zero-sum game**: 
@@ -412,38 +421,186 @@ On each $(s, a, r, s')$:
 * Policies (for player $p$ in state $s$) 
     - Deterministic policy: $\pi_p(s)  \in \text{Actions}(s)$
     - Stochastic policy: $\pi_p(s, a)  \in [0, 1]$, a probability
+    
+
 
 ## Game Algorithms
 
 
 ### Game evaluation
 
-* Use recurrence for policy evaluation to estimate value of the game:
+* Use recurrence for policy evaluation to estimate **value of the game**  (expected utility):
 
 \[
 V_\text{eval}(s) = 
 \begin{cases}
 \text{Utility}(s) & \text{ IsEnd}(s)\\
-\sum_{a\in\text{Actions}(s)} \pi_\text{agent}(s, a) V_\text{eval}(\text{Succ}(s, a))
+\sum_{a\in\text{Actions}(s)} \pi_\text{agent}(s, a) V_\text{eval}(\text{Succ}(s, a)) & \text{ Player}(s) = \text{agent}\\
+\sum_{a\in\text{Actions}(s)} \pi_\text{opp}(s, a) V_\text{eval}(\text{Succ}(s, a)) & \text{ Player}(s) = \text{opp}\\
 \end{cases}
 \]
 
 
 ### Expectimax
 
+* **Expectimax**: given opponent's policy, find the best policy for the agent
+
+\[
+V_\text{exptmax}(s) = 
+\begin{cases}
+\text{Utility}(s) & \text{ IsEnd}(s)\\
+\max_{a\in\text{Actions}(s)} V_\text{exptmax}(\text{Succ}(s, a)) & \text{ Player}(s) = \text{agent}\\
+\sum_{a\in\text{Actions}(s)} \pi_\text{opp}(s, a) V_\text{exptmax}(\text{Succ}(s, a)) & \text{ Player}(s) = \text{opp}\\
+\end{cases}
+\]
+
 ### Minimax
+
+* **Minimax** assumes the worst case for the opponent's policy
+
+\[
+V_\text{minmax}(s) = 
+\begin{cases}
+\text{Utility}(s) & \text{ IsEnd}(s)\\
+\max_{a\in\text{Actions}(s)} V_\text{minmax}(\text{Succ}(s, a)) & \text{ Player}(s) = \text{agent}\\
+\min_{a\in\text{Actions}(s)}  V_\text{minmax}(\text{Succ}(s, a)) & \text{ Player}(s) = \text{opp}\\
+\end{cases}
+\]
+
+<img src="/figures/cs221/week5_game_minimax.png" alt="drawing" width="450" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6> Figure source: [Stanford CS221 spring 2025](https://stanford-cs221.github.io/spring2025/), lecture slides week 5  </h6> 
+
+* Minimax properties
+
+    - Best against minimax opponent
+    \[
+    V(\pi_\max, \pi_\min) \geq V(\pi_\text{agent}, \pi_\min) \text{ for all } \pi_\text{agent}
+    \]
+    - Lower bound against any opponent
+    \[
+    V(\pi_\max, \pi_\min) \leq V(\pi_\max, \pi_\text{opp}) \text{ for all } \pi_\text{opp}
+    \]
+    - *Not optimal if opponent is known!* Here, $\pi_7$ stands for an arbitrary known policy, for example, random choice with equal probabilities.
+    \[
+    V(\pi_\max, \pi_7) \geq V(\pi_{\text{exptmax}(7)}, \pi_7) \text{ for opponent } \pi_7
+    \]    
+
+* Relationship between game values
+
+<img src="/figures/cs221/week5_games_expectimax_vs_minimax.png" alt="drawing" width="500" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6> Figure source: [Stanford CS221 spring 2025](https://stanford-cs221.github.io/spring2025/), lecture slides week 5  </h6> 
 
 ### Expectiminimax
 
+* Modify the game to introduce randomness
+
+<img src="/figures/cs221/week5_game2.png" alt="drawing" width="700" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6> Figure source: [Stanford CS221 spring 2025](https://stanford-cs221.github.io/spring2025/), lecture slides week 5  </h6> 
+
+* This is equivalent to having a third player, the coin
+\[
+V_\text{exptminmax}(s) = 
+\begin{cases}
+\text{Utility}(s) & \text{ IsEnd}(s)\\
+\max_{a\in\text{Actions}(s)} V_\text{exptminmax}(\text{Succ}(s, a)) & \text{ Player}(s) = \text{agent}\\
+\min_{a\in\text{Actions}(s)}  V_\text{exptminmax}(\text{Succ}(s, a)) & \text{ Player}(s) = \text{opp}\\
+\sum_{a\in\text{Actions}(s)} \pi_\text{coin}(s, a) V_\text{exptminmax}(\text{Succ}(s, a)) & \text{ Player}(s) = \text{coin}\\
+\end{cases}
+\]
+
+
 ### Evaluation functions
+
+* Computation complexity: with branching factor $b$ and depth $d$ (number of turns $2d$ because of two players), since this is a tree search, we have
+    - $O(d)$ space
+    - $O(b^{2d})$ time
+    
+* **Limited depth tree search**: stop at maximum depth $d_\max$
+\[
+V_\text{minmax}(s, d) = 
+\begin{cases}
+\text{Utility}(s) & \text{ IsEnd}(s)\\
+\text{Eval}(s) & d=0\\
+\max_{a\in\text{Actions}(s)} V_\text{minmax}(\text{Succ}(s, a), d) & \text{ Player}(s) = \text{agent}\\
+\min_{a\in\text{Actions}(s)}  V_\text{minmax}(\text{Succ}(s, a), d-1) & \text{ Player}(s) = \text{opp}\\
+\end{cases}
+\]
+
+    - Use: at state $s$, call $V_\text{minmax}(s, d_\max)$
+
+* An **evaluation function** Eval$(s)$ is a possibly very weak estimate of the value $V_\text{minmax}(s)$, using domain knowledge
+    - This is similar to FutureCost$(s)$ in the A* search problems. But unlike A*, there are no guarantees on the error for approximation. 
 
 ### Alpha-Beta pruning
 
+* Branch and bound
+    - Maintain lower and upper bounds on values. 
+    - If intervals don't overlap, then we can choose optimally without future work
+
+* **Alpha-beta prining** for minimax:
+    - $a_s$: lower bound on value of max node $s$
+    - $b_s$: upper bound on value of max node $s$
+    - Store $\alpha_s = \max_{s'\leq s} a_{s'}$ and $\beta_s = \min_{s'\leq s} b_{s'}$
+    - Prune a node if its interval doesn't have non-trivial overlap with every ancestor
+    
+* Pruning depends on the order
+
+    - Worse ordering: $O(b^{2\cdot d})$ time
+    - Best ordering: $O(b^{2\cdot 0.5 d})$ time
+    - Random ordering: $O(b^{2\cdot 0.75 d})$ time, when $b=2$
+    - In practice, we can order based on the evaluation function Eval$(s)$:
+        - Max nodes: order successors by decreasing Eval$(s)$
+        - Min nodes: order successors by increasing Eval$(s)$
+
 ## More Topics
+
+### TD learning (on-policy)
+
+* General learning framework
+    - Objective function
+    \[
+    \frac{1}{2}\left(\text{prediction}(\mathbf{w}) - \text{target} \right)^2
+    \]
+    - Update
+    \[
+    \mathbf{w} \leftarrow  \mathbf{w} - \eta \left(\text{prediction}(\mathbf{w}) - \text{target} \right) \nabla_\mathbf{w} \text{prediction}(\mathbf{w})
+    \]
+    
+* **Temporal difference (TD) learning**: on each $(s, a, r, s')$, 
+
+    \[
+    \mathbf{w} \leftarrow  \mathbf{w} - \eta \left[V(s; \mathbf{w}) - \left(r + \gamma V(s'; \mathbf{w})\right) \right] \nabla_\mathbf{w} V(s; \mathbf{w})
+    \]
+    
+    - For linear function
+    \[V(s; \mathbf{w}) = \mathbf{w} \cdot \phi(s)\]
 
 ### Simultaneous games
 
-### Non-zero-sum games
+* Payoff matrix: for two players, $V(a, b)$ is A's utility if A chooses action $a$ and B chooses action $b$
+
+* Strategies (policies)
+    - **Pure strategy**: a single action
+    - **Mixed strategy**: a probability distribution of actions
+    
+* Game evaluation: the value of the game if player A follows $\pi_A$ and player B follows $\pi_B$ is 
+\[
+V(\pi_A, \pi_B) = \sum_{a, b} \pi_A(a) \pi_B(b) V(a, b)
+\]
+
+* For pure strategies, going second is no worse
+    \[\max_a \min_b V(a, b) \leq \min_b \max_a V(a, b)\]
+* Mixed strategy: second play can play pure strategy:
+    for any fixed mixed strategy $\pi_A$, $\min_{\pi_B} V(\pi_A, \pi_B)$ can be obtained by a pure strategy
+    
+* Minimax theorem: for every simultaneous two-player zero-sum game with a finite number of actions
+\[
+\max_{\pi_A} \min_{\pi_B} V(\pi_A, \pi_B) 
+= \min_{\pi_B}\max_{\pi_A} V(\pi_A, \pi_B) 
+\]
+    - Revealing your optimal mixed strategy doesn't hurt you.    
+
+
 
 
 

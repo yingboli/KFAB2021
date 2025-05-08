@@ -6,7 +6,16 @@
     <description>Recent content in My Notes on Statistics and Machine Learning Books, Courses, Papers, and More on King Fox And Butterfly</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 16 Aug 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://liyingbo.com/stat/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 04 May 2025 00:00:00 +0000</lastBuildDate><atom:link href="http://liyingbo.com/stat/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CS221 Artificial Intelligence, Notes on States (Week 3-5)</title>
+      <link>http://liyingbo.com/stat/2025/05/04/cs221-notes/</link>
+      <pubDate>Sun, 04 May 2025 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2025/05/04/cs221-notes/</guid>
+      <description>Week 3. Search  Tree Search  Model a search problem Tree search algorithms  Dynamic Programming Graph Search  Uniform cost search (UCS) A*   Week 4. Markov Decision Processes  Markov Decision Processes (offline)  Model an MDP Policy Evaluation (on-policy) Value Iteration (off-policy)  Reinforcement Learning (online)  Model-based methods (off-policy) Model-free Monte Carlo (on-policy) SARSA (on-policy) Q-learning (off-policy) Epsilon-greedy Function appxomation   Week 5.</description>
+    </item>
+    
     <item>
       <title>Course Notes: A Crash Course on Causality -- Week 5: Instrumental Variables</title>
       <link>http://liyingbo.com/stat/2021/08/16/course-notes-a-crash-course-on-causality-week-5-instrumental-variables/</link>
