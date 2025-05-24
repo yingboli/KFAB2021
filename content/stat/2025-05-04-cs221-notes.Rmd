@@ -539,7 +539,7 @@ V_\text{minmax}(s, d) =
 
 * **Alpha-beta prining** for minimax:
     - $a_s$: lower bound on value of max node $s$
-    - $b_s$: upper bound on value of max node $s$
+    - $b_s$: upper bound on value of min node $s$
     - Store $\alpha_s = \max_{s'\leq s} a_{s'}$ and $\beta_s = \min_{s'\leq s} b_{s'}$
     - Prune a node if its interval doesn't have non-trivial overlap with every ancestor
     
