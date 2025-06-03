@@ -1,0 +1,250 @@
+---
+title: CS221 Artificial Intelligence, Notes on Logic (Week 9)
+author: Yingbo Li
+date: '2025-06-01'
+slug: cs221-artificial-intelligence-notes-on-logic-week-9
+categories:
+  - Lecture notes
+tags:
+  - AI
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 3
+---
+
+* High level summaries
+
+    -   State-based models: search problems, MDPs, games
+        -   Applications: route finding, game playing, etc
+        -   Terms: states, actions, costs
+    -   Variable-based models: CSPs, Bayesian networks
+        -   Applications: scheduling, tracking, medical diagnosis, etc
+        -   Terms: variables, factors
+    -   Logic-based models: propositional logic, first-order logic
+        -   Applications: theorem proving, verification, etc
+        -   Terms: logical formulas, inference rules
+        -   Problems with logic:
+            -   Deterministic, cannot handle uncertainty
+            -   Rule-based, does not allow to learn from data
+
+# Propositional Logic
+
+
+-   **Propositional symbols (atomic formulas)**: $A, B, C$
+
+-   Use **Logical connectives** to build up formulas recursively: if $f$ and $g$ are **formulas**, so are the following
+
+    -   Negation: $\neg f$
+    -   Conjunction: $f \wedge g$
+    -   Disjunction: $f \vee g$
+    -   Implication: $f \rightarrow g$
+    -   Bicodintional: $f \leftrightarrow g$
+
+
+## Models
+
+-   **model** $w$: an **assignment** of values to propositional symbols
+
+-   **interpretation function**: for a formula $f$ and a model $w$, $$
+    \mathcal{I}(f, w) = \mathbf{1}\{w \text{ satisfies } f\}
+    $$
+
+    -   Define $\mathcal{M}(f) = \left\{w: \mathcal{I}(f, w) = 1\right\}$
+
+## Knowledge base
+
+-   **Knowledge base** KB: $$
+    \mathcal{M}(\text{KB}) = \cap_{f \in \text{KB}} \mathcal{M}(f)
+    $$
+
+-   Add a formula to the knowledge base:
+
+    -   From KB to KB$\cup f$
+    -   Shrinks the set of models: from $\mathcal{M}(\text{KB})$ to $\mathcal{M}(\text{KB}) \cap \mathcal{M}(f)$
+
+-   Relationships between a KB and a formula $f$
+
+| Relationship  | Notation     | Definition                                                                                          | Meaning                |
+|------------------|-----------------|-----------------|--------------------|
+| Entailment    | KB$\vDash f$ | $\mathcal{M}(\text{KB}) \subseteq \mathcal{M}(f)$                                                     | Already knew that.     |
+| Contradiction |              | $\mathcal{M}(\text{KB}) \cap \mathcal{M}(f) = \emptyset$                                            | Don't believe that.    |
+| Contingency   |              | $\emptyset \subsetneq \mathcal{M}(\text{KB}) \cap \mathcal{M}(f) \subsetneq \mathcal{M}(\text{KB})$ | Learned something new. |
+| Inference     |              |                                                                                                     |                        |
+
+-   KB contradict with $f$ $\Longleftrightarrow$ KB entails $\neg f$
+
+-   **Probabilistic interpretation** $$
+    \mathbb{P}(f \mid \text{KB}) = \frac{\sum_{w \in \mathcal{M}(\text{KB} \cup \{f\})}\mathbb{P}(W = w)}{\sum_{w \in \mathcal{M}(\text{KB})}\mathbb{P}(W = w)}
+    $$
+
+* A KB is **satisfiable** if $\mathcal{M}(KB) \neq \emptyset$
+
+<img src="/figures/cs221/week9_satisfiability.png" alt="drawing" width="600" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6> Figure source: [Stanford CS221 spring 2025](https://stanford-cs221.github.io/spring2025/), lecture slides week 9 </h6>
+
+- Checking satisfiability (SAT) in propositional logic is a special case of CSPs
+    
+    |Logic term | Counterpart CSP term |
+    |-----------|---------------------|
+    |propositional symbol | variable|
+    |formula| constraint|
+    |model|assignment|
+
+## Inference Rules
+
+* **Inference rule**: if the premises $f_1, \ldots, f_k$ are in the KB, then your can add the conclusion $g$ to the KB. Formula:
+\[
+\frac{f_1, \ldots, f_k}{g}\quad \quad
+\frac{\text{(premises)}}{\text{(conclusion)}}
+\]
+
+* **Modus ponens inference rule**: captures the if-then reasoning pattern. For any propositional symbols $p$ and $q$, we have
+\[
+\frac{p, \quad p\rightarrow q}{q} 
+\]
+
+
+* **Derivation**: KB derives $f$, written as $KB \vdash f$, iff $f$ eventually gets added to KB.
+    - Inference rules operate directly on syntax, not on semantics.
+    
+### Soundness and completeness
+
+* A set of inference rules is **sound** if
+\[
+\{f: \text{KB}\vdash f\} \subseteq \{f: \text{KB}\vDash f\}
+\]
+    - Nothing but the truth
+    - Showing soundness is easy
+
+* A set of inference rules is **complete** if
+\[
+\{f: \text{KB}\vdash f\} \supseteq \{f: \text{KB}\vDash f\}
+\]
+    - Whole truth
+    - Showing completeness if hard
+    
+* Fixing completeness
+    - Option 1: restrict the allowed set of formulas, to propositional logic with only *Horn clauses*
+    - Option 2: use more powerful inference rules, change from Modus ponens to *resolution*
+    
+| Formulas allowed | Inference rules | Complete? |
+|------------------|-----------------|-----------|
+| Propositional logic | modus ponens | No |
+| Propositional logic (only Horn clauses) | modus ponens | Yes |
+| Propositional logic | resolution | Yes |
+
+
+
+## Propositional Modus Ponens
+
+* **Horn clauses**: is either a **definite clause**, 
+\[(p_1 \wedge \cdots \wedge p_k) \rightarrow q,\]
+or a goal clause
+\[(p_1 \wedge \cdots \wedge p_k) \rightarrow \text{false}\]
+
+* A more generic version of the **modus ponens inference rule**
+    \[
+    \frac{p_1, \ldots, p_k, \quad (p_1 \wedge \cdots \wedge p_k) \rightarrow q}{q}
+    \]
+    
+* Theory: Modus ponens is *complete* with respect to  Horn clauses. This is, if KB contains only Horn clauses, then
+\[
+\text{KB} \vDash p \text{(entailment)} \Longleftrightarrow
+\text{KB} \vdash p \text{(derivation)}
+\]
+
+## Propositional Resolution
+
+* Rewrite implication $A \rightarrow C$ to disjunction
+$\neg A \vee C$
+   - In this way, we can rewrite modus ponens as
+   \[
+   \frac{A, \quad \neg A \vee C}{C}
+   \]
+   Note that $A$ and $\neg A$ are cancelled out.
+
+
+* **Resolution inference rule**: cancel out $p$ and $\neg p$ in the middle
+\[
+\frac{f_1 \vee \cdots \vee f_n \vee p, \quad
+\neg p \vee g_1 \vee \cdots \vee g_m}{
+f_1 \vee \cdots \vee f_n \vee g_1 \vee \cdots \vee g_m
+}
+\]
+
+### Conjunctive normal form (CNF)
+
+* CNF is a conjunction ($\wedge$) of clauses ($\vee$)
+
+    - Every formula in propositional logic can be converted into an equivalent CNF formula
+    
+    - Conversion rules
+    
+    | Propositional logic | CNF |
+    |---------------------|-----|
+    | $f \rightarrow g$ | $\neg f \vee g$ |
+    | $f \leftrightarrow g$ | $(f \rightarrow g) \wedge (g \rightarrow f)$|
+    | $\neg (f \wedge g)$ | $\neg f \vee \neg g$ |
+    | $\neg (f \vee g)$ | $\neg f \wedge \neg g$ |
+    | $\neg \neg f$ | $f$ |
+    | $f \vee (g \wedge h)$ | $(f \vee g) \wedge (f \vee h)$|
+    
+### Proof by Resolution
+- Add $\neg f$ into KB
+\[KB^\prime = KB \cup \neg f\]
+- Convert all formulas into CNF
+- Repeatedly apply resolution rule
+- Return entailment iff derive false
+
+# First-order Logic
+
+* Syntax of first-order logic
+    - Terms (object)
+        - constant symbol (e.g., arithmetic)
+        - variable (e.g., $x$)
+        - function of terms (e.g., Sum(3, $x$))
+    
+    - Formulas (truth values)
+        - Atomic formulas (atoms): predicate applied to terms, e.g., Knows($x$, arithmetic)
+        - Connectives applied to formulas: e.g., Student($x$) $\rightarrow$ Knows($x$, arithmetic)
+        - Quantifiers applied to formulas: e.g., $\forall x$ Student($x$) $\rightarrow$ Knows($x$, arithmetic)
+        
+* Quantifiers: for all ($\forall$) and exists ($\exists$)
+    - Note the different connectives:
+        - $\forall$ Student$(x) \rightarrow$ Knows($x$, arithmetic)
+        - $\exists$ Student$(x) \wedge$ Knows($x$, arithmetic)
+
+<img src="/figures/cs221/week9_first_order_logic_example.png" alt="drawing" width="800" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6> Figure source: [Stanford CS221 spring 2025](https://stanford-cs221.github.io/spring2025/), lecture slides week 9 </h6>
+
+
+
+## First-order Modus Ponens
+
+* **Definite clause in first-order logic** for variables $x_1, \ldots, x_n$ and atomic formuas $a_1, \ldots, a_k, b$ which contain those variables, has the following form
+\[
+\forall x_1 \cdots \forall x_n (a_1 \wedge \cdots \wedge a_k) \rightarrow b
+\]
+
+* **Substitution** $\theta$ is a mapping from variables to terms
+Subst$[\theta, f]$ returns the result of performing substitution $\theta$ on $f$.
+    - E.g., Subst$[\{x/\text{alice}\}, P(x)] = P(\text{alice})$
+    
+* **Unification**: takes two formulas $f$ and $g$ and returns a substitution $\theta$ which is the most general unifier:
+\[
+\text{Unify}[f, g] = 
+\begin{cases}
+\theta, &\text{ such that Subst}[\theta, f] = \text{Subst}[\theta, g]\\
+\text{fail}, & \text{ if no such }\theta \text{ exists} 
+\end{cases}
+\]
+
+* **First-order modus ponens** with substitution:
+Let $\theta = \text{Unify}[a_1^\prime \wedge \cdots \wedge a_k^\prime, a_1 \wedge \cdots \wedge a_k]$ and $b^\prime = \text{Subst}[\theta, b]$, then
+\[
+\frac{a_1^\prime \wedge \cdots \wedge a_k^\prime, \quad \forall x_1 \cdots \forall x_n (a_1 \wedge \cdots \wedge a_k) \rightarrow b}{b^\prime}
+\]
+
+
+

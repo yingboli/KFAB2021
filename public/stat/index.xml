@@ -6,7 +6,26 @@
     <description>Recent content in My Notes on Statistics and Machine Learning Books, Courses, Papers, and More on King Fox And Butterfly</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 04 May 2025 00:00:00 +0000</lastBuildDate><atom:link href="http://liyingbo.com/stat/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 01 Jun 2025 00:00:00 +0000</lastBuildDate><atom:link href="http://liyingbo.com/stat/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CS221 Artificial Intelligence, Notes on Logic (Week 9)</title>
+      <link>http://liyingbo.com/stat/2025/06/01/cs221-artificial-intelligence-notes-on-logic-week-9/</link>
+      <pubDate>Sun, 01 Jun 2025 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2025/06/01/cs221-artificial-intelligence-notes-on-logic-week-9/</guid>
+      <description>Propositional Logic  Models Knowledge base Inference Rules  Soundness and completeness  Propositional Modus Ponens Propositional Resolution  Conjunctive normal form (CNF) Proof by Resolution   First-order Logic  First-order Modus Ponens     High level summaries
+ State-based models: search problems, MDPs, games  Applications: route finding, game playing, etc Terms: states, actions, costs  Variable-based models: CSPs, Bayesian networks  Applications: scheduling, tracking, medical diagnosis, etc Terms: variables, factors  Logic-based models: propositional logic, first-order logic  Applications: theorem proving, verification, etc Terms: logical formulas, inference rules Problems with logic:  Deterministic, cannot handle uncertainty Rule-based, does not allow to learn from data     Propositional Logic  Propositional symbols (atomic formulas): \(A, B, C\)</description>
+    </item>
+    
+    <item>
+      <title>CS221 Artificial Intelligence, Notes on Variables (Week 6-8)</title>
+      <link>http://liyingbo.com/stat/2025/05/24/cs221-artificial-intelligence-notes-on-variables-week-6-8/</link>
+      <pubDate>Sat, 24 May 2025 00:00:00 +0000</pubDate>
+      
+      <guid>http://liyingbo.com/stat/2025/05/24/cs221-artificial-intelligence-notes-on-variables-week-6-8/</guid>
+      <description>Difference between state-based vs variable-based search problems: order Constraint Satisfaction Problems (CSPs)  Factor Graphs Exact Backtracking Search  Backtracking search algorithm for CSPs Dynamic ordering Arc consistency  Approximate Search  Beam search Local search   Markov Networks  Gibbs Sampling  Bayesian Networks  Hidden Markov Model  Forward Backward Particle Filtering  Smoothing Expectation Maximization (EM) Algorithm    Difference between state-based vs variable-based search problems: order  There is usually an (obvious) order for state-based search problems, e.</description>
+    </item>
+    
     <item>
       <title>CS221 Artificial Intelligence, Notes on States (Week 3-5)</title>
       <link>http://liyingbo.com/stat/2025/05/04/cs221-notes/</link>

@@ -1,0 +1,432 @@
+---
+title: CS221 Artificial Intelligence, Notes on Variables (Week 6-8)
+author: Yingbo Li
+date: '2025-05-24'
+slug: cs221-artificial-intelligence-notes-on-variables-week-6-8
+categories:
+  - Lecture notes
+tags:
+  - AI
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 3
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#difference-between-state-based-vs-variable-based-search-problems-order" id="toc-difference-between-state-based-vs-variable-based-search-problems-order">Difference between state-based vs variable-based search problems: order</a></li>
+<li><a href="#constraint-satisfaction-problems-csps" id="toc-constraint-satisfaction-problems-csps">Constraint Satisfaction Problems (CSPs)</a>
+<ul>
+<li><a href="#factor-graphs" id="toc-factor-graphs">Factor Graphs</a></li>
+<li><a href="#exact-backtracking-search" id="toc-exact-backtracking-search">Exact Backtracking Search</a>
+<ul>
+<li><a href="#backtracking-search-algorithm-for-csps" id="toc-backtracking-search-algorithm-for-csps">Backtracking search algorithm for CSPs</a></li>
+<li><a href="#dynamic-ordering" id="toc-dynamic-ordering">Dynamic ordering</a></li>
+<li><a href="#arc-consistency" id="toc-arc-consistency">Arc consistency</a></li>
+</ul></li>
+<li><a href="#approximate-search" id="toc-approximate-search">Approximate Search</a>
+<ul>
+<li><a href="#beam-search" id="toc-beam-search">Beam search</a></li>
+<li><a href="#local-search" id="toc-local-search">Local search</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#markov-networks" id="toc-markov-networks">Markov Networks</a>
+<ul>
+<li><a href="#gibbs-sampling" id="toc-gibbs-sampling">Gibbs Sampling</a></li>
+</ul></li>
+<li><a href="#bayesian-networks" id="toc-bayesian-networks">Bayesian Networks</a>
+<ul>
+<li><a href="#hidden-markov-model" id="toc-hidden-markov-model">Hidden Markov Model</a>
+<ul>
+<li><a href="#forward-backward" id="toc-forward-backward">Forward Backward</a></li>
+<li><a href="#particle-filtering" id="toc-particle-filtering">Particle Filtering</a></li>
+</ul></li>
+<li><a href="#smoothing" id="toc-smoothing">Smoothing</a></li>
+<li><a href="#expectation-maximization-em-algorithm" id="toc-expectation-maximization-em-algorithm">Expectation Maximization (EM) Algorithm</a></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="difference-between-state-based-vs-variable-based-search-problems-order" class="section level3">
+<h3>Difference between state-based vs variable-based search problems: order</h3>
+<ul>
+<li><p>There is usually an (obvious) order for state-based search problems, e.g., certain start and end points.</p></li>
+<li><p>For variable-based search problems:</p>
+<ul>
+<li>Ordering doesn’t affect correctness (e.g., map coloring problem), so we might dynamically choose a better ordering of the variables (e.g., lookahead).</li>
+<li>We might composed the problem because variables are interdependent in a local way.</li>
+</ul></li>
+<li><p>Equivalent terminologies</p>
+<ul>
+<li>Variable-based models <span class="math inline">\(=\)</span> graphical models</li>
+<li>Probablistic graphical models = <span class="math inline">\(\{\)</span>Markov networks, Bayesian networks<span class="math inline">\(\}\)</span></li>
+<li>Markov networks <span class="math inline">\(=\)</span> undirected graphical models</li>
+<li>Bayesian networks <span class="math inline">\(=\)</span> directed graphical models</li>
+</ul></li>
+</ul>
+</div>
+<div id="constraint-satisfaction-problems-csps" class="section level1">
+<h1>Constraint Satisfaction Problems (CSPs)</h1>
+<div id="factor-graphs" class="section level2">
+<h2>Factor Graphs</h2>
+<img src="/figures/cs221/week6_factor_graph.png" alt="drawing" width="300" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6>
+Figure source: <a href="https://stanford-cs221.github.io/spring2025/">Stanford CS221 spring 2025</a>, lecture slides week 6
+</h6>
+<ul>
+<li><p><strong>Variables</strong> (and their <strong>domains</strong>):
+<span class="math display">\[
+X = (X_1, \ldots, X_n), \text{ where } X_i \in \text{Domain}_i
+\]</span></p></li>
+<li><p><strong>Factors</strong>: constraints or preferrence
+<span class="math display">\[
+f_1, \ldots, f_m, \text{ where } f_j(X) \geq 0
+\]</span></p>
+<ul>
+<li>Factors measure how good an assignment is. We prefer <span class="math inline">\(X\)</span> that can achieve higher value of <span class="math inline">\(f_j\)</span>.</li>
+<li>If <span class="math inline">\(f_j(X) = 0 \text{ or } 1\)</span>, it describes a constraint.
+<ul>
+<li>For example, a factor for force <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> to be equal can be written as <span class="math inline">\(\mathbf{1}[X_1 = X_2]\)</span>.</li>
+</ul></li>
+<li>Scope of a factor: set up variables it depends on.</li>
+<li>Arity of a factor: number of variables in the scope
+<ul>
+<li>Unary factor: arity 1</li>
+<li>Binary factor: arity 2</li>
+</ul></li>
+</ul></li>
+<li><p>Assignment weights: each assignment <span class="math inline">\(x = (x_1, \ldots, x_n)\)</span> has a <strong>weight</strong>
+<span class="math display">\[\text{Weight}(x) = \prod_{j=1}^m f_j (x)\]</span></p>
+<ul>
+<li>An assignment <span class="math inline">\(x\)</span> is <strong>consistent</strong> if Weight<span class="math inline">\((x) &gt; 0\)</span></li>
+</ul></li>
+<li><p>Goal: find the best assignment of values to the variables to <em>maximize the weight</em>
+<span class="math display">\[
+\arg\max_x \text{Weight}(x)
+\]</span></p>
+<ul>
+<li>A CSP is <strong>satisfiable</strong> if <span class="math inline">\(\max_x \text{Weight}(x) &gt; 0\)</span>.</li>
+</ul></li>
+</ul>
+</div>
+<div id="exact-backtracking-search" class="section level2">
+<h2>Exact Backtracking Search</h2>
+<ul>
+<li>In backtracking search
+<ul>
+<li>Each node is a partial assignment,
+and each child node is an extension of the partial assignment.</li>
+<li>Each leaf node is a complete assignment.</li>
+</ul></li>
+<li>For a partial assignment <span class="math inline">\(x\)</span> and a new variable <span class="math inline">\(X_i\)</span> that’s not in <span class="math inline">\(x\)</span>, <strong>dependent factor</strong> <span class="math inline">\(D(x, X_i)\)</span> is the set of factors that only depend on <span class="math inline">\(x\)</span> and <span class="math inline">\(X_i\)</span>, but not on any other variables.</li>
+</ul>
+<div id="backtracking-search-algorithm-for-csps" class="section level3">
+<h3>Backtracking search algorithm for CSPs</h3>
+<ul>
+<li><p>Backtrack(<span class="math inline">\(x\)</span>, <span class="math inline">\(w\)</span>, Domains):</p>
+<ul>
+<li>If <span class="math inline">\(x\)</span> is complete assignment: update best and return</li>
+<li><span style="color:blue"> Choose unassigned variable <span class="math inline">\(X_i\)</span> (MCV)
+</span></li>
+<li><span style="color:blue"> Order values in Domain<span class="math inline">\(_i\)</span> of chosen variable <span class="math inline">\(X_i\)</span> (LCV)
+</span><br />
+</li>
+<li>For each value <span class="math inline">\(v\)</span> in that order:
+<ul>
+<li><span class="math inline">\(\delta \leftarrow \prod_{f_j \in D(x, X_i)} f_j\left(x \cup \{X_i: v\}\right)\)</span></li>
+<li>If <span class="math inline">\(\delta=0\)</span>: continue (new partial assignment is inconsistent)</li>
+<li><span style="color:blue"> Domains<span class="math inline">\(^\prime \leftarrow\)</span> Domains via <strong>lookahead</strong>
+</span><br />
+</li>
+<li>If any Domains<span class="math inline">\(^\prime_i\)</span> is empty: continue</li>
+<li>Backtrack(<span class="math inline">\(x \cup \{X_i: v\}\)</span>, <span class="math inline">\(w\delta\)</span>, Domains<span class="math inline">\(^\prime\)</span>)</li>
+</ul></li>
+</ul></li>
+<li><p>In the above algorithm, the <span style="color:blue"> blue </span> contents are the ones that can be optimized</p></li>
+<li><p><strong>One-step lookahead</strong>: forward checking: after assigning a variable <span class="math inline">\(X_i\)</span>, eliminate inconsistent values from the dominas of <span class="math inline">\(X_i\)</span>’s neighbors</p></li>
+</ul>
+</div>
+<div id="dynamic-ordering" class="section level3">
+<h3>Dynamic ordering</h3>
+<ul>
+<li>Choose an unassigned variable: <strong>choose the most constrained variable</strong> (MCV), i.e., the variable that has the smallest domain).
+<ul>
+<li>If going to fail, fail early (more pruning)</li>
+<li>Because we need to find an assignment for <em>every</em> variable</li>
+<li>This is useful when some factor are constraints (can prune assginemnts with weight 0)</li>
+</ul></li>
+<li>Order values of a selected variable: <strong>least constrained value</strong> (LCV), descending order of the sum of consistent values of neighboring variables
+<ul>
+<li>Choose value that is most likely to lead to solution</li>
+<li>Because for each variable only need to choose <em>some</em> values</li>
+<li>Useful when all factors are constraints (Only need to find an assignment with weight 1)</li>
+</ul></li>
+</ul>
+</div>
+<div id="arc-consistency" class="section level3">
+<h3>Arc consistency</h3>
+<ul>
+<li><p>A variable <span class="math inline">\(X_i\)</span> is <strong>arc consistent</strong> wrt <span class="math inline">\(X_j\)</span> if for each <span class="math inline">\(x_i \in \text{Domain}_i\)</span>, there exists <span class="math inline">\(x_j \in \text{Domain}_j\)</span> such that
+<span class="math display">\[
+f(\{X_i: x_i, X_j: x_j \}) \neq 0
+\]</span>
+for all factors <span class="math inline">\(f\)</span> whose scope contains <span class="math inline">\(X_i\)</span> and <span class="math inline">\(X_j\)</span>.</p></li>
+<li><p><strong>AC-3</strong> algorithm: repeatedly enforce arc consistency on all variables</p></li>
+</ul>
+</div>
+</div>
+<div id="approximate-search" class="section level2">
+<h2>Approximate Search</h2>
+<ul>
+<li>Backtracking and beam search: extend partial assignments</li>
+<li>Local search: modify complete assignments</li>
+</ul>
+<div id="beam-search" class="section level3">
+<h3>Beam search</h3>
+<ul>
+<li><strong>Greedy search</strong>: we assume we have a fixed ordering of the variables. Then in every step of assinging a value to a variable, greedy search is to use the assignment with the highest wegith.</li>
+</ul>
+<img src="/figures/cs221/week6_greedy_search.png" alt="drawing" width="600" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6>
+Figure source: <a href="https://stanford-cs221.github.io/spring2025/">Stanford CS221 spring 2025</a>, lecture slides week 6
+</h6>
+<ul>
+<li><strong>Beam search</strong>: keep track of (at most) <span class="math inline">\(K\)</span> best partial assignments at each level of the search tree
+<ul>
+<li>Note: these candidates are not guaranteed to be the <span class="math inline">\(K\)</span> best at each level</li>
+<li>Time complexity of beam search if <span class="math inline">\(O(nKb)\)</span>
+<ul>
+<li>Depth: number of variables <span class="math inline">\(n\)</span></li>
+<li>Branching factor <span class="math inline">\(b = |\text{Domain}_i|\)</span></li>
+<li>Beam size <span class="math inline">\(K\)</span></li>
+</ul></li>
+<li>Beam size <span class="math inline">\(K\)</span> controls trade-off between efficiency and accuracy
+<ul>
+<li><span class="math inline">\(K=1\)</span>: greedy search, <span class="math inline">\(O(nb)\)</span> time</li>
+<li><span class="math inline">\(K = \infty\)</span>: BFS, <span class="math inline">\(O(b^n)\)</span> time</li>
+</ul></li>
+</ul></li>
+</ul>
+<img src="/figures/cs221/week6_beam_search.png" alt="drawing" width="600" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6>
+Figure source: <a href="https://stanford-cs221.github.io/spring2025/">Stanford CS221 spring 2025</a>, lecture slides week 6
+</h6>
+</div>
+<div id="local-search" class="section level3">
+<h3>Local search</h3>
+<ul>
+<li><p>The goal is to improve an old complete assignment.</p></li>
+<li><p><strong>Locality</strong>: When evaluating possible re-assignments to <span class="math inline">\(X_i\)</span>, only need to consider the factors that depend on <span class="math inline">\(X_i\)</span>.</p></li>
+<li><p><strong>Iterated conditional modes (ICM)</strong> algorithm</p>
+<ul>
+<li>Initialize <span class="math inline">\(x\)</span> to a random complete assignment</li>
+<li>Loop through <span class="math inline">\(i = 1, \ldots, n\)</span> until convergence:
+<ul>
+<li>Compute weight of <span class="math inline">\(x_v = x\cup \{X_i, v\}\)</span> for each <span class="math inline">\(v\)</span></li>
+<li><span class="math inline">\(x \leftarrow x_v\)</span> with highest weights</li>
+</ul></li>
+</ul></li>
+<li><p>ICM can stuck at local optima</p></li>
+<li><p>ICM has linear time complexity</p></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="markov-networks" class="section level1">
+<h1>Markov Networks</h1>
+<ul>
+<li><p>A <strong>Markov network</strong> is a factor graph which defines a joint distribution over random variables <span class="math inline">\(X = (X_1, \ldots, X_n)\)</span>:
+<span class="math display">\[
+\mathbb{P}(X = x) = \frac{\text{Weight}(x)}{Z}
+\]</span>
+where <span class="math inline">\(Z = \sum_{x^\prime} \text{Weight}(x^\prime)\)</span> is the normalization constant.</p>
+<ul>
+<li>Markov network <span class="math inline">\(=\)</span> factor graphs <span class="math inline">\(+\)</span> probability</li>
+</ul></li>
+<li><p><strong>Marginal probability</strong> of <span class="math inline">\(X_i = v\)</span> is
+<span class="math display">\[
+\mathbb{P}(X_i = v) = \sum_{x: x_i = v} \mathbb{P}(X = x)
+\]</span></p></li>
+</ul>
+<div id="gibbs-sampling" class="section level2">
+<h2>Gibbs Sampling</h2>
+<ul>
+<li><strong>Gibbs sampling</strong> algorithm:
+<ul>
+<li>Initialize <span class="math inline">\(x\)</span> to a random complete assignment</li>
+<li>Loop through <span class="math inline">\(i = 1, \ldots, n\)</span> until convergence:
+<ul>
+<li>Set <span class="math inline">\(x_i = v\)</span> with probability
+<span class="math display">\[\mathbb{P}(X_i = v \mid X_{-i} = x_{-i})\]</span></li>
+<li>Increment count<span class="math inline">\(_i(x_i)\)</span></li>
+</ul></li>
+<li>Estimate
+<span class="math display">\[\hat{\mathbb{P}}(X_i = x_i) = \frac{\text{count}_i (x_i)}{\sum_v \text{count}_i (v)}\]</span></li>
+</ul></li>
+<li>Search vs sampling</li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th>Iterated Conditional Modes</th>
+<th>Gibbs Sampling</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>maximum weight assignment</td>
+<td>marginal probabilities</td>
+</tr>
+<tr class="even">
+<td>choose best value</td>
+<td>sample a value</td>
+</tr>
+<tr class="odd">
+<td>coverges to local optimum</td>
+<td>marginals converge to correct answer</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="bayesian-networks" class="section level1">
+<h1>Bayesian Networks</h1>
+<ul>
+<li>Markov networks vs Bayesian networks</li>
+</ul>
+<img src="/figures/cs221/week7_markov_networks_vs_bayesian_networks.png" alt="drawing" width="600" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6>
+Figure source: <a href="https://stanford-cs221.github.io/spring2025/">Stanford CS221 spring 2025</a>, lecture slides week 7
+</h6>
+<table>
+<thead>
+<tr class="header">
+<th>Markov networks</th>
+<th>Bayesian networks</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>arbitrary factors</td>
+<td>local conditional probabilities</td>
+</tr>
+<tr class="even">
+<td>set of preferences</td>
+<td>generative process</td>
+</tr>
+<tr class="odd">
+<td>un-directed graphs</td>
+<td>directed graphs</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Let <span class="math inline">\(X = (X_1, \ldots, X_n)\)</span> be random variables.
+A <strong>Bayesian network</strong> is a directed acyclic graph (DAG) that specifies a joint distribution over <span class="math inline">\(X\)</span> as a project of local conditional distributions, one for each node
+<span class="math display">\[
+\mathbb{P}(X_1 =x_1, \ldots, X_n = x_n) \stackrel{\text{def}}{=}
+\prod_{i=1}^n p\left(x_i \mid x_{\text{Parents}(i)} \right)
+\]</span></li>
+</ul>
+<div id="hidden-markov-model" class="section level2">
+<h2>Hidden Markov Model</h2>
+<ul>
+<li><strong>Hidden Markov model (HMM)</strong>: For each time step <span class="math inline">\(t = 1, \ldots, T\)</span>,
+<ul>
+<li>Generate object location <span class="math inline">\(H_t \sim p(H_t \mid H_{t-1})\)</span></li>
+<li>Generate sensor reading <span class="math inline">\(E_t \sim p(E_t \mid H_t)\)</span></li>
+</ul></li>
+</ul>
+<img src="/figures/cs221/week7_hmm.png" alt="drawing" width="400" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6>
+Figure source: <a href="https://stanford-cs221.github.io/spring2025/">Stanford CS221 spring 2025</a>, lecture slides week 7
+</h6>
+<div id="forward-backward" class="section level3">
+<h3>Forward Backward</h3>
+<img src="/figures/cs221/week7_hmm_forward_backward.png" alt="drawing" width="800" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6>
+Figure source: <a href="https://stanford-cs221.github.io/spring2025/">Stanford CS221 spring 2025</a>, lecture slides week 7
+</h6>
+<ul>
+<li><p>Edge start <span class="math inline">\(\rightarrow H_1 = h_1\)</span> has weight <span class="math inline">\(p(h_1)p(e_1 \mid h_1)\)</span></p></li>
+<li><p>Edge <span class="math inline">\(H_{i -1} = h_{i=1}\rightarrow H_i = h_i\)</span> has weight <span class="math inline">\(p(h_i \mid h_{i-1}) p(e_i \mid h_i)\)</span></p></li>
+<li><p>Each path from start to end is an assignment with weight equal to the product of edge weights</p></li>
+<li><p><strong>Forward</strong>: sum of weights of paths from start to <span class="math inline">\(H_i = h_i\)</span>
+<span class="math display">\[\begin{align*}
+F_i(h_i)
+&amp; = \sum_{h_{i-1}} F_{i-1}(h_{i-1}) \cdot \text{Weight}\left(H_{i-1}=h_{i-1}, H_i = h_i\right)\\
+&amp; = \sum_{h_{i-1}} F_{i-1}(h_{i-1}) \cdot p(h_i \mid h_{i-1}) p(e_i \mid h_i)
+\end{align*}\]</span></p></li>
+<li><p><strong>Backward</strong>: sum of weights of paths from <span class="math inline">\(H_i = h_i\)</span> to end
+<span class="math display">\[\begin{align*}
+B_i(h_i) &amp; = \sum_{h_{i+1}} B_{i+1}(h_{i+1}) \cdot \text{Weight}\left(H_{i}=h_{i}, H_{i+1} = h_{i+1}\right)\\
+&amp; =\sum_{h_{i+1}} B_{i+1}(h_{i+1})  \cdot p(h_{i+1} \mid h_{i}) p(e_{i+1} \mid h_{i+1})
+\end{align*}\]</span></p></li>
+<li><p>Define: sum of weights of paths from start to end through <span class="math inline">\(H_i = h_i\)</span>
+<span class="math display">\[
+S_i(h_i) = F_i(h_i) B_i(h_i)
+\]</span></p></li>
+<li><p>Base cases: <span class="math inline">\(F_0 = B_{n} = 1\)</span></p></li>
+<li><p><strong>Forward-backward algorithm for HMMs</strong>:</p>
+<ul>
+<li>Compute <span class="math inline">\(F_1, F_2, \ldots, F_n\)</span></li>
+<li>Compute <span class="math inline">\(B_n, B_{n-1}, \ldots, B_1\)</span></li>
+<li>Compute <span class="math inline">\(S_i\)</span> for each $i and normalize
+<span class="math display">\[
+  \mathbb{P}(H_i = h_i \mid E = e) = \frac{S_i(h_i)}{\sum_v S_i(v)}
+  \]</span></li>
+</ul></li>
+<li><p>Time complexity of forward-backward: <span class="math inline">\(O(n |\text{Domain}|^2)\)</span></p></li>
+</ul>
+</div>
+<div id="particle-filtering" class="section level3">
+<h3>Particle Filtering</h3>
+<ul>
+<li><p>Particle filtering is kind of like beam search for HMMs: keep <span class="math inline">\(\leq K\)</span> partial assignments (<strong>particles</strong>)</p></li>
+<li><p><strong>Particle filtering for HMMs</strong>: 3 steps</p>
+<ol style="list-style-type: decimal">
+<li><strong>Propose</strong>: For each old particle <span class="math inline">\((h_1, \ldots, h_{i-1})\)</span>, sample <span class="math inline">\(H_i \sim p(h_i \mid h_{i-1})\)</span></li>
+<li><strong>Weight</strong>: For each old particle <span class="math inline">\((h_1, \ldots, h_{i-1}, h_i)\)</span>, weight it by <span class="math inline">\(p(e_i \mid h_i)\)</span></li>
+<li><strong>Resample</strong>: Normalize weights and draw <span class="math inline">\(K\)</span> samples to redistribute particles to more promising areas. The resulting distribution is approximately <span class="math inline">\(\mathbb{P}(H_1, \ldots, H_i \mid E_1, \ldots, E_i)\)</span></li>
+</ol></li>
+</ul>
+</div>
+</div>
+<div id="smoothing" class="section level2">
+<h2>Smoothing</h2>
+<ul>
+<li><strong>Laplace smoothing</strong>: for each distribution <span class="math inline">\(d\)</span> and partial assignment <span class="math inline">\((x_{\text{Parents}(i)}, x_i)\)</span>, add <span class="math inline">\(\lambda\)</span> to count<span class="math inline">\(_d(x_{\text{Parents}(i)}, x_i)\)</span></li>
+</ul>
+</div>
+<div id="expectation-maximization-em-algorithm" class="section level2">
+<h2>Expectation Maximization (EM) Algorithm</h2>
+<ul>
+<li>EM algorithm deals with hidden variables <span class="math inline">\(H\)</span></li>
+<li>Intuition: generalization of the K-means algorithm:
+<ul>
+<li>Cluster centroids = parameter <span class="math inline">\(\theta\)</span></li>
+<li>Cluster assignments = hidden variables <span class="math inline">\(H\)</span></li>
+</ul></li>
+<li><strong>EM algorithm</strong>
+<ul>
+<li>Initialize <span class="math inline">\(\theta\)</span> randomly</li>
+<li>Repeat until converge
+<ul>
+<li><strong>E step</strong>: fix <span class="math inline">\(\theta\)</span>, update <span class="math inline">\(H\)</span>
+<ul>
+<li>For each <span class="math inline">\(h\)</span> compute
+<span class="math display">\[q(h) = \mathbb{P}(H=h \mid E=e, \theta)\]</span></li>
+<li>Create fully-observed weighted examples: <span class="math inline">\((h, e)\)</span> with weight <span class="math inline">\(q(h)\)</span></li>
+</ul></li>
+<li><strong>M-step</strong>: fix <span class="math inline">\(H\)</span>, update <span class="math inline">\(\theta\)</span>
+<ul>
+<li>Maximum likelihood (count and normalize) on weighted examples to get <span class="math inline">\(\theta\)</span></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>EM algorithm converges to local optima</li>
+</ul>
+</div>
+</div>

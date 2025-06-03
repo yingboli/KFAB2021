@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.88.1" />
+
+
+<title>CS221 Artificial Intelligence, Notes on Logic (Week 9) - King Fox And Butterfly</title>
+<meta property="og:title" content="CS221 Artificial Intelligence, Notes on Logic (Week 9) - King Fox And Butterfly">
+
+
+  <link href='http://liyingbo.com/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/yingbo_headshot.jpg"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/cooking/">Cooking</a></li>
+    
+    <li><a href="/stat/">Statistics</a></li>
+    
+    <li><a href="/life/">Life</a></li>
+    
+    <li><a href="/about/">About Me</a></li>
+    
+    <li><a href="/categories/">Categories</a></li>
+    
+    <li><a href="/tags/">Tags</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+
+    <h1 class="article-title">CS221 Artificial Intelligence, Notes on Logic (Week 9)</h1>
+
+    
+
+    <div class="article-content">
+      
+
+<div id="TOC">
+<ul>
+<li><a href="#propositional-logic" id="toc-propositional-logic">Propositional Logic</a>
+<ul>
+<li><a href="#models" id="toc-models">Models</a></li>
+<li><a href="#knowledge-base" id="toc-knowledge-base">Knowledge base</a></li>
+<li><a href="#inference-rules" id="toc-inference-rules">Inference Rules</a>
+<ul>
+<li><a href="#soundness-and-completeness" id="toc-soundness-and-completeness">Soundness and completeness</a></li>
+</ul></li>
+<li><a href="#propositional-modus-ponens" id="toc-propositional-modus-ponens">Propositional Modus Ponens</a></li>
+<li><a href="#propositional-resolution" id="toc-propositional-resolution">Propositional Resolution</a>
+<ul>
+<li><a href="#conjunctive-normal-form-cnf" id="toc-conjunctive-normal-form-cnf">Conjunctive normal form (CNF)</a></li>
+<li><a href="#proof-by-resolution" id="toc-proof-by-resolution">Proof by Resolution</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#first-order-logic" id="toc-first-order-logic">First-order Logic</a>
+<ul>
+<li><a href="#first-order-modus-ponens" id="toc-first-order-modus-ponens">First-order Modus Ponens</a></li>
+</ul></li>
+</ul>
+</div>
+
+<ul>
+<li><p>High level summaries</p>
+<ul>
+<li>State-based models: search problems, MDPs, games
+<ul>
+<li>Applications: route finding, game playing, etc</li>
+<li>Terms: states, actions, costs</li>
+</ul></li>
+<li>Variable-based models: CSPs, Bayesian networks
+<ul>
+<li>Applications: scheduling, tracking, medical diagnosis, etc</li>
+<li>Terms: variables, factors</li>
+</ul></li>
+<li>Logic-based models: propositional logic, first-order logic
+<ul>
+<li>Applications: theorem proving, verification, etc</li>
+<li>Terms: logical formulas, inference rules</li>
+<li>Problems with logic:
+<ul>
+<li>Deterministic, cannot handle uncertainty</li>
+<li>Rule-based, does not allow to learn from data</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<div id="propositional-logic" class="section level1">
+<h1>Propositional Logic</h1>
+<ul>
+<li><p><strong>Propositional symbols (atomic formulas)</strong>: <span class="math inline">\(A, B, C\)</span></p></li>
+<li><p>Use <strong>Logical connectives</strong> to build up formulas recursively: if <span class="math inline">\(f\)</span> and <span class="math inline">\(g\)</span> are <strong>formulas</strong>, so are the following</p>
+<ul>
+<li>Negation: <span class="math inline">\(\neg f\)</span></li>
+<li>Conjunction: <span class="math inline">\(f \wedge g\)</span></li>
+<li>Disjunction: <span class="math inline">\(f \vee g\)</span></li>
+<li>Implication: <span class="math inline">\(f \rightarrow g\)</span></li>
+<li>Bicodintional: <span class="math inline">\(f \leftrightarrow g\)</span></li>
+</ul></li>
+</ul>
+<div id="models" class="section level2">
+<h2>Models</h2>
+<ul>
+<li><p><strong>model</strong> <span class="math inline">\(w\)</span>: an <strong>assignment</strong> of values to propositional symbols</p></li>
+<li><p><strong>interpretation function</strong>: for a formula <span class="math inline">\(f\)</span> and a model <span class="math inline">\(w\)</span>, <span class="math display">\[
+\mathcal{I}(f, w) = \mathbf{1}\{w \text{ satisfies } f\}
+\]</span></p>
+<ul>
+<li>Define <span class="math inline">\(\mathcal{M}(f) = \left\{w: \mathcal{I}(f, w) = 1\right\}\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="knowledge-base" class="section level2">
+<h2>Knowledge base</h2>
+<ul>
+<li><p><strong>Knowledge base</strong> KB: <span class="math display">\[
+\mathcal{M}(\text{KB}) = \cap_{f \in \text{KB}} \mathcal{M}(f)
+\]</span></p></li>
+<li><p>Add a formula to the knowledge base:</p>
+<ul>
+<li>From KB to KB<span class="math inline">\(\cup f\)</span></li>
+<li>Shrinks the set of models: from <span class="math inline">\(\mathcal{M}(\text{KB})\)</span> to <span class="math inline">\(\mathcal{M}(\text{KB}) \cap \mathcal{M}(f)\)</span></li>
+</ul></li>
+<li><p>Relationships between a KB and a formula <span class="math inline">\(f\)</span></p></li>
+</ul>
+<table>
+<colgroup>
+<col width="25%" />
+<col width="23%" />
+<col width="23%" />
+<col width="27%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Relationship</th>
+<th>Notation</th>
+<th>Definition</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Entailment</td>
+<td>KB<span class="math inline">\(\vDash f\)</span></td>
+<td><span class="math inline">\(\mathcal{M}(\text{KB}) \subseteq \mathcal{M}(f)\)</span></td>
+<td>Already knew that.</td>
+</tr>
+<tr class="even">
+<td>Contradiction</td>
+<td></td>
+<td><span class="math inline">\(\mathcal{M}(\text{KB}) \cap \mathcal{M}(f) = \emptyset\)</span></td>
+<td>Don’t believe that.</td>
+</tr>
+<tr class="odd">
+<td>Contingency</td>
+<td></td>
+<td><span class="math inline">\(\emptyset \subsetneq \mathcal{M}(\text{KB}) \cap \mathcal{M}(f) \subsetneq \mathcal{M}(\text{KB})\)</span></td>
+<td>Learned something new.</td>
+</tr>
+<tr class="even">
+<td>Inference</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p>KB contradict with <span class="math inline">\(f\)</span> <span class="math inline">\(\Longleftrightarrow\)</span> KB entails <span class="math inline">\(\neg f\)</span></p></li>
+<li><p><strong>Probabilistic interpretation</strong> <span class="math display">\[
+\mathbb{P}(f \mid \text{KB}) = \frac{\sum_{w \in \mathcal{M}(\text{KB} \cup \{f\})}\mathbb{P}(W = w)}{\sum_{w \in \mathcal{M}(\text{KB})}\mathbb{P}(W = w)}
+\]</span></p></li>
+<li><p>A KB is <strong>satisfiable</strong> if <span class="math inline">\(\mathcal{M}(KB) \neq \emptyset\)</span></p></li>
+</ul>
+<img src="/figures/cs221/week9_satisfiability.png" alt="drawing" width="600" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6>
+Figure source: <a href="https://stanford-cs221.github.io/spring2025/">Stanford CS221 spring 2025</a>, lecture slides week 9
+</h6>
+<ul>
+<li><p>Checking satisfiability (SAT) in propositional logic is a special case of CSPs</p>
+<table>
+<thead>
+<tr class="header">
+<th>Logic term</th>
+<th>Counterpart CSP term</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>propositional symbol</td>
+<td>variable</td>
+</tr>
+<tr class="even">
+<td>formula</td>
+<td>constraint</td>
+</tr>
+<tr class="odd">
+<td>model</td>
+<td>assignment</td>
+</tr>
+</tbody>
+</table></li>
+</ul>
+</div>
+<div id="inference-rules" class="section level2">
+<h2>Inference Rules</h2>
+<ul>
+<li><p><strong>Inference rule</strong>: if the premises <span class="math inline">\(f_1, \ldots, f_k\)</span> are in the KB, then your can add the conclusion <span class="math inline">\(g\)</span> to the KB. Formula:
+<span class="math display">\[
+\frac{f_1, \ldots, f_k}{g}\quad \quad
+\frac{\text{(premises)}}{\text{(conclusion)}}
+\]</span></p></li>
+<li><p><strong>Modus ponens inference rule</strong>: captures the if-then reasoning pattern. For any propositional symbols <span class="math inline">\(p\)</span> and <span class="math inline">\(q\)</span>, we have
+<span class="math display">\[
+\frac{p, \quad p\rightarrow q}{q}
+\]</span></p></li>
+<li><p><strong>Derivation</strong>: KB derives <span class="math inline">\(f\)</span>, written as <span class="math inline">\(KB \vdash f\)</span>, iff <span class="math inline">\(f\)</span> eventually gets added to KB.</p>
+<ul>
+<li>Inference rules operate directly on syntax, not on semantics.</li>
+</ul></li>
+</ul>
+<div id="soundness-and-completeness" class="section level3">
+<h3>Soundness and completeness</h3>
+<ul>
+<li>A set of inference rules is <strong>sound</strong> if
+<span class="math display">\[
+\{f: \text{KB}\vdash f\} \subseteq \{f: \text{KB}\vDash f\}
+\]</span>
+<ul>
+<li>Nothing but the truth</li>
+<li>Showing soundness is easy</li>
+</ul></li>
+<li>A set of inference rules is <strong>complete</strong> if
+<span class="math display">\[
+\{f: \text{KB}\vdash f\} \supseteq \{f: \text{KB}\vDash f\}
+\]</span>
+<ul>
+<li>Whole truth</li>
+<li>Showing completeness if hard</li>
+</ul></li>
+<li>Fixing completeness
+<ul>
+<li>Option 1: restrict the allowed set of formulas, to propositional logic with only <em>Horn clauses</em></li>
+<li>Option 2: use more powerful inference rules, change from Modus ponens to <em>resolution</em></li>
+</ul></li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th>Formulas allowed</th>
+<th>Inference rules</th>
+<th>Complete?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Propositional logic</td>
+<td>modus ponens</td>
+<td>No</td>
+</tr>
+<tr class="even">
+<td>Propositional logic (only Horn clauses)</td>
+<td>modus ponens</td>
+<td>Yes</td>
+</tr>
+<tr class="odd">
+<td>Propositional logic</td>
+<td>resolution</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="propositional-modus-ponens" class="section level2">
+<h2>Propositional Modus Ponens</h2>
+<ul>
+<li><p><strong>Horn clauses</strong>: is either a <strong>definite clause</strong>,
+<span class="math display">\[(p_1 \wedge \cdots \wedge p_k) \rightarrow q,\]</span>
+or a goal clause
+<span class="math display">\[(p_1 \wedge \cdots \wedge p_k) \rightarrow \text{false}\]</span></p></li>
+<li><p>A more generic version of the <strong>modus ponens inference rule</strong>
+<span class="math display">\[
+  \frac{p_1, \ldots, p_k, \quad (p_1 \wedge \cdots \wedge p_k) \rightarrow q}{q}
+  \]</span></p></li>
+<li><p>Theory: Modus ponens is <em>complete</em> with respect to Horn clauses. This is, if KB contains only Horn clauses, then
+<span class="math display">\[
+\text{KB} \vDash p \text{(entailment)} \Longleftrightarrow
+\text{KB} \vdash p \text{(derivation)}
+\]</span></p></li>
+</ul>
+</div>
+<div id="propositional-resolution" class="section level2">
+<h2>Propositional Resolution</h2>
+<ul>
+<li>Rewrite implication <span class="math inline">\(A \rightarrow C\)</span> to disjunction
+<span class="math inline">\(\neg A \vee C\)</span>
+<ul>
+<li>In this way, we can rewrite modus ponens as
+<span class="math display">\[
+\frac{A, \quad \neg A \vee C}{C}
+\]</span>
+Note that <span class="math inline">\(A\)</span> and <span class="math inline">\(\neg A\)</span> are cancelled out.</li>
+</ul></li>
+<li><strong>Resolution inference rule</strong>: cancel out <span class="math inline">\(p\)</span> and <span class="math inline">\(\neg p\)</span> in the middle
+<span class="math display">\[
+\frac{f_1 \vee \cdots \vee f_n \vee p, \quad
+\neg p \vee g_1 \vee \cdots \vee g_m}{
+f_1 \vee \cdots \vee f_n \vee g_1 \vee \cdots \vee g_m
+}
+\]</span></li>
+</ul>
+<div id="conjunctive-normal-form-cnf" class="section level3">
+<h3>Conjunctive normal form (CNF)</h3>
+<ul>
+<li><p>CNF is a conjunction (<span class="math inline">\(\wedge\)</span>) of clauses (<span class="math inline">\(\vee\)</span>)</p>
+<ul>
+<li><p>Every formula in propositional logic can be converted into an equivalent CNF formula</p></li>
+<li><p>Conversion rules</p></li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th>Propositional logic</th>
+<th>CNF</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(f \rightarrow g\)</span></td>
+<td><span class="math inline">\(\neg f \vee g\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(f \leftrightarrow g\)</span></td>
+<td><span class="math inline">\((f \rightarrow g) \wedge (g \rightarrow f)\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\neg (f \wedge g)\)</span></td>
+<td><span class="math inline">\(\neg f \vee \neg g\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\neg (f \vee g)\)</span></td>
+<td><span class="math inline">\(\neg f \wedge \neg g\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\neg \neg f\)</span></td>
+<td><span class="math inline">\(f\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(f \vee (g \wedge h)\)</span></td>
+<td><span class="math inline">\((f \vee g) \wedge (f \vee h)\)</span></td>
+</tr>
+</tbody>
+</table></li>
+</ul>
+</div>
+<div id="proof-by-resolution" class="section level3">
+<h3>Proof by Resolution</h3>
+<ul>
+<li>Add <span class="math inline">\(\neg f\)</span> into KB
+<span class="math display">\[KB^\prime = KB \cup \neg f\]</span></li>
+<li>Convert all formulas into CNF</li>
+<li>Repeatedly apply resolution rule</li>
+<li>Return entailment iff derive false</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="first-order-logic" class="section level1">
+<h1>First-order Logic</h1>
+<ul>
+<li>Syntax of first-order logic
+<ul>
+<li>Terms (object)
+<ul>
+<li>constant symbol (e.g., arithmetic)</li>
+<li>variable (e.g., <span class="math inline">\(x\)</span>)</li>
+<li>function of terms (e.g., Sum(3, <span class="math inline">\(x\)</span>))</li>
+</ul></li>
+<li>Formulas (truth values)
+<ul>
+<li>Atomic formulas (atoms): predicate applied to terms, e.g., Knows(<span class="math inline">\(x\)</span>, arithmetic)</li>
+<li>Connectives applied to formulas: e.g., Student(<span class="math inline">\(x\)</span>) <span class="math inline">\(\rightarrow\)</span> Knows(<span class="math inline">\(x\)</span>, arithmetic)</li>
+<li>Quantifiers applied to formulas: e.g., <span class="math inline">\(\forall x\)</span> Student(<span class="math inline">\(x\)</span>) <span class="math inline">\(\rightarrow\)</span> Knows(<span class="math inline">\(x\)</span>, arithmetic)</li>
+</ul></li>
+</ul></li>
+<li>Quantifiers: for all (<span class="math inline">\(\forall\)</span>) and exists (<span class="math inline">\(\exists\)</span>)
+<ul>
+<li>Note the different connectives:
+<ul>
+<li><span class="math inline">\(\forall\)</span> Student<span class="math inline">\((x) \rightarrow\)</span> Knows(<span class="math inline">\(x\)</span>, arithmetic)</li>
+<li><span class="math inline">\(\exists\)</span> Student<span class="math inline">\((x) \wedge\)</span> Knows(<span class="math inline">\(x\)</span>, arithmetic)</li>
+</ul></li>
+</ul></li>
+</ul>
+<img src="/figures/cs221/week9_first_order_logic_example.png" alt="drawing" width="800" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6>
+Figure source: <a href="https://stanford-cs221.github.io/spring2025/">Stanford CS221 spring 2025</a>, lecture slides week 9
+</h6>
+<div id="first-order-modus-ponens" class="section level2">
+<h2>First-order Modus Ponens</h2>
+<ul>
+<li><p><strong>Definite clause in first-order logic</strong> for variables <span class="math inline">\(x_1, \ldots, x_n\)</span> and atomic formuas <span class="math inline">\(a_1, \ldots, a_k, b\)</span> which contain those variables, has the following form
+<span class="math display">\[
+\forall x_1 \cdots \forall x_n (a_1 \wedge \cdots \wedge a_k) \rightarrow b
+\]</span></p></li>
+<li><p><strong>Substitution</strong> <span class="math inline">\(\theta\)</span> is a mapping from variables to terms
+Subst<span class="math inline">\([\theta, f]\)</span> returns the result of performing substitution <span class="math inline">\(\theta\)</span> on <span class="math inline">\(f\)</span>.</p>
+<ul>
+<li>E.g., Subst<span class="math inline">\([\{x/\text{alice}\}, P(x)] = P(\text{alice})\)</span></li>
+</ul></li>
+<li><p><strong>Unification</strong>: takes two formulas <span class="math inline">\(f\)</span> and <span class="math inline">\(g\)</span> and returns a substitution <span class="math inline">\(\theta\)</span> which is the most general unifier:
+<span class="math display">\[
+\text{Unify}[f, g] =
+\begin{cases}
+\theta, &amp;\text{ such that Subst}[\theta, f] = \text{Subst}[\theta, g]\\
+\text{fail}, &amp; \text{ if no such }\theta \text{ exists}
+\end{cases}
+\]</span></p></li>
+<li><p><strong>First-order modus ponens</strong> with substitution:
+Let <span class="math inline">\(\theta = \text{Unify}[a_1^\prime \wedge \cdots \wedge a_k^\prime, a_1 \wedge \cdots \wedge a_k]\)</span> and <span class="math inline">\(b^\prime = \text{Subst}[\theta, b]\)</span>, then
+<span class="math display">\[
+\frac{a_1^\prime \wedge \cdots \wedge a_k^\prime, \quad \forall x_1 \cdots \forall x_n (a_1 \wedge \cdots \wedge a_k) \rightarrow b}{b^\prime}
+\]</span></p></li>
+</ul>
+</div>
+</div>
+
+    </div>
+  </article>
+
+  
+<section id="comments">
+  <div id="disqus_thread"></div>
+  <script>
+  var disqus_config = function () {
+  
+  };
+  (function() {
+    var inIFrame = function() {
+      var iframe = true;
+      try { iframe = window.self !== window.top; } catch (e) {}
+      return iframe;
+    };
+    if (inIFrame()) return;
+    var d = document, s = d.createElement('script');
+    s.src = '//kfab.disqus.com/embed.js'; s.async = true;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-116913878-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+  </body>
+</html>
+
