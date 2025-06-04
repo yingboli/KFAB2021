@@ -13,20 +13,46 @@ output:
     toc_depth: 3
 ---
 
-### Difference between state-based vs variable-based search problems: order
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE);
 
-* There is usually an (obvious) order for state-based search problems, e.g., certain start and end points. 
+#Color Format
+col_text = function(color, x){
+  outputFormat = knitr::opts_knit$get('rmarkdown.pandoc.to');
+  if(outputFormat == 'latex'){
+    if(color == 'green'){
+      paste('\\textcolor[RGB]{0, 128, 0}{', x, '}', sep = '');
+    } else {
+      paste('\\textcolor{', color, '}{', x, '}', sep = '');
+    }
+  } else if(outputFormat == 'beamer'){
+    paste('\\', color, '{', x, '}', sep = '');
+  } else if(outputFormat %in% c('html', 'slidy')){
+    paste("<font color='", color, "'>", x, '</font>', sep = '');
+  } else{
+    x;
+  }
+}
 
-* For variable-based search problems:
-    - Ordering doesn't affect correctness (e.g., map coloring problem), so we might dynamically choose a better ordering of the variables (e.g., lookahead).
-    - We might composed the problem because variables are interdependent in a local way.
-    
-* Equivalent terminologies
-    - Variable-based models $=$ graphical models
-    - Probablistic graphical models = $\{$Markov networks, Bayesian networks$\}$
-    - Markov networks $=$ undirected graphical models
-    - Bayesian networks $=$ directed graphical models
-    
+blue = function(x){col_text('blue', x);}
+red = function(x){col_text('red', x);}
+green = function(x){col_text('green', x);}
+```
+
+* Difference between state-based vs variable-based search problems: **order**
+
+  * There is usually an (obvious) order for state-based search problems, e.g., certain start and end points. 
+  
+  * For variable-based search problems:
+      - Ordering doesn't affect correctness (e.g., map coloring problem), so we might dynamically choose a better ordering of the variables (e.g., lookahead).
+      - We might composed the problem because variables are interdependent in a local way.
+      
+  * Equivalent terminologies
+      - Variable-based models $=$ graphical models
+      - Probablistic graphical models = $\{$Markov networks, Bayesian networks$\}$
+      - Markov networks $=$ undirected graphical models
+      - Bayesian networks $=$ directed graphical models
+      
 
 # Constraint Satisfaction Problems (CSPs)
 
@@ -223,6 +249,8 @@ A **Bayesian network** is a directed acyclic graph (DAG) that specifies a joint 
 
 ### Forward Backward 
 
+* Lattice representation
+
 <img src="/figures/cs221/week7_hmm_forward_backward.png" alt="drawing" width="800" style="display: block; margin-left: auto; margin-right: auto;"/>
 <h6> Figure source: [Stanford CS221 spring 2025](https://stanford-cs221.github.io/spring2025/), lecture slides week 7 </h6>
 
@@ -248,7 +276,9 @@ B_i(h_i) & = \sum_{h_{i+1}} B_{i+1}(h_{i+1}) \cdot \text{Weight}\left(H_{i}=h_{i
 S_i(h_i) = F_i(h_i) B_i(h_i)
 \]
 
-* Base cases: $F_0 = B_{n} = 1$
+* Base cases: 
+\[F_1 = p(h_1) p(e_1 \mid h_1)\]
+\[B_{n} = 1\]
 
 * **Forward-backward algorithm for HMMs**:
     - Compute $F_1, F_2, \ldots, F_n$
@@ -277,19 +307,47 @@ S_i(h_i) = F_i(h_i) B_i(h_i)
 
 ## Expectation Maximization (EM) Algorithm
 
-* EM algorithm deals with hidden variables $H$
-* Intuition: generalization of the K-means algorithm:
-    - Cluster centroids = parameter $\theta$
-    - Cluster assignments = hidden variables $H$
-    
-* **EM algorithm**
-    - Initialize $\theta$ randomly
-    - Repeat until converge
-        - **E step**: fix $\theta$, update $H$
-            - For each $h$ compute
-            \[q(h) = \mathbb{P}(H=h \mid E=e, \theta)\]
-            - Create fully-observed weighted examples: $(h, e)$ with weight $q(h)$
-        - **M-step**: fix $H$, update $\theta$
-            - Maximum likelihood (count and normalize) on weighted examples to get $\theta$
+- Initialize $\theta$ randomly
+- Repeat until converge
+    - **E step**: fix $\theta$, update $H$
+        - For each $h$ compute
+        \[q(h) = \mathbb{P}(H=h \mid E=e, \theta)\]
+        - Create fully-observed weighted examples: $(h, e)$ with weight $q(h)$
+    - **M-step**: fix $H$, update $\theta$
+        - Maximum likelihood (count and normalize) on weighted examples to get $\theta$
 
-* EM algorithm converges to local optima
+* Properties of the EM algorithm
+  * EM algorithm deals with hidden variables $H$
+  * Intuition: generalization of the K-means algorithm:
+      - Cluster centroids = parameter $\theta$
+      - Cluster assignments = hidden variables $H$
+  * EM algorithm converges to local optima
+  
+### A more general version of the EM algorithm 
+
+1. Choose the initial parameters $\boldsymbol\theta^{\text{old}}$
+
+2. **E step**: since the conditional posterior 
+$p\left( \mathbf{Z} \mid \mathbf{X}, \boldsymbol\theta^{\text{old}} \right)$
+contains all of our knowledge about the latent variable $\mathbf{Z}$, 
+we compute the expected complete-data log likelihood under it.
+\begin{align*}
+\mathcal{Q}(\boldsymbol\theta, \boldsymbol\theta^{\text{old}})
+& = E_{\mathbf{Z} \mid \mathbf{X}, \boldsymbol\theta^{\text{old}}}
+\left\{\log p(\mathbf{X}, \mathbf{Z} \mid \boldsymbol\theta)  \right\} \\
+& = \sum_{\mathbf{Z}} p\left( \mathbf{Z} \mid \mathbf{X}, \boldsymbol\theta^{\text{old}} \right)
+\log p(\mathbf{X}, \mathbf{Z} \mid \boldsymbol\theta)
+\end{align*}
+
+3. **M step**: revise parameter estimate 
+\[
+\boldsymbol\theta^{\text{new}} = \arg\max_{\boldsymbol\theta} 
+\mathcal{Q}(\boldsymbol\theta, \boldsymbol\theta^{\text{old}})
+\]
+    - `r green('Note in the maximizing step, the logarithm acts driectly on the joint likelihood')` $p(\mathbf{X}, \mathbf{Z} \mid \boldsymbol\theta)$, `r green('so the maximizating will be tractable.')`
+    
+4. Check for convergence of the log likelihood or the parameter values.
+If not converged, use $\boldsymbol\theta^{\text{new}}$ to replace $\boldsymbol\theta^{\text{old}}$,
+and return to step 2.
+
+    - See my [EM algorithm notes](https://liyingbo.com/stat/2020/06/13/book-notes-pattern-recognition-and-machine-learning-ch9-mixture-models-and-em-algorithm/) for more details

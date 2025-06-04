@@ -73,7 +73,6 @@
 
 <div id="TOC">
 <ul>
-<li><a href="#difference-between-state-based-vs-variable-based-search-problems-order" id="toc-difference-between-state-based-vs-variable-based-search-problems-order">Difference between state-based vs variable-based search problems: order</a></li>
 <li><a href="#constraint-satisfaction-problems-csps" id="toc-constraint-satisfaction-problems-csps">Constraint Satisfaction Problems (CSPs)</a>
 <ul>
 <li><a href="#factor-graphs" id="toc-factor-graphs">Factor Graphs</a></li>
@@ -101,13 +100,16 @@
 <li><a href="#particle-filtering" id="toc-particle-filtering">Particle Filtering</a></li>
 </ul></li>
 <li><a href="#smoothing" id="toc-smoothing">Smoothing</a></li>
-<li><a href="#expectation-maximization-em-algorithm" id="toc-expectation-maximization-em-algorithm">Expectation Maximization (EM) Algorithm</a></li>
+<li><a href="#expectation-maximization-em-algorithm" id="toc-expectation-maximization-em-algorithm">Expectation Maximization (EM) Algorithm</a>
+<ul>
+<li><a href="#a-more-general-version-of-the-em-algorithm" id="toc-a-more-general-version-of-the-em-algorithm">A more general version of the EM algorithm</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </div>
 
-<div id="difference-between-state-based-vs-variable-based-search-problems-order" class="section level3">
-<h3>Difference between state-based vs variable-based search problems: order</h3>
+<ul>
+<li><p>Difference between state-based vs variable-based search problems: <strong>order</strong></p>
 <ul>
 <li><p>There is usually an (obvious) order for state-based search problems, e.g., certain start and end points.</p></li>
 <li><p>For variable-based search problems:</p>
@@ -122,8 +124,8 @@
 <li>Markov networks <span class="math inline">\(=\)</span> undirected graphical models</li>
 <li>Bayesian networks <span class="math inline">\(=\)</span> directed graphical models</li>
 </ul></li>
+</ul></li>
 </ul>
-</div>
 <div id="constraint-satisfaction-problems-csps" class="section level1">
 <h1>Constraint Satisfaction Problems (CSPs)</h1>
 <div id="factor-graphs" class="section level2">
@@ -402,6 +404,9 @@ Figure source: <a href="https://stanford-cs221.github.io/spring2025/">Stanford C
 </h6>
 <div id="forward-backward" class="section level3">
 <h3>Forward Backward</h3>
+<ul>
+<li>Lattice representation</li>
+</ul>
 <img src="/figures/cs221/week7_hmm_forward_backward.png" alt="drawing" width="800" style="display: block; margin-left: auto; margin-right: auto;"/>
 <h6>
 Figure source: <a href="https://stanford-cs221.github.io/spring2025/">Stanford CS221 spring 2025</a>, lecture slides week 7
@@ -425,7 +430,9 @@ B_i(h_i) &amp; = \sum_{h_{i+1}} B_{i+1}(h_{i+1}) \cdot \text{Weight}\left(H_{i}=
 <span class="math display">\[
 S_i(h_i) = F_i(h_i) B_i(h_i)
 \]</span></p></li>
-<li><p>Base cases: <span class="math inline">\(F_0 = B_{n} = 1\)</span></p></li>
+<li><p>Base cases:
+<span class="math display">\[F_1 = p(h_1) p(e_1 \mid h_1)\]</span>
+<span class="math display">\[B_{n} = 1\]</span></p></li>
 <li><p><strong>Forward-backward algorithm for HMMs</strong>:</p>
 <ul>
 <li>Compute <span class="math inline">\(F_1, F_2, \ldots, F_n\)</span></li>
@@ -460,14 +467,6 @@ S_i(h_i) = F_i(h_i) B_i(h_i)
 <div id="expectation-maximization-em-algorithm" class="section level2">
 <h2>Expectation Maximization (EM) Algorithm</h2>
 <ul>
-<li>EM algorithm deals with hidden variables <span class="math inline">\(H\)</span></li>
-<li>Intuition: generalization of the K-means algorithm:
-<ul>
-<li>Cluster centroids = parameter <span class="math inline">\(\theta\)</span></li>
-<li>Cluster assignments = hidden variables <span class="math inline">\(H\)</span></li>
-</ul></li>
-<li><strong>EM algorithm</strong>
-<ul>
 <li>Initialize <span class="math inline">\(\theta\)</span> randomly</li>
 <li>Repeat until converge
 <ul>
@@ -482,9 +481,48 @@ S_i(h_i) = F_i(h_i) B_i(h_i)
 <li>Maximum likelihood (count and normalize) on weighted examples to get <span class="math inline">\(\theta\)</span></li>
 </ul></li>
 </ul></li>
+<li>Properties of the EM algorithm
+<ul>
+<li>EM algorithm deals with hidden variables <span class="math inline">\(H\)</span></li>
+<li>Intuition: generalization of the K-means algorithm:
+<ul>
+<li>Cluster centroids = parameter <span class="math inline">\(\theta\)</span></li>
+<li>Cluster assignments = hidden variables <span class="math inline">\(H\)</span></li>
 </ul></li>
 <li>EM algorithm converges to local optima</li>
+</ul></li>
 </ul>
+<div id="a-more-general-version-of-the-em-algorithm" class="section level3">
+<h3>A more general version of the EM algorithm</h3>
+<ol style="list-style-type: decimal">
+<li><p>Choose the initial parameters <span class="math inline">\(\boldsymbol\theta^{\text{old}}\)</span></p></li>
+<li><p><strong>E step</strong>: since the conditional posterior
+<span class="math inline">\(p\left( \mathbf{Z} \mid \mathbf{X}, \boldsymbol\theta^{\text{old}} \right)\)</span>
+contains all of our knowledge about the latent variable <span class="math inline">\(\mathbf{Z}\)</span>,
+we compute the expected complete-data log likelihood under it.
+<span class="math display">\[\begin{align*}
+\mathcal{Q}(\boldsymbol\theta, \boldsymbol\theta^{\text{old}})
+&amp; = E_{\mathbf{Z} \mid \mathbf{X}, \boldsymbol\theta^{\text{old}}}
+\left\{\log p(\mathbf{X}, \mathbf{Z} \mid \boldsymbol\theta)  \right\} \\
+&amp; = \sum_{\mathbf{Z}} p\left( \mathbf{Z} \mid \mathbf{X}, \boldsymbol\theta^{\text{old}} \right)
+\log p(\mathbf{X}, \mathbf{Z} \mid \boldsymbol\theta)
+\end{align*}\]</span></p></li>
+<li><p><strong>M step</strong>: revise parameter estimate
+<span class="math display">\[
+\boldsymbol\theta^{\text{new}} = \arg\max_{\boldsymbol\theta}
+\mathcal{Q}(\boldsymbol\theta, \boldsymbol\theta^{\text{old}})
+\]</span></p>
+<ul>
+<li><font color='green'>Note in the maximizing step, the logarithm acts driectly on the joint likelihood</font> <span class="math inline">\(p(\mathbf{X}, \mathbf{Z} \mid \boldsymbol\theta)\)</span>, <font color='green'>so the maximizating will be tractable.</font></li>
+</ul></li>
+<li><p>Check for convergence of the log likelihood or the parameter values.
+If not converged, use <span class="math inline">\(\boldsymbol\theta^{\text{new}}\)</span> to replace <span class="math inline">\(\boldsymbol\theta^{\text{old}}\)</span>,
+and return to step 2.</p>
+<ul>
+<li>See my <a href="https://liyingbo.com/stat/2020/06/13/book-notes-pattern-recognition-and-machine-learning-ch9-mixture-models-and-em-algorithm/">EM algorithm notes</a> for more details</li>
+</ul></li>
+</ol>
+</div>
 </div>
 </div>
 

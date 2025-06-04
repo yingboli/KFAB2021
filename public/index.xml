@@ -23,7 +23,7 @@
       <pubDate>Sat, 24 May 2025 00:00:00 +0000</pubDate>
       
       <guid>http://liyingbo.com/stat/2025/05/24/cs221-artificial-intelligence-notes-on-variables-week-6-8/</guid>
-      <description>Difference between state-based vs variable-based search problems: order Constraint Satisfaction Problems (CSPs)  Factor Graphs Exact Backtracking Search  Backtracking search algorithm for CSPs Dynamic ordering Arc consistency  Approximate Search  Beam search Local search   Markov Networks  Gibbs Sampling  Bayesian Networks  Hidden Markov Model  Forward Backward Particle Filtering  Smoothing Expectation Maximization (EM) Algorithm    Difference between state-based vs variable-based search problems: order  There is usually an (obvious) order for state-based search problems, e.</description>
+      <description>Constraint Satisfaction Problems (CSPs)  Factor Graphs Exact Backtracking Search  Backtracking search algorithm for CSPs Dynamic ordering Arc consistency  Approximate Search  Beam search Local search   Markov Networks  Gibbs Sampling  Bayesian Networks  Hidden Markov Model  Forward Backward Particle Filtering  Smoothing Expectation Maximization (EM) Algorithm  A more general version of the EM algorithm      Difference between state-based vs variable-based search problems: order</description>
     </item>
     
     <item>
