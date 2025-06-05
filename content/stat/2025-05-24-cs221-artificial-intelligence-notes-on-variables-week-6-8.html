@@ -286,7 +286,7 @@ where <span class="math inline">\(Z = \sum_{x^\prime} \text{Weight}(x^\prime)\)<
 <td>sample a value</td>
 </tr>
 <tr class="odd">
-<td>coverges to local optimum</td>
+<td>converges to local optimum</td>
 <td>marginals converge to correct answer</td>
 </tr>
 </tbody>
@@ -325,12 +325,27 @@ Figure source: <a href="https://stanford-cs221.github.io/spring2025/">Stanford C
 </tbody>
 </table>
 <ul>
-<li>Let <span class="math inline">\(X = (X_1, \ldots, X_n)\)</span> be random variables.
+<li><p>Let <span class="math inline">\(X = (X_1, \ldots, X_n)\)</span> be random variables.
 A <strong>Bayesian network</strong> is a directed acyclic graph (DAG) that specifies a joint distribution over <span class="math inline">\(X\)</span> as a project of local conditional distributions, one for each node
 <span class="math display">\[
 \mathbb{P}(X_1 =x_1, \ldots, X_n = x_n) \stackrel{\text{def}}{=}
 \prod_{i=1}^n p\left(x_i \mid x_{\text{Parents}(i)} \right)
-\]</span></li>
+\]</span></p></li>
+<li><p>Reducing Bayesian networks to Markov networks</p>
+<ul>
+<li>Remember to have a single factor connecting each parent.</li>
+</ul></li>
+</ul>
+<img src="/figures/cs221/week7_reduction_to_markov_networks.png" alt="drawing" width="700" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6>
+Figure source: <a href="https://stanford-cs221.github.io/spring2025/">Stanford CS221 spring 2025</a>, lecture slides week 7
+</h6>
+<ul>
+<li>Leveraging additional structure
+<ul>
+<li>Throw away any unobserved leaves before running inference</li>
+<li>Throw away any disconnected components before running inference (independence)</li>
+</ul></li>
 </ul>
 <div id="hidden-markov-model" class="section level2">
 <h2>Hidden Markov Model</h2>
@@ -419,7 +434,7 @@ S_i(h_i) = F_i(h_i) B_i(h_i)
 <span class="math display">\[q(h) = \mathbb{P}(H=h \mid E=e, \theta)\]</span></li>
 <li>Create fully-observed weighted examples: <span class="math inline">\((h, e)\)</span> with weight <span class="math inline">\(q(h)\)</span></li>
 </ul></li>
-<li><strong>M-step</strong>: fix <span class="math inline">\(H\)</span>, update <span class="math inline">\(\theta\)</span>
+<li><strong>M step</strong>: fix <span class="math inline">\(H\)</span>, update <span class="math inline">\(\theta\)</span>
 <ul>
 <li>Maximum likelihood (count and normalize) on weighted examples to get <span class="math inline">\(\theta\)</span></li>
 </ul></li>

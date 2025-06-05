@@ -216,7 +216,7 @@ where $Z = \sum_{x^\prime} \text{Weight}(x^\prime)$ is the normalization constan
 |----------------------------|----------------|
 | maximum weight assignment  | marginal probabilities|
 | choose best value          | sample a value        |
-|coverges to local optimum   | marginals converge to correct answer |
+|converges to local optimum   | marginals converge to correct answer |
 
 # Bayesian Networks
 
@@ -237,6 +237,16 @@ A **Bayesian network** is a directed acyclic graph (DAG) that specifies a joint 
 \mathbb{P}(X_1 =x_1, \ldots, X_n = x_n) \stackrel{\text{def}}{=}
 \prod_{i=1}^n p\left(x_i \mid x_{\text{Parents}(i)} \right)
 \]
+
+* Reducing Bayesian networks to Markov networks
+    - Remember to have a single factor connecting each parent.
+
+<img src="/figures/cs221/week7_reduction_to_markov_networks.png" alt="drawing" width="700" style="display: block; margin-left: auto; margin-right: auto;"/>
+<h6> Figure source: [Stanford CS221 spring 2025](https://stanford-cs221.github.io/spring2025/), lecture slides week 7 </h6>
+
+* Leveraging additional structure
+    - Throw away any unobserved leaves before running inference
+    - Throw away any disconnected components before running inference (independence)
 
 ## Hidden Markov Model
 
@@ -313,7 +323,7 @@ S_i(h_i) = F_i(h_i) B_i(h_i)
         - For each $h$ compute
         \[q(h) = \mathbb{P}(H=h \mid E=e, \theta)\]
         - Create fully-observed weighted examples: $(h, e)$ with weight $q(h)$
-    - **M-step**: fix $H$, update $\theta$
+    - **M step**: fix $H$, update $\theta$
         - Maximum likelihood (count and normalize) on weighted examples to get $\theta$
 
 * Properties of the EM algorithm
