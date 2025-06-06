@@ -39,12 +39,13 @@ output:
 <ul>
 <li><a href="#hidden-markov-model" id="toc-hidden-markov-model">Hidden Markov Model</a>
 <ul>
-<li><a href="#forward-backward" id="toc-forward-backward">Forward Backward</a></li>
-<li><a href="#particle-filtering" id="toc-particle-filtering">Particle Filtering</a></li>
+<li><a href="#forward-backward-estimate-h" id="toc-forward-backward-estimate-h">Forward Backward: estimate <span class="math inline">\(H\)</span></a></li>
+<li><a href="#particle-filtering-estimate-h" id="toc-particle-filtering-estimate-h">Particle Filtering: estimate <span class="math inline">\(H\)</span></a></li>
 </ul></li>
-<li><a href="#smoothing" id="toc-smoothing">Smoothing</a></li>
-<li><a href="#expectation-maximization-em-algorithm" id="toc-expectation-maximization-em-algorithm">Expectation Maximization (EM) Algorithm</a>
+<li><a href="#parameter-estimation" id="toc-parameter-estimation">Parameter Estimation</a>
 <ul>
+<li><a href="#smoothing" id="toc-smoothing">Smoothing</a></li>
+<li><a href="#expectation-maximization-em-algorithm" id="toc-expectation-maximization-em-algorithm">Expectation Maximization (EM) Algorithm</a></li>
 <li><a href="#a-more-general-version-of-the-em-algorithm" id="toc-a-more-general-version-of-the-em-algorithm">A more general version of the EM algorithm</a></li>
 </ul></li>
 </ul></li>
@@ -52,13 +53,13 @@ output:
 </div>
 
 <ul>
-<li><p>Difference between state-based vs variable-based search problems: <strong>order</strong></p>
+<li><p>State-based vs variable-based search problems: <strong>order</strong></p>
 <ul>
 <li><p>There is usually an (obvious) order for state-based search problems, e.g., certain start and end points.</p></li>
 <li><p>For variable-based search problems:</p>
 <ul>
 <li>Ordering doesn’t affect correctness (e.g., map coloring problem), so we might dynamically choose a better ordering of the variables (e.g., lookahead).</li>
-<li>We might composed the problem because variables are interdependent in a local way.</li>
+<li>Variables are interdependent in a local way.</li>
 </ul></li>
 <li><p>Equivalent terminologies</p>
 <ul>
@@ -147,7 +148,7 @@ and each child node is an extension of the partial assignment.</li>
 </ul></li>
 </ul></li>
 <li><p>In the above algorithm, the <span style="color:blue"> blue </span> contents are the ones that can be optimized</p></li>
-<li><p><strong>One-step lookahead</strong>: forward checking: after assigning a variable <span class="math inline">\(X_i\)</span>, eliminate inconsistent values from the dominas of <span class="math inline">\(X_i\)</span>’s neighbors</p></li>
+<li><p><strong>One-step lookahead</strong>: forward checking. After assigning a variable <span class="math inline">\(X_i\)</span>, eliminate inconsistent values from the dominas of <span class="math inline">\(X_i\)</span>’s neighbors</p></li>
 </ul>
 </div>
 <div id="dynamic-ordering" class="section level3">
@@ -188,7 +189,7 @@ for all factors <span class="math inline">\(f\)</span> whose scope contains <spa
 <div id="beam-search" class="section level3">
 <h3>Beam search</h3>
 <ul>
-<li><strong>Greedy search</strong>: we assume we have a fixed ordering of the variables. Then in every step of assinging a value to a variable, greedy search is to use the assignment with the highest wegith.</li>
+<li><strong>Greedy search</strong>: we assume we have a fixed ordering of the variables. Then in every step of assigning a value to a variable, greedy search is to use the assignment with the highest weight</li>
 </ul>
 <img src="/figures/cs221/week6_greedy_search.png" alt="drawing" width="600" style="display: block; margin-left: auto; margin-right: auto;"/>
 <h6>
@@ -198,7 +199,7 @@ Figure source: <a href="https://stanford-cs221.github.io/spring2025/">Stanford C
 <li><strong>Beam search</strong>: keep track of (at most) <span class="math inline">\(K\)</span> best partial assignments at each level of the search tree
 <ul>
 <li>Note: these candidates are not guaranteed to be the <span class="math inline">\(K\)</span> best at each level</li>
-<li>Time complexity of beam search if <span class="math inline">\(O(nKb)\)</span>
+<li>Time complexity of beam search is <span class="math inline">\(O(nKb)\)</span>
 <ul>
 <li>Depth: number of variables <span class="math inline">\(n\)</span></li>
 <li>Branching factor <span class="math inline">\(b = |\text{Domain}_i|\)</span></li>
@@ -360,8 +361,8 @@ Figure source: <a href="https://stanford-cs221.github.io/spring2025/">Stanford C
 <h6>
 Figure source: <a href="https://stanford-cs221.github.io/spring2025/">Stanford CS221 spring 2025</a>, lecture slides week 7
 </h6>
-<div id="forward-backward" class="section level3">
-<h3>Forward Backward</h3>
+<div id="forward-backward-estimate-h" class="section level3">
+<h3>Forward Backward: estimate <span class="math inline">\(H\)</span></h3>
 <ul>
 <li>Lattice representation</li>
 </ul>
@@ -395,7 +396,7 @@ S_i(h_i) = F_i(h_i) B_i(h_i)
 <ul>
 <li>Compute <span class="math inline">\(F_1, F_2, \ldots, F_n\)</span></li>
 <li>Compute <span class="math inline">\(B_n, B_{n-1}, \ldots, B_1\)</span></li>
-<li>Compute <span class="math inline">\(S_i\)</span> for each $i and normalize
+<li>Compute <span class="math inline">\(S_i\)</span> for each <span class="math inline">\(i\)</span> and normalize
 <span class="math display">\[
   \mathbb{P}(H_i = h_i \mid E = e) = \frac{S_i(h_i)}{\sum_v S_i(v)}
   \]</span></li>
@@ -403,8 +404,8 @@ S_i(h_i) = F_i(h_i) B_i(h_i)
 <li><p>Time complexity of forward-backward: <span class="math inline">\(O(n |\text{Domain}|^2)\)</span></p></li>
 </ul>
 </div>
-<div id="particle-filtering" class="section level3">
-<h3>Particle Filtering</h3>
+<div id="particle-filtering-estimate-h" class="section level3">
+<h3>Particle Filtering: estimate <span class="math inline">\(H\)</span></h3>
 <ul>
 <li><p>Particle filtering is kind of like beam search for HMMs: keep <span class="math inline">\(\leq K\)</span> partial assignments (<strong>particles</strong>)</p></li>
 <li><p><strong>Particle filtering for HMMs</strong>: 3 steps</p>
@@ -416,14 +417,19 @@ S_i(h_i) = F_i(h_i) B_i(h_i)
 </ul>
 </div>
 </div>
-<div id="smoothing" class="section level2">
-<h2>Smoothing</h2>
+<div id="parameter-estimation" class="section level2">
+<h2>Parameter Estimation</h2>
+<div id="smoothing" class="section level3">
+<h3>Smoothing</h3>
 <ul>
-<li><strong>Laplace smoothing</strong>: for each distribution <span class="math inline">\(d\)</span> and partial assignment <span class="math inline">\((x_{\text{Parents}(i)}, x_i)\)</span>, add <span class="math inline">\(\lambda\)</span> to count<span class="math inline">\(_d(x_{\text{Parents}(i)}, x_i)\)</span></li>
+<li><strong>Laplace smoothing</strong>: for each distribution <span class="math inline">\(d\)</span> and partial assignment <span class="math inline">\((x_{\text{Parents}(i)}, x_i)\)</span>, add <span class="math inline">\(\lambda\)</span> to count<span class="math inline">\(_d(x_{\text{Parents}(i)}, x_i)\)</span>
+<ul>
+<li>This is like adding a Dirichlet prior</li>
+</ul></li>
 </ul>
 </div>
-<div id="expectation-maximization-em-algorithm" class="section level2">
-<h2>Expectation Maximization (EM) Algorithm</h2>
+<div id="expectation-maximization-em-algorithm" class="section level3">
+<h3>Expectation Maximization (EM) Algorithm</h3>
 <ul>
 <li>Initialize <span class="math inline">\(\theta\)</span> randomly</li>
 <li>Repeat until converge
@@ -450,6 +456,7 @@ S_i(h_i) = F_i(h_i) B_i(h_i)
 <li>EM algorithm converges to local optima</li>
 </ul></li>
 </ul>
+</div>
 <div id="a-more-general-version-of-the-em-algorithm" class="section level3">
 <h3>A more general version of the EM algorithm</h3>
 <ol style="list-style-type: decimal">
@@ -475,11 +482,11 @@ we compute the expected complete-data log likelihood under it.
 </ul></li>
 <li><p>Check for convergence of the log likelihood or the parameter values.
 If not converged, use <span class="math inline">\(\boldsymbol\theta^{\text{new}}\)</span> to replace <span class="math inline">\(\boldsymbol\theta^{\text{old}}\)</span>,
-and return to step 2.</p>
-<ul>
-<li>See my <a href="https://liyingbo.com/stat/2020/06/13/book-notes-pattern-recognition-and-machine-learning-ch9-mixture-models-and-em-algorithm/">EM algorithm notes</a> for more details</li>
-</ul></li>
+and return to step 2.</p></li>
 </ol>
+<blockquote>
+<p>See my <a href="https://liyingbo.com/stat/2020/06/13/book-notes-pattern-recognition-and-machine-learning-ch9-mixture-models-and-em-algorithm/">EM algorithm notes</a> for more details</p>
+</blockquote>
 </div>
 </div>
 </div>

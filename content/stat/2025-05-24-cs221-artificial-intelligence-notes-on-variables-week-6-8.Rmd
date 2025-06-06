@@ -39,13 +39,13 @@ red = function(x){col_text('red', x);}
 green = function(x){col_text('green', x);}
 ```
 
-* Difference between state-based vs variable-based search problems: **order**
+* State-based vs variable-based search problems: **order**
 
   * There is usually an (obvious) order for state-based search problems, e.g., certain start and end points. 
   
   * For variable-based search problems:
       - Ordering doesn't affect correctness (e.g., map coloring problem), so we might dynamically choose a better ordering of the variables (e.g., lookahead).
-      - We might composed the problem because variables are interdependent in a local way.
+      - Variables are interdependent in a local way.
       
   * Equivalent terminologies
       - Variable-based models $=$ graphical models
@@ -117,7 +117,7 @@ and each child node is an extension of the partial assignment.
 
 * In the above algorithm, the <span style="color:blue"> blue </span> contents are the ones that can be optimized
 
-* **One-step lookahead**: forward checking: after assigning a variable $X_i$, eliminate inconsistent values from the dominas of $X_i$'s neighbors
+* **One-step lookahead**: forward checking. After assigning a variable $X_i$, eliminate inconsistent values from the dominas of $X_i$'s neighbors
 
 
 ### Dynamic ordering
@@ -149,14 +149,14 @@ for all factors $f$ whose scope contains $X_i$ and $X_j$.
 
 ### Beam search
 
-* **Greedy search**: we assume we have a fixed ordering of the variables. Then in every step of assinging a value to a variable, greedy search is to use the assignment with the highest wegith.
+* **Greedy search**: we assume we have a fixed ordering of the variables. Then in every step of assigning a value to a variable, greedy search is to use the assignment with the highest weight
 
 <img src="/figures/cs221/week6_greedy_search.png" alt="drawing" width="600" style="display: block; margin-left: auto; margin-right: auto;"/>
 <h6> Figure source: [Stanford CS221 spring 2025](https://stanford-cs221.github.io/spring2025/), lecture slides week 6 </h6>
 
 * **Beam search**: keep track of (at most) $K$ best partial assignments at each level of the search tree
     - Note: these candidates are not guaranteed to be the $K$ best at each level
-    - Time complexity of beam search if $O(nKb)$
+    - Time complexity of beam search is $O(nKb)$
         - Depth: number of variables $n$ 
         - Branching factor $b = |\text{Domain}_i|$
         - Beam size $K$
@@ -257,7 +257,7 @@ A **Bayesian network** is a directed acyclic graph (DAG) that specifies a joint 
 <img src="/figures/cs221/week7_hmm.png" alt="drawing" width="400" style="display: block; margin-left: auto; margin-right: auto;"/>
 <h6> Figure source: [Stanford CS221 spring 2025](https://stanford-cs221.github.io/spring2025/), lecture slides week 7 </h6>
 
-### Forward Backward 
+### Forward Backward: estimate $H$
 
 * Lattice representation
 
@@ -293,7 +293,7 @@ S_i(h_i) = F_i(h_i) B_i(h_i)
 * **Forward-backward algorithm for HMMs**:
     - Compute $F_1, F_2, \ldots, F_n$
     - Compute $B_n, B_{n-1}, \ldots, B_1$
-    - Compute $S_i$ for each $i and normalize
+    - Compute $S_i$ for each $i$ and normalize
     \[
     \mathbb{P}(H_i = h_i \mid E = e) = \frac{S_i(h_i)}{\sum_v S_i(v)}
     \]
@@ -301,7 +301,7 @@ S_i(h_i) = F_i(h_i) B_i(h_i)
 * Time complexity of forward-backward: $O(n |\text{Domain}|^2)$
 
 
-### Particle Filtering
+### Particle Filtering: estimate $H$
 
 * Particle filtering is kind of like beam search for HMMs: keep $\leq K$ partial assignments (**particles**)
 
@@ -311,11 +311,14 @@ S_i(h_i) = F_i(h_i) B_i(h_i)
     3. **Resample**: Normalize weights and draw $K$ samples to redistribute particles to more promising areas. The resulting distribution is approximately $\mathbb{P}(H_1, \ldots, H_i \mid E_1, \ldots, E_i)$
 
 
-## Smoothing
+## Parameter Estimation
+
+### Smoothing
 
 * **Laplace smoothing**: for each distribution $d$ and partial assignment $(x_{\text{Parents}(i)}, x_i)$, add $\lambda$ to count$_d(x_{\text{Parents}(i)}, x_i)$
+    - This is like adding a Dirichlet prior
 
-## Expectation Maximization (EM) Algorithm
+### Expectation Maximization (EM) Algorithm
 
 - Initialize $\theta$ randomly
 - Repeat until converge
@@ -360,4 +363,4 @@ we compute the expected complete-data log likelihood under it.
 If not converged, use $\boldsymbol\theta^{\text{new}}$ to replace $\boldsymbol\theta^{\text{old}}$,
 and return to step 2.
 
-    - See my [EM algorithm notes](https://liyingbo.com/stat/2020/06/13/book-notes-pattern-recognition-and-machine-learning-ch9-mixture-models-and-em-algorithm/) for more details
+> See my [EM algorithm notes](https://liyingbo.com/stat/2020/06/13/book-notes-pattern-recognition-and-machine-learning-ch9-mixture-models-and-em-algorithm/) for more details
