@@ -44,9 +44,9 @@ output:
 
 ## Models
 
--   **model** $w$: an **assignment** of values to propositional symbols
+-   **Model** $w$: an **assignment** of values to propositional symbols
 
--   **interpretation function**: for a formula $f$ and a model $w$, $$
+-   **Interpretation function**: for a formula $f$ and a model $w$, $$
     \mathcal{I}(f, w) = \mathbf{1}\{w \text{ satisfies } f\}
     $$
 
@@ -72,7 +72,7 @@ output:
 | Contingency   |              | $\emptyset \subsetneq \mathcal{M}(\text{KB}) \cap \mathcal{M}(f) \subsetneq \mathcal{M}(\text{KB})$ | Learned something new. |
 | Inference     |              |                                                                                                     |                        |
 
--   KB contradict with $f$ $\Longleftrightarrow$ KB entails $\neg f$
+-   KB contradicts with $f$ $\Longleftrightarrow$ KB entails $\neg f$
 
 -   **Probabilistic interpretation** $$
     \mathbb{P}(f \mid \text{KB}) = \frac{\sum_{w \in \mathcal{M}(\text{KB} \cup \{f\})}\mathbb{P}(W = w)}{\sum_{w \in \mathcal{M}(\text{KB})}\mathbb{P}(W = w)}

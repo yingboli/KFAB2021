@@ -74,7 +74,7 @@ f_1, \ldots, f_m, \text{ where } f_j(X) \geq 0
     - Factors measure how good an assignment is. We prefer $X$ that can achieve higher value of $f_j$.
     - If $f_j(X) = 0 \text{ or } 1$,  it describes a constraint. 
         - For example, a factor for force $X_1$ and $X_2$ to be equal can be written as $\mathbf{1}[X_1 = X_2]$.
-    - Scope of a factor: set up variables it depends on.
+    - Scope of a factor: set of variables it depends on.
     - Arity of a factor: number of variables in the scope
         - Unary factor: arity 1
         - Binary factor: arity 2
@@ -178,7 +178,7 @@ for all factors $f$ whose scope contains $X_i$ and $X_j$.
 * **Iterated conditional modes (ICM)** algorithm
     - Initialize $x$ to a random complete assignment
     - Loop through $i = 1, \ldots, n$ until convergence:
-        - Compute weight of $x_v = x\cup \{X_i, v\}$ for each $v$
+        - Compute weight of $x_v = x\cup \{X_i: v\}$ for each $v$
         - $x \leftarrow x_v$ with highest weights
         
 * ICM can stuck at local optima

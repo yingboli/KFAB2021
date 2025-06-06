@@ -93,7 +93,7 @@ f_1, \ldots, f_m, \text{ where } f_j(X) \geq 0
 <ul>
 <li>For example, a factor for force <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> to be equal can be written as <span class="math inline">\(\mathbf{1}[X_1 = X_2]\)</span>.</li>
 </ul></li>
-<li>Scope of a factor: set up variables it depends on.</li>
+<li>Scope of a factor: set of variables it depends on.</li>
 <li>Arity of a factor: number of variables in the scope
 <ul>
 <li>Unary factor: arity 1</li>
@@ -227,7 +227,7 @@ Figure source: <a href="https://stanford-cs221.github.io/spring2025/">Stanford C
 <li>Initialize <span class="math inline">\(x\)</span> to a random complete assignment</li>
 <li>Loop through <span class="math inline">\(i = 1, \ldots, n\)</span> until convergence:
 <ul>
-<li>Compute weight of <span class="math inline">\(x_v = x\cup \{X_i, v\}\)</span> for each <span class="math inline">\(v\)</span></li>
+<li>Compute weight of <span class="math inline">\(x_v = x\cup \{X_i: v\}\)</span> for each <span class="math inline">\(v\)</span></li>
 <li><span class="math inline">\(x \leftarrow x_v\)</span> with highest weights</li>
 </ul></li>
 </ul></li>
