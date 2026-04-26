@@ -1,0 +1,357 @@
+---
+title: 'Tabular Deep Learning - Benchmarks '
+author: Yingbo Li
+date: '2026-04-25'
+slug: tabular-deep-learning-benchmarks
+categories:
+  - Deep Learning
+tags:
+  - Tabular Deep Learning
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 3
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#datasets" id="toc-datasets">Datasets</a></li>
+<li><a href="#models" id="toc-models">Models</a>
+<ul>
+<li><a href="#overview-of-top-ranking-models" id="toc-overview-of-top-ranking-models">Overview of top ranking models</a></li>
+<li><a href="#details-of-model-comparison-results-from-the-papers" id="toc-details-of-model-comparison-results-from-the-papers">Details of model comparison results from the papers</a></li>
+</ul></li>
+<li><a href="#when-does-gbdt-outperform-dnn" id="toc-when-does-gbdt-outperform-dnn">When does GBDT outperform DNN</a>
+<ul>
+<li><a href="#large-sample-size" id="toc-large-sample-size">Large sample size</a></li>
+<li><a href="#feature-redundancy" id="toc-feature-redundancy">Feature redundancy</a></li>
+<li><a href="#feature-heterogeneity-and-irregularity" id="toc-feature-heterogeneity-and-irregularity">Feature heterogeneity and irregularity</a></li>
+<li><a href="#regression-and-binary-classification-tasks" id="toc-regression-and-binary-classification-tasks">Regression and binary classification tasks</a></li>
+<li><a href="#non-smooth-target-functions" id="toc-non-smooth-target-functions">Non-smooth target functions</a></li>
+<li><a href="#other-factors" id="toc-other-factors">Other factors</a></li>
+</ul></li>
+<li><a href="#insights-and-learnings" id="toc-insights-and-learnings">Insights and Learnings</a></li>
+<li><a href="#references" id="toc-references">References</a></li>
+</ul>
+</div>
+
+<p>It has almost been a decade since the invention of modern implementations of Gradient Boosted Decision Trees (GBDT), such as XGBoost [<a href="https://dl.acm.org/doi/pdf/10.1145/2939672.2939785">Chen and Guestrin 2016</a>], LightGBM [<a href="https://proceedings.neurips.cc/paper/2017/file/6449f44a102fde848669bdd9eb6b76fa-Paper.pdf">Ke et al 2017</a>], and CatBoost [<a href="https://proceedings.neurips.cc/paper/2018/file/14491b756b3a51daac41c24863285549-Paper.pdf">Prokhorenkova et al 2018</a>]. Over the years, these GBDTs have become the industry standard machine learning methods for predictive modeling tasks (classification and regression), thanks to their superior predictive accuracy and computational efficiency. On the other hand, with the rapid development of deep learning techniques, many attempts have been made to create novel Tabular Deep Learning (TDL) methods that can yield comparable performance with GBDT or even outperform them. In addition, there are also multiple empirical works that propose new benchmarks to horserace deep neural network (DNN) methods against GBDT, with growing number of datasets and extensive analysis on which methods perform well on which types of data.</p>
+<p>In this post, I will give a high-level overview of several benchmark papers (disclaimer: by no means this aims to be a complete survey), mainly including <a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/0378c7692da36807bdec87ab043cdadc-Paper-Datasets_and_Benchmarks.pdf">Grinsztajn et al 2022</a>, <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/f06d5ebd4ff40b40dd97e30cee632123-Paper-Datasets_and_Benchmarks.pdf">McElfresh et al 2023</a>, TabReD [<a href="https://openreview.net/pdf?id=L14sqcrUC3">Rubachev et al 2025</a>], and TALENT [<a href="https://arxiv.org/pdf/2407.00956">Ye et al 2025</a>]. I will mainly focus on</p>
+<ol style="list-style-type: decimal">
+<li>What types of datasets are in the benchmarks?</li>
+<li>What DNN and/or GBDT models rank the top?</li>
+<li>What properties of the data may impact the “DNN vs GBDT” comparison?</li>
+<li>What insights can we get to make the models better?</li>
+</ol>
+<p>Note that like GBDTs, TDL models are created for traditional tabular data rather than sequential tabular data. For the former, conditional independence (exchangeability) applies, while for the latter, multiple events are associated with the same individual and usually happen in a temporal order.</p>
+<div id="datasets" class="section level2">
+<h2>Datasets</h2>
+<p><em>The more the merrier, but diversity and quality matter.</em></p>
+<table>
+<colgroup>
+<col width="5%" />
+<col width="23%" />
+<col width="23%" />
+<col width="23%" />
+<col width="23%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/0378c7692da36807bdec87ab043cdadc-Paper-Datasets_and_Benchmarks.pdf">Grinsztajn et al 2022</a></th>
+<th><a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/f06d5ebd4ff40b40dd97e30cee632123-Paper-Datasets_and_Benchmarks.pdf">McElfresh et al 2023</a></th>
+<th>TabReD [<a href="https://openreview.net/pdf?id=L14sqcrUC3">Rubachev et al 2025</a>]</th>
+<th>TALENT [<a href="https://arxiv.org/pdf/2407.00956">Ye et al 2025</a>]</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td># Datasets</td>
+<td>45</td>
+<td>176</td>
+<td>8</td>
+<td>300</td>
+</tr>
+<tr class="even">
+<td>Sources#</td>
+<td>OpenML</td>
+<td>OpenML</td>
+<td>Kaggle, and a new private industry data source</td>
+<td>UCI Machine Learning Repository, Kaggle, and OpenML</td>
+</tr>
+<tr class="odd">
+<td>Highlights</td>
+<td></td>
+<td>A wide range of sample sizes: from 32 to 1 million.</td>
+<td>Real industry standard data, with <span class="math inline">\(n_\text{sample}\)</span> on the million scale, and median <span class="math inline">\(n_\text{feature}\)</span> more than 200. <br />Has timestamps to split data along, and the data may experience gradual temporal shift.<br />Includes engineered features so the data have higher collinearity and redundancy.</td>
+<td>120 binary classification datasets,<br />80 multi-class classification datasets, and<br />100 regression datasets.</td>
+</tr>
+<tr class="even">
+<td>Limitations</td>
+<td><span class="math inline">\(n_\text{feature} / n_\text{sample} &lt; 0.1\)</span> <br />Focus on medium-sized data: <span class="math inline">\(n_\text{sample} &lt; 10,000\)</span></td>
+<td>All classification data</td>
+<td>Only 8 datasets, hard to conclude statistical significance</td>
+<td>Most <span class="math inline">\(n_\text{sample}\)</span> are on the <span class="math inline">\(10^4\)</span> and <span class="math inline">\(10^5\)</span> scale, with only several datasets more than <span class="math inline">\(10^6\)</span><br />Most <span class="math inline">\(n_\text{feature}\)</span> are small, with only about about 2 dozens exceeding 100</td>
+</tr>
+<tr class="odd">
+<td>Mini-benchmarks</td>
+<td></td>
+<td>TabZilla: 36 hardest datasets</td>
+<td></td>
+<td>Two mini-benchmarks, 45 datasets each: <br />(1) Tree-friendly vs DNN-friendly<br />(2) Rank consistent</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p>Note that a lot of <a href="https://www.openml.org/">OpenML</a> datasets are originally from <a href="https://archive.ics.uci.edu/">UCI Machine Learning repository</a> or <a href="https://www.kaggle.com/datasets">Kaggle</a>.</p></li>
+<li><p>Since TabReD may be relevant and helpful for data scientists working in the industry like myself, I attach the dataset overview of it here. Source: the TabReD paper [<a href="https://openreview.net/pdf?id=L14sqcrUC3">Rubachev et al 2025</a>].</p>
+<p><img src="/figures/tabular_deep_learning/Rubachev_etal_2025_table2.png" alt="drawing" width="1200" style="display: block; margin-left: auto; margin-right: auto;"/></p></li>
+</ul>
+</div>
+<div id="models" class="section level2">
+<h2>Models</h2>
+<p><em>The more the merrier, again, but implementation and optimization matter.</em></p>
+<table>
+<colgroup>
+<col width="12%" />
+<col width="21%" />
+<col width="21%" />
+<col width="21%" />
+<col width="21%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/0378c7692da36807bdec87ab043cdadc-Paper-Datasets_and_Benchmarks.pdf">Grinsztajn et al 2022</a></th>
+<th><a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/f06d5ebd4ff40b40dd97e30cee632123-Paper-Datasets_and_Benchmarks.pdf">McElfresh et al 2023</a></th>
+<th>TabReD [<a href="https://openreview.net/pdf?id=L14sqcrUC3">Rubachev et al 2025</a>]</th>
+<th>TALENT [<a href="https://arxiv.org/pdf/2407.00956">Ye et al 2025</a>]</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td># models</td>
+<td>7</td>
+<td>19</td>
+<td>18</td>
+<td>32</td>
+</tr>
+<tr class="even">
+<td>Top ranking models</td>
+<td>XGBoost</td>
+<td>CatBoost</td>
+<td>MLP-PLR ensemble</td>
+<td>CatBoost</td>
+</tr>
+<tr class="odd">
+<td>Top ranking DNN models</td>
+<td>FT-Transformer, SAINT</td>
+<td>TabPFNv1</td>
+<td>MLP-PLR ensemble</td>
+<td>TabR, ModernNCA, RealMLP,</td>
+</tr>
+<tr class="even">
+<td>Top ranking GBDT models</td>
+<td>XGBoost</td>
+<td>CatBoost</td>
+<td>XGBoost</td>
+<td>Catboost</td>
+</tr>
+<tr class="odd">
+<td>Objective function: classification</td>
+<td>Accuracy</td>
+<td>Accuracy</td>
+<td>Cross entropy</td>
+<td>Accuracy</td>
+</tr>
+<tr class="even">
+<td>Objective function: regression</td>
+<td><span class="math inline">\(R^2\)</span></td>
+<td>No regression data in this benchmark</td>
+<td>MSE</td>
+<td>RMSE</td>
+</tr>
+<tr class="odd">
+<td>Hyperparameter tuning</td>
+<td>Random search, 400 trials</td>
+<td>Random search, 30 trials</td>
+<td>Optuna</td>
+<td>Optuna, 100 trials</td>
+</tr>
+<tr class="even">
+<td>Limitation</td>
+<td>Categorical features are only handled by one-hot encoding (but not embedding) for all models</td>
+<td>For large datasets, TabPFN(v1) is run on a random sample of 3000 data points.<br />Due to computation budget constraints, main results are based on 98 (likely smaller or easier) datasets.</td>
+<td>Comparisons are based on random large subsamples of the data</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Notes</td>
+<td>Numerical features are Gaussianized for DNN</td>
+<td></td>
+<td>Train-valid-test split is along a temporal variable, thus it’s harder than random split</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<div id="overview-of-top-ranking-models" class="section level3">
+<h3>Overview of top ranking models</h3>
+<p>Before introducing the promising models, I want to emphasize that there exists huge variation across datasets. Although some GBDT and DNN models consistently perform well on a lot of datasets, there is <strong>no single model dominating all datasets</strong>. In <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/f06d5ebd4ff40b40dd97e30cee632123-Paper-Datasets_and_Benchmarks.pdf">McElfresh et al 2023</a>, almost every one of the 19 benchmarked models rank the best on some datasets, and rank at the bottom on some other datasets. For the TALENT benchmark, even simple linear models, such as logistic regression, perform the best on 5% of the binary classification datasets.</p>
+<p>In the following part, I will briefly cover the performance of each type of models. Here, I subcategorize the DNN models mostly following the categorization of the TALENT benchmark paper [<a href="https://arxiv.org/pdf/2407.00956">Ye et al 2025</a>].</p>
+<div id="gbdt-xgboost-lightgbm-and-catboost-are-equally-the-best" class="section level4">
+<h4>GBDT: XGBoost, LightGBM, and CatBoost are equally the best</h4>
+<p>A first consistent trend is that these three GBDT models remain to be among <strong>the best</strong>. Among these three, some benchmark works find Catboost the best, while some find XGBoost the best. Wilcoxon-Holm tests in the TALENT benchmark paper suggest that there is no significant difference among the three.</p>
+<p>One interesting observation from the TabReD benchmark is that when changing the train-valid-test data split method from random split to splitting along a temporal variable, the advantage of GBDT over DNN models becomes smaller.</p>
+</div>
+<div id="mlp-variants-realmlp-is-better-than-vanilla-mlp-and-resnet" class="section level4">
+<h4>MLP variants: RealMLP is better than vanilla MLP and ResNet</h4>
+<p>In the benchmark papers, the MLP and ResNet models follow the same architecture as in <a href="https://proceedings.neurips.cc/paper_files/paper/2021/file/9d86d83f925f2149e9edb0ac3b49229c-Paper.pdf">Gorishniy et al 2021</a>:</p>
+<ul>
+<li>MLP: fully connected neural network, with ReLU activation and dropout</li>
+<li>ResNet: the above MLP, plus batch norm and residual connection every two layers</li>
+</ul>
+<p><a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/9e9f0ffc3d836836ca96cbf8fe14b105-Paper-Conference.pdf">Gorishniy et al 2022</a> proposes methods to embed continuous features which can improve MLP models’ performance. This is confirmed by the TabReD and TALENT benchmarks, i.e., MLP-PLR outperforms MLP.</p>
+<p>The best performing MLP variants is RealMLP [<a href="https://proceedings.neurips.cc/paper_files/paper/2024/file/2ee1c87245956e3eaa71aaba5f5753eb-Paper-Conference.pdf">Holzmüller et al 2024</a>], which optimizes MLP performance with a lot of design choices, including the above mentioned continuous feature embeddings. It is among the top ranking models in both the TALENT benchmark and another new benchmark called TabArena [<a href="https://arxiv.org/pdf/2506.16791">Erickson et al 2025</a>]. In fact, Wilcoxon-Holm tests in the TALENT benchmark finds that the improvement of RealMLP over MLP and ResNet is statistically significant.</p>
+</div>
+<div id="retrieval-based-neighborhood-based-dnn-tabr-and-modernnca" class="section level4">
+<h4>Retrieval-based (Neighborhood-based) DNN: TabR and ModernNCA</h4>
+<p>Retrieval-based DNN models use KNN to learn local structures. The best ones are TabR [<a href="https://openreview.net/pdf?id=rhgIgTSSxW">Gorishniy et al 2024</a>] and ModernNCA [<a href="https://arxiv.org/abs/2407.03257">Ye et al 2025</a>]. They are among the top ranking DNN models in both the TALENT and TabArena benchmarks. Moreover, Wilcoxon-Holm tests in the TALENT benchmark find no significant difference among the three GBDTs and ModernNCA.</p>
+<p>On the large and messy datasets in the TabReD benchmark, both TabR and ModernNCA lose their edge and are beaten by all three GBDTs, MLP-PLR, and even MLP. Possible reasons may be that industry standard datasets’ complex feature multicolinearity and redundancy make it harder to find good neighborhood, and also the retrieval-based approaches can be less robust to the temporal shift in the data.</p>
+</div>
+<div id="ensemble-dnn-tabm" class="section level4">
+<h4>Ensemble DNN: TabM</h4>
+<p>Based on MLP architecture, TabM [<a href="https://openreview.net/pdf?id=Sd4wYYOhmY">Gorishniy et al 2025</a>] introduces parameter-efficient ensemble, where the underlying MLPs share a lot of parameters. Thus, by ensembling a lot of these potentially weaker learners, TabM achieves top performance, comparable with RealMLP, as shown in the more recent benchmark works TabArena and <a href="https://arxiv.org/pdf/2402.03970">Zabërgja et al 2025</a>.</p>
+</div>
+<div id="token-based-transformer-based-dnn-not-so-promising-compared-with-mlp" class="section level4">
+<h4>Token-based (Transformer-based) DNN: not so promising compared with MLP</h4>
+<p>Many transformer-based DNN models are benchmarked, with the most promising one being FT-Transformer [<a href="https://proceedings.neurips.cc/paper_files/paper/2021/file/9d86d83f925f2149e9edb0ac3b49229c-Paper.pdf">Gorishniy et al 2021</a>]. However, Wilcoxon-Holm tests in the TALENT benchmark find no significant difference among most token based methods.</p>
+<p>I feel like that a recent trend in TDL is to turn away from transformer-based models to embrace MLP-based models again. In fact, there is no transformer-based models (except the PFNs, which use the transformer architecture, but are foundation models that are pre-trained on synthetic data) ranks within top 3, in any of the more recent benchmarks, TabReD, TALENT, and TabArena. In <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/f06d5ebd4ff40b40dd97e30cee632123-Paper-Datasets_and_Benchmarks.pdf">McElfresh et al 2023</a>, token-based models are outperformed by ResNet. Also, <a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/0378c7692da36807bdec87ab043cdadc-Paper-Datasets_and_Benchmarks.pdf">Grinsztajn et al 2022</a> finds that transformer based methods tend to perform better on smaller data, whose sample size is smaller than <span class="math inline">\(10,000\)</span>.</p>
+</div>
+<div id="tabular-foundation-models-pfns-are-the-best-with-small-data" class="section level4">
+<h4>Tabular foundation models: PFNs are the best with small data</h4>
+<p>I personally think it may make more sense to list the Prior-Fitted Networks (PFNs) separate from the above token-based DNNs. PFNs are foundation models pre-trained on synthetic data. Using the few-shot learning ideas in large language models, when given a new training and test data pair, the attention mechanism in PFNs enables them to learn the training data’ information during the scoring time, and apply them to make prediction in the test data. Thus, they achieve very fast training speed (no parameter learning or fine-tuning needed, just model scoring). As a Bayesian statistician, I still need more time to understand PFNs, since they seem so mysterious but surprisingly powerful on small datasets.</p>
+<p>PFNs are the top ranking models, but just with small datasets so far. In <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/f06d5ebd4ff40b40dd97e30cee632123-Paper-Datasets_and_Benchmarks.pdf">McElfresh et al 2023</a>, TabPFNv1 [<a href="https://arxiv.org/pdf/2207.01848">Hollmann et al</a>] is the best among DNN models. On small datasets (sample size less than 3000), it enjoys fast training time, comparable to linear model and KNN. But its inference time is not so fast compared to all other models. In the recent benchmark TabArena, TabPFNv2 [<a href="https://www.nature.com/articles/s41586-024-08328-6.pdf">Hollmann et al. 2025</a>] ranks the best model among datasets with sample size up to <span class="math inline">\(10,000\)</span> and TabICL [<a href="https://arxiv.org/abs/2502.05564">Qu et al 2025</a>] ranks the third best among datasets with sample size up to <span class="math inline">\(100,000\)</span>, only losing to TabM and RealMLP.</p>
+</div>
+</div>
+<div id="details-of-model-comparison-results-from-the-papers" class="section level3">
+<h3>Details of model comparison results from the papers</h3>
+<ul>
+<li><p>From <a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/0378c7692da36807bdec87ab043cdadc-Paper-Datasets_and_Benchmarks.pdf">Grinsztajn et al 2022</a></p>
+<p><img src="/figures/tabular_deep_learning/Grinsztajn_etal_2022_fig1.png" alt="drawing" width="700" style="display: block; margin-left: auto; margin-right: auto;"/></p></li>
+<li><p>From <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/f06d5ebd4ff40b40dd97e30cee632123-Paper-Datasets_and_Benchmarks.pdf">McElfresh et al 2023</a>: there is no single model dominates, suggesting huge variation across datasets.</p>
+<p><img src="/figures/tabular_deep_learning/McElfresh_etal_2023_table1.png" alt="drawing" width="700" style="display: block; margin-left: auto; margin-right: auto;"/></p></li>
+<li><p>From the TabReD paper [<a href="https://openreview.net/pdf?id=L14sqcrUC3">Rubachev et al 2025</a>]: for industry standard data (large and messy), the three GBDT models plus ensembles MLP-PLR are the best.</p>
+<p><img src="/figures/tabular_deep_learning/Rubachev_etal_2025_table3.png" alt="drawing" width="700" style="display: block; margin-left: auto; margin-right: auto;"/></p></li>
+<li><p>From the TALENT benchmark paper [<a href="https://arxiv.org/pdf/2407.00956">Ye et al 2025</a>]</p></li>
+</ul>
+<p><img src="/figures/tabular_deep_learning/Ye_etal_2025_fig1.png" alt="drawing" width="700" style="display: block; margin-left: auto; margin-right: auto;"/></p>
+<ul>
+<li><p>From TabArena paper [<a href="https://arxiv.org/pdf/2506.16791">Erickson et al 2025</a>]</p>
+<p><img src="/figures/tabular_deep_learning/Erickson_etal_2025_fig1.png" alt="drawing" width="700" style="display: block; margin-left: auto; margin-right: auto;"/></p></li>
+</ul>
+</div>
+</div>
+<div id="when-does-gbdt-outperform-dnn" class="section level2">
+<h2>When does GBDT outperform DNN</h2>
+<div id="large-sample-size" class="section level3">
+<h3>Large sample size</h3>
+<p><a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/f06d5ebd4ff40b40dd97e30cee632123-Paper-Datasets_and_Benchmarks.pdf">McElfresh et al 2023</a> computes correlation between datasets’ meta-features and normalized log loss, and finds that the most highly correlated meta-feature for XGBoost and LightGBM is the log sample size. In other words, the higher the sample size, the better XGBoost and LightGBM performs. In addition, the log sample size has the highest correlation with the performance gap between best GBDT vs best DNN.</p>
+<p><a href="https://arxiv.org/pdf/2407.00956">Ye et al 2025</a> finds that Catboost consistently outperform neural network method on large data, whose <span class="math inline">\(n_\text{samples} &gt; 10^4\)</span> (Well, not so large, right? 😅). TabR also performs well on large data, but not MLP or FT-Transformer.</p>
+</div>
+<div id="feature-redundancy" class="section level3">
+<h3>Feature redundancy</h3>
+<p>Since GBDT models select which features to split along, it can be less vulnerable to feature redundancy. In contrast, DNN models seem to suffer more in the presence of redundant features.</p>
+<p><a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/0378c7692da36807bdec87ab043cdadc-Paper-Datasets_and_Benchmarks.pdf">Grinsztajn et al 2022</a> finds that after removing uninformative features based on random forest’s feature importance, the performance gap between GBDT and DNN models decreases as more features are removed. <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/f06d5ebd4ff40b40dd97e30cee632123-Paper-Datasets_and_Benchmarks.pdf">McElfresh et al 2023</a> finds the ratio <span class="math inline">\(n_\text{sample} / n_\text{feature}\)</span> is the 2nd highest correlated meta-feature with GBDT vs DNN performance gap. Since <span class="math inline">\(n_\text{feature}\)</span> also includes redundant features, this finding also backs up the hypothesis that redundant features hurt DNN performance more. In the benchmark TabReD, where datasets are large and messy, and thus have more complex correlation and redundancy, all DNN models (except MLP-PLR ensembles) lose to GBDT models.</p>
+<p>This suggests that feature screening as a pre-processing step and feature selection during the training could be an essential step to improve DNN performance. Of course, GBDT models usually also benefit from careful features screening and selection.</p>
+</div>
+<div id="feature-heterogeneity-and-irregularity" class="section level3">
+<h3>Feature heterogeneity and irregularity</h3>
+<p>GBDT models are found to perform better on datasets with higher variance of skewness, sparsity, entropy, and IQR, among all the features. More specifically, <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/f06d5ebd4ff40b40dd97e30cee632123-Paper-Datasets_and_Benchmarks.pdf">McElfresh et al 2023</a> finds that GBDT outperforms DNN more often with higher</p>
+<ul>
+<li>Max skewness of all features,</li>
+<li>Range of skewness of all features,</li>
+<li>Standard deviation of feature skewness, and</li>
+<li>Standard deviation of feature kurtosis.</li>
+</ul>
+<p><a href="https://arxiv.org/pdf/2407.00956">Ye et al 2025</a> finds that GBDT ranks better than DNN as the following meta-features increases:</p>
+<ul>
+<li><p>Standard deviation of sparsity. Here, the sparsity for a feature vector <span class="math inline">\(v\)</span> that has <span class="math inline">\(\phi(v)\)</span> unique values is defined as
+<span class="math display">\[
+S(v) = \frac{1}{n-1}\left(\frac{n}{\phi(v)}-1 \right)= \frac{1}{\phi(v)}\frac{n - \phi(v)}{n-1},
+\]</span>
+where <span class="math inline">\(n\)</span> is the sample size</p></li>
+<li><p>Standard deviation of entropy, where the entropy of a feature is defined as
+<span class="math display">\[
+H(v) = -\sum_k p_k \cdot \log (p_k)
+\]</span>
+Here, <span class="math inline">\(p_k\)</span> is the proportion of the <span class="math inline">\(k\)</span>-th unique value.</p></li>
+<li><p>Standard deviation of interquartile range (IQR).</p></li>
+</ul>
+</div>
+<div id="regression-and-binary-classification-tasks" class="section level3">
+<h3>Regression and binary classification tasks</h3>
+<p>The TALENT benchmark [<a href="https://arxiv.org/pdf/2407.00956">Ye et al 2025</a>] compares models in three separate types of predictive modeling tasks: binary classification, multi-class classification, and regression, and finds that DNN models outperform GBDT for multi-class classification, but not for binary classification or regression.</p>
+<p>My guess is that the L2 loss used for regression tasks may not be the most suitable for some continuous targets dataset, since the target may be heavily skewed, so that they may need log transformation or Tweedie regression instead of normal regression. Tree based models might be more robust against misspecification of loss function than DNN models.</p>
+<p>On the other hand, for multi-class classification tasks, some GBDT models such as XGBoost and LightGBM usually fit separate trees, one for each class, while in MLP methods, different classes share the same network architecture until the very last layer. Maybe the efficient parameter sharing contributes to DNN models’ better performance in multi-class classifications.</p>
+</div>
+<div id="non-smooth-target-functions" class="section level3">
+<h3>Non-smooth target functions</h3>
+<p>Since DNN methods tend to give smoother solutions than GBDT, <a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/0378c7692da36807bdec87ab043cdadc-Paper-Datasets_and_Benchmarks.pdf">Grinsztajn et al 2022</a> performs an experiment to smooth the target function though a Gaussian Kernel smoother, and finds that as the solution becomes smoother, the performance gap between GBDT and DNN becomes smaller, and eventually FT-Transformer outperforms GBDT.</p>
+</div>
+<div id="other-factors" class="section level3">
+<h3>Other factors</h3>
+<div id="rotation-invariance" class="section level4">
+<h4>Rotation invariance</h4>
+<p><a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/0378c7692da36807bdec87ab043cdadc-Paper-Datasets_and_Benchmarks.pdf">Grinsztajn et al 2022</a> comments on the rotation invariance, i.e., invariance after the features being multiplied by an orthogonal matrix. MLP-based models are rotation invariant, but the data are usually not. Therefore, this might be a reason why MLP loses to non rotation invariant models such as GBDT and token-based models.</p>
+</div>
+<div id="accuracy-metrics" class="section level4">
+<h4>Accuracy metrics</h4>
+<p><a href="https://arxiv.org/pdf/2407.00956">Ye et al 2025</a> finds that with imbalanced data, the choice of evaluation metrics matters to the ranking of models. More specifically, AUC favors GBDTs and TabPFN, while F1-score favors RealMLP.</p>
+</div>
+</div>
+</div>
+<div id="insights-and-learnings" class="section level2">
+<h2>Insights and Learnings</h2>
+<p>When I discussed these benchmark papers with my mentor and data science colleagues, the first question they asked was “whether the GBDT models were treated fairly to optimize their performance”? I have to admit that this is a very reasonable doubt since the benchmark papers were mostly written by researchers who develop new DNN models. Of course, their unspoken (or maybe explicit, anyway) hope is for DNN model to beat GBDT models, or at least, to identify which DNN models can. On the other hand, the GBDT models are improving over the decade since they were created, just to name a few recent innovations:</p>
+<ul>
+<li>Both XGBoost and LightGBM use histogram binning as a feature pre-processing to accelerate tree split search speed.</li>
+<li>LightGBM uses optimal partition to handle categorical features more efficiently, so that one-hot encoding is no longer needed. XGBoost can do this, too, but it is not the default setting so users need to turn it on.</li>
+<li>LightGBM has Cost Efficient Gradient Boosting (CEGB), which penalize a feature when it first appears in a tree. This is a very interesting feature selection mechanism and definitely worthy trying.</li>
+<li>I’m not that familiar with CatBoost, but I think the focus on oblivious tree, where each layer of a tree split on the same feature at the same cut point is quite cool and powerful to prevent over-fitting.</li>
+</ul>
+<p>With that being said, these benchmark papers serve as great introduction materials for one to quickly get a solid grasp on the TDL literature and to identify promising models to dig further,</p>
+<center>
+RealMLP, TabM, TabR, ModernNCA, TabPFN, TabICL
+</center>
+<p>In addition, some of the insights in the papers can be valuable to improve both DNN models and GBDTs.</p>
+<ul>
+<li>As feature redundancy in the data is a real problem, I think feature screening and feature selection can be very important.</li>
+<li>Hyperparameter tuning is important. As emphasized in <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/f06d5ebd4ff40b40dd97e30cee632123-Paper-Datasets_and_Benchmarks.pdf">McElfresh et al 2023</a>, “light hyperparameter tuning on CatBoost or ResNet increases performance more than choosing among GBDTs and NNs.”. I think rather than random search, using some Bayesian optimization algorithm, such as TPE (the default sampler of Optuna) would be better.</li>
+<li>Data pre-processing can be essential. For continuous features, both DNN and GBDT may be beneficial from feature binning, feature transformation (to be less skewed), or embeddings in <a href="https://openreview.net/pdf?id=pfI7u0eJAIr">Gorishniy et al 2022</a>. For categorical features with high cardinality, rather than learned embedding, random effects may be worth trying [<a href="https://www.jmlr.org/papers/volume24/22-0501/22-0501.pdf">Simchoni and Rosset 2023</a>].</li>
+</ul>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<ul>
+<li><p>Chen and Guestrin. <a href="https://dl.acm.org/doi/pdf/10.1145/2939672.2939785">“Xgboost: A scalable tree boosting system.”</a> SIGKDD, 2016</p></li>
+<li><p>Ke et al. <a href="https://proceedings.neurips.cc/paper/2017/file/6449f44a102fde848669bdd9eb6b76fa-Paper.pdf">“Lightgbm: A highly efficient gradient boosting decision tree.”</a> NeurIPS, 2017</p></li>
+<li><p>Prokhorenkova et al <a href="https://proceedings.neurips.cc/paper/2018/file/14491b756b3a51daac41c24863285549-Paper.pdf">“CatBoost: unbiased boosting with categorical features”</a> NeurIPS, 2018</p></li>
+<li><p>Grinsztajn, Oyallon, and Varoquaux <a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/0378c7692da36807bdec87ab043cdadc-Paper-Datasets_and_Benchmarks.pdf">“Why do tree-based models still outperform deep learning on typical tabular data?”</a> ICML 2022 <a href="https://github.com/LeoGrin/tabular-benchmark">(Github repo)</a></p></li>
+<li><p>McElfresh et al. <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/f06d5ebd4ff40b40dd97e30cee632123-Paper-Datasets_and_Benchmarks.pdf">“When do neural nets outperform boosted trees on tabular data?”</a> NeurIPS, 2023 (<a href="https://github.com/naszilla/tabzilla">Github repo</a>)</p></li>
+<li><p>Rubachev et al <a href="https://openreview.net/pdf?id=L14sqcrUC3">“TabReD: Analyzing pitfalls and filling the gaps in tabular deep learning benchmarks”</a> ICLR, 2025 (<a href="https://github.com/yandex-research/tabred">Github repo</a>)</p></li>
+<li><p>Ye et al. <a href="https://arxiv.org/pdf/2407.00956">“A Closer Look at Deep Learning on Tabular Data.”</a> arXiv: 2407.00956 (2025) (<a href="https://github.com/LAMDA-Tabular/TALENT">Github repo</a>)</p></li>
+<li><p>Gorishniy et al. <a href="https://proceedings.neurips.cc/paper_files/paper/2021/file/9d86d83f925f2149e9edb0ac3b49229c-Paper.pdf">“Revisiting deep learning models for tabular data.”</a> NeurIPS, 2021</p></li>
+<li><p>Gorishniy et al. <a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/9e9f0ffc3d836836ca96cbf8fe14b105-Paper-Conference.pdf">“On embeddings for numerical features in tabular deep learning.”</a> NeurIPS, 2022</p></li>
+<li><p>Holzmüller et al. <a href="https://proceedings.neurips.cc/paper_files/paper/2024/file/2ee1c87245956e3eaa71aaba5f5753eb-Paper-Conference.pdf">“Better by Default: Strong Pre-Tuned MLPs and Boosted Trees on Tabular Data”</a> NeurIPS, 2024</p></li>
+<li><p>Erickson et al. <a href="https://arxiv.org/pdf/2506.16791">“TabArena: A Living Benchmark for Machine Learning on Tabular Data”</a> arXiv: 2506.16791 (2025)</p></li>
+<li><p>Gorishniy et al. <a href="https://openreview.net/pdf?id=rhgIgTSSxW">“TabR: Tabular Deep Learning Meets Nearest Neighbors.”</a> ICLR, 2024</p></li>
+<li><p>Ye et al. <a href="https://arxiv.org/abs/2407.03257">“Revisiting nearest neighbor for tabular data: A deep tabular baseline two decades later”</a>, ICLR, 2025</p></li>
+<li><p>Gorishniy, Kotelnikov, and Babenko. <a href="https://openreview.net/pdf?id=Sd4wYYOhmY">“TabM: Advancing Tabular Deep Learning with Parameter-Efficient Ensembling”</a> ICLR 2025</p></li>
+<li><p>Zabërgja et al. <a href="https://arxiv.org/pdf/2402.03970">“Tabular Data: Is Deep Learning You Need?”</a> arXiv: 2402.03970 (2025)</p></li>
+<li><p>Hollmann et al. <a href="https://arxiv.org/pdf/2207.01848">“Tabpfn: A transformer that solves small tabular classification problems in a second.”</a> ICLR, 2023</p></li>
+<li><p>Hollmann et al. <a href="https://www.nature.com/articles/s41586-024-08328-6.pdf">“Accurate predictions on small data with a tabular foundation model”</a> Nature, 2025</p></li>
+<li><p>Qu et al. <a href="https://arxiv.org/abs/2502.05564">“TabICL: A Tabular Foundation Model for In-Context Learning on Large Data”</a>, ICML, 2025</p></li>
+<li><p>Simchoni and Rosset <a href="https://www.jmlr.org/papers/volume24/22-0501/22-0501.pdf">“Integrating random effects in deep neural networks”</a>, Journal of Machine Learning Research, 2023</p></li>
+</ul>
+</div>
