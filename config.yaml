@@ -38,6 +38,7 @@ menu:
       weight: 6
 
 params:
+  customCSS: ["css/custom.css"]
   MathJaxCDN: //cdnjs.cloudflare.com/ajax/libs
   MathJaxVersion: 2.7.5
   description: A blog for cooking and statistics.
